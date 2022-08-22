@@ -2,9 +2,9 @@
 
 namespace Finller\Invoice\Tests;
 
+use Finller\Invoice\InvoiceServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Finller\Invoice\InvoiceServiceProvider;
 
 class TestCase extends Orchestra
 {
