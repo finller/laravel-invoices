@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Finller\Invoice\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class InvoiceCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-invoices';
 
     public $description = 'My command';
 
