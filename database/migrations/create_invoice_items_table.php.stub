@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::create('invoice_items_table', function (Blueprint $table) {
+            $table->id();
+
+
+            $table->integer('quantity')->default(1);
+            $table->string('quantity_unit')->nullable();
+
+            /**
+            * All amount are in the same currency
+            **/
+            $table->bigInteger('unit_price')->nullable();
+            $table->string('currency')->nullable();
+            
+            $table->bigInteger('unit_tax')->nullable();
+
+            $table->string('label')->nullable();
+            $table->text('description')->nullable();
+
+            $table->foreignId('invoice_id');
+
+            $table->json('metadata')->nullable();
+
+            $table->timestamps();
+        });
+    }
+};

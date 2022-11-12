@@ -8,10 +8,23 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('laravel_invoices_table', function (Blueprint $table) {
+        Schema::create('invoices_table', function (Blueprint $table) {
             $table->id();
+            $table->string('serial_number')->unique();
 
-            // add fields
+            $table->string('state');
+            $table->dateTime('state_set_at')->nullable();
+
+            $table->dateTime('due_at')->nullable();
+
+            /**
+            * As invoices are a capture of a transaction at a specific moment in time,
+            * You should store all the information in the model itself and limit dependencies to relations
+            **/
+            $table->json('buyer')->nullable();
+            $table->json('seller')->nullable();
+
+            $table->nullableMorphs('invoiceable');
 
             $table->timestamps();
         });
