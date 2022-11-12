@@ -13,6 +13,7 @@ return [
     /**
      * This is the class that will used to cast all amount and prices
      * We recommand to use solution such as:
+     *
      * @see https://github.com/brick/money or https://github.com/akaunting/laravel-money
      */
     'money_cast' => null,
@@ -37,9 +38,9 @@ return [
          * - YYCCCC: 220123
          * - PPPYYCCCC : INV220123
          */
-        'format' => "PPSSSS-YYCCCC",
+        'format' => 'PPSSSS-YYCCCC',
 
         'default_prefix' => 'IN',
 
-    ]
+    ],
 ];
