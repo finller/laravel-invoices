@@ -52,12 +52,12 @@ class Invoice extends Model
     public static function getLatestSerialNumber(): ?string
     {
         /** @var ?static */
-        $latestInvoice = static::lastest('serial_number')->first();
+        $latestInvoice = static::query()->latest('serial_number')->first();
 
         return $latestInvoice?->serial_number;
     }
 
-    public static function generateSerialNumber()
+    public static function generateSerialNumber(?int $serie = null, ?Carbon $date = null)
     {
         $generator = new SerialNumberGenerator();
 
@@ -66,8 +66,8 @@ class Invoice extends Model
         $latestCount = $latestSerialNumber ? data_get($generator->parse($latestSerialNumber), 'COUNT', 0) : 0;
 
         return $generator->generate(
-            serie: 0,
-            date: now(),
+            serie: $serie,
+            date: $date ?? now(),
             count: $latestCount + 1
         );
     }

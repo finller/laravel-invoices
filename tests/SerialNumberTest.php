@@ -25,3 +25,22 @@ it('can generate serial number from format', function ($format, $serie, $count, 
     ['PPSSSS-YYYCCCC', 1, 2, 'IN0001-0220002'],
     ['PPCCCC', null, 102, 'IN0102'],
 ]);
+
+
+it('can parse serial number from format', function ($format, $serialNumber, $prefix, $serie, $year, $count) {
+    $generator = new SerialNumberGenerator(
+        format: $format,
+    );
+
+    $serialNumberParsed = $generator->parse($serialNumber);
+
+    dump($serialNumberParsed);
+
+    expect($serialNumberParsed['prefix'])->toBe($prefix);
+    expect($serialNumberParsed['serie'])->toBe($serie);
+    expect($serialNumberParsed['year'])->toBe($year);
+    expect($serialNumberParsed['count'])->toBe($count);
+})->with([
+    ['PPSSSS-YYCCCC', 'IN0001-220002', 'IN', '0001', '22', '0002'],
+    ['SSSS-YYCCCC', '0001-220002', null, '0001', '22', '0002'],
+]);

@@ -58,6 +58,21 @@ class SerialNumberGenerator implements GenerateSerialNumber
 
     public function parse(string $serialNumber): array
     {
-        return [];
+        preg_match("/{$this->formatToRegex()}/", $serialNumber, $matches);
+
+        return $matches;
+    }
+
+    protected function formatToRegex(): string
+    {
+        return preg_replace_callback_array(
+            [
+                '/P+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<prefix>[a-zA-Z]{{$length}})" : '',
+                '/S+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<serie>\d{{$length}})" : '',
+                '/Y+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<year>\d{{$length}})" : '',
+                '/C+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<count>\d{{$length}})" : '',
+            ],
+            $this->format
+        );
     }
 }
