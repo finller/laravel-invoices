@@ -2,9 +2,9 @@
 
 namespace Finller\Invoice;
 
+use Finller\Invoice\Commands\InvoiceCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Finller\Invoice\Commands\InvoiceCommand;
 
 class InvoiceServiceProvider extends PackageServiceProvider
 {
