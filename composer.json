@@ -1,9 +1,10 @@
 {
     "name": "finller/laravel-invoices",
-    "description": "This is my package laravel-invoices",
+    "description": "Store invoices safely in your Laravel application",
     "keywords": [
         "finller",
         "laravel",
+        "invoices",
         "laravel-invoices"
     ],
     "homepage": "https://github.com/finller/laravel-invoices",
