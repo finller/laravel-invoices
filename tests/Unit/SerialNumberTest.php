@@ -14,6 +14,7 @@ it('can generate serial number from format', function ($format, $serie, $count, 
     expect($serialNumber)->toBe($expected);
 })->with([
     ['PPSSSS-YYCCCC', 1, 2, 'IN0001-220002'],
+    ['PP-YYCCCC', null, 2, 'IN-220002'],
     ['SSSS-YYCCCC', 1, 2, '0001-220002'],
     ['SSSS-CCCC', 1, 2, '0001-0002'],
     ['SSCC', 1, 2, '0102'],
@@ -26,7 +27,6 @@ it('can generate serial number from format', function ($format, $serie, $count, 
     ['PPCCCC', null, 102, 'IN0102'],
 ]);
 
-
 it('can parse serial number from format', function ($format, $serialNumber, $prefix, $serie, $year, $count) {
     $generator = new SerialNumberGenerator(
         format: $format,
@@ -34,13 +34,15 @@ it('can parse serial number from format', function ($format, $serialNumber, $pre
 
     $serialNumberParsed = $generator->parse($serialNumber);
 
-    dump($serialNumberParsed);
-
-    expect($serialNumberParsed['prefix'])->toBe($prefix);
-    expect($serialNumberParsed['serie'])->toBe($serie);
-    expect($serialNumberParsed['year'])->toBe($year);
-    expect($serialNumberParsed['count'])->toBe($count);
+    expect(data_get($serialNumberParsed, 'prefix'))->toBe($prefix);
+    expect(data_get($serialNumberParsed, 'serie'))->toBe($serie);
+    expect(data_get($serialNumberParsed, 'year'))->toBe($year);
+    expect(data_get($serialNumberParsed, 'count'))->toBe($count);
 })->with([
-    ['PPSSSS-YYCCCC', 'IN0001-220002', 'IN', '0001', '22', '0002'],
-    ['SSSS-YYCCCC', '0001-220002', null, '0001', '22', '0002'],
+    ['PPSSSS-YYCCCC', 'IN0001-220002', 'IN', 1, 22, 2],
+    ['SSSS-YYCCCC', '0001-220002', null, 1, 22, 2],
+    ['SSSSYYCCCC', '0001220002', null, 1, 22, 2],
+    ['SSYYCCCC', '01220002', null, 1, 22, 2],
+    ['YYCCCC', '220002', null, null, 22, 2],
+    ['YYPPCCCSSSS', '22IN0020001', 'IN', 1, 22, 2],
 ]);

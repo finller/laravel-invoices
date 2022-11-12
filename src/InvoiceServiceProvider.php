@@ -2,7 +2,6 @@
 
 namespace Finller\Invoice;
 
-use Finller\Invoice\Commands\InvoiceCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -18,8 +17,9 @@ class InvoiceServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-invoices')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-invoices_table')
-            ->hasCommand(InvoiceCommand::class);
+            // ->hasViews()
+            ->hasMigration('create_invoices_table')
+            ->hasMigration('create_invoice_items_table');
+        // ->hasCommand(InvoiceCommand::class);
     }
 }

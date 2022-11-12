@@ -8,9 +8,10 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('invoices_table', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->string('serial_number')->unique();
+            $table->text('description')->nullable();
 
             $table->string('state');
             $table->dateTime('state_set_at')->nullable();
@@ -21,12 +22,33 @@ return new class extends Migration
             * As invoices are a capture of a transaction at a specific moment in time,
             * You should store all the information in the model itself and limit dependencies to relations
             **/
-            $table->json('buyer')->nullable();
-            $table->json('seller')->nullable();
+            $table->json('buyer_information')->nullable();
+            $table->json('seller_information')->nullable();
 
+            /**
+            * Attach the invoice to a transaction, a mission or any parent
+            **/
             $table->nullableMorphs('invoiceable');
+
+            /**
+            * Typically this relationship will refer to your users, teams or companies
+            **/
+            $table->nullableMorphs('buyer_id');
+
+            /**
+            * If your application is a marketplace with both buyers and seller, you would certainly like to 
+            * attach the invoice to both of them
+            **/
+            $table->nullableMorphs('seller_id');
+
+            $table->json('metadata')->nullable();
 
             $table->timestamps();
         });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('invoices');
     }
 };

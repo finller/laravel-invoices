@@ -10,6 +10,8 @@ return [
     'model_invoice_item' => InvoiceItem::class,
     'model_invoice' => Invoice::class,
 
+    'cascade_invoice_delete_to_invoice_items' => true,
+
     /**
      * This is the class that will used to cast all amount and prices
      * We recommand to use solution such as:
@@ -20,7 +22,7 @@ return [
 
     'serial_number' => [
         /**
-         * If true, will generation a serial number on creation
+         * If true, will generate a serial number on creation
          * If false, you will have to set the serial_number yourself
          */
         'auto_generate' => true,
@@ -28,19 +30,21 @@ return [
         /**
          * P: Prefix
          * S: Serie
+         * M: Month
          * Y: Year
          * C: Count
          * Example: IN0012-220234
          * Repeat letter to set the length of each information
-         * Exemple of formats:
-         * - PPSSSS-YYCCCC (default) : INV0001-220123
+         * Examples of formats:
+         * - PPYYCCCC : IN220123 (default)
+         * - PPPYYCCCC : INV220123
+         * - PPSSSS-YYCCCC : INV0001-220123
          * - SSSS-CCCC: 0001-0123
          * - YYCCCC: 220123
-         * - PPPYYCCCC : INV220123
          */
-        'format' => 'PPSSSS-YYCCCC',
+        'format' => 'PPYYCCCC',
 
-        'default_prefix' => 'IN',
+        'prefix' => 'IN',
 
     ],
 ];

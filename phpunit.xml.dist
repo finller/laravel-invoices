@@ -19,7 +19,7 @@
     verbose="true"
 >
     <testsuites>
-        <testsuite name="Finller Test Suite">
+        <testsuite name="Laravel invoices Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

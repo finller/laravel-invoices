@@ -8,12 +8,11 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('invoice_items_table', function (Blueprint $table) {
+        Schema::create('invoice_items', function (Blueprint $table) {
             $table->id();
 
-
             $table->integer('quantity')->default(1);
-            $table->string('quantity_unit')->nullable();
+            $table->string('quantity_unit')->nullable(); // such as hours, days, number, ...
 
             /**
             * All amount are in the same currency
@@ -32,5 +31,10 @@ return new class extends Migration
 
             $table->timestamps();
         });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('invoice_items');
     }
 };
