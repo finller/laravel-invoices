@@ -26,7 +26,6 @@ it('can generate serial number from format', function ($format, $serie, $count, 
     ['PPCCCC', null, 102, 'IN0102'],
 ]);
 
-
 it('can parse serial number from format', function ($format, $serialNumber, $prefix, $serie, $year, $count) {
     $generator = new SerialNumberGenerator(
         format: $format,
