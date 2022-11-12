@@ -16,9 +16,8 @@ class InvoiceItem extends Model
          * This cast will be forwarded to the class defined in config at invoices.money_cast
          */
         'unit_price' => MoneyCaster::class,
-        'unit_tax'=> MoneyCaster::class,
+        'unit_tax' => MoneyCaster::class,
     ];
-
 
     public function invoice()
     {

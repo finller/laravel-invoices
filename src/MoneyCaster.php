@@ -6,7 +6,6 @@ use Illuminate\Contracts\Database\Eloquent\Castable;
 
 class MoneyCaster implements Castable
 {
-
     /**
      * Get the name of the caster class to use when casting from / to this cast target.
      *
