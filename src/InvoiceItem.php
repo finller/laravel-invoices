@@ -32,7 +32,7 @@ class InvoiceItem extends Model
          */
         'unit_price' => MoneyCaster::class,
         'unit_tax' => MoneyCaster::class,
-        'metadata'=> AsArrayObject::class
+        'metadata' => AsArrayObject::class,
     ];
 
     public function invoice()
