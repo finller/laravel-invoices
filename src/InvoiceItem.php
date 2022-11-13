@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
+ * @property mixed $unit_price
+ * @property mixed $unit_tax
  * @property ?string $currency
  * @property ?int $quantity
  * @property ?string $quantity_unit

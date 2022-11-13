@@ -2,7 +2,7 @@
 
 use Finller\Invoice\Invoice;
 
-it('can creates and generates unique serial numbers', function () {
+it('can create and generate unique serial numbers', function () {
     $prefix = 'INV';
     config()->set('invoices.serial_number.format', 'PPPYYCCCC');
     config()->set('invoices.serial_number.prefix', $prefix);
