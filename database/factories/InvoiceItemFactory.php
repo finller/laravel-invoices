@@ -12,6 +12,7 @@ class InvoiceItemFactory extends Factory
     public function definition()
     {
         $price = fake()->random_int(100, 100000);
+
         return [
             'label' => fake()->sentence(),
             'description' => fake()->sentence(),
