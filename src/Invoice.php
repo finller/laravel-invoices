@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
+ * @property int $id
  * @property string $serial_number
  * @property string $description
  * @property ?ArrayObject $seller_information
@@ -22,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property ?Model $buyer
  * @property ?Model $seller
  * @property ?Model $invoiceable
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Invoice extends Model
 {

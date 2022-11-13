@@ -13,6 +13,12 @@ return new class extends Migration
             $table->string('serial_number')->unique();
             $table->text('description')->nullable();
 
+            /**
+            * In most of the cases, you want to store the logo like it was when the invoice was created.
+            * That's why we will store it in the database.
+            **/
+            $table->binary('logo'); 
+
             $table->string('state');
             $table->dateTime('state_set_at')->nullable();
 
