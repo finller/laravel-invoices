@@ -48,7 +48,7 @@ return [
 
     ],
 
-    'date_format' => "Y-m-d",
+    'date_format' => 'Y-m-d',
 
     'default_seller' => [
         'name' => null,
