@@ -28,7 +28,7 @@ class PdfInvoice
     ) {
         $this->seller = $seller ?? config('invoices.default_seller', []);
         $this->logo = $logo ?? config('invoices.default_logo', null);
-        $this->template = sprintf('invoices::templates.%s', $template ?? config('invoices.default_template', null));
+        $this->template = sprintf('invoices::%s', $template ?? config('invoices.default_template', null));
     }
 
     public function generateFilename(): string
