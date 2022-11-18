@@ -9,7 +9,7 @@ it('can generate serial number from format', function ($format, $serie, $count, 
         prefix: 'IN'
     );
 
-    $serialNumber = $generator->generate($serie, Carbon::parse('2022-01-01'), $count);
+    $serialNumber = $generator->generate(count: $count, serie: $serie, date: Carbon::parse('2022-01-01'));
 
     expect($serialNumber)->toBe($expected);
 })->with([
