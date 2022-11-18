@@ -12,14 +12,6 @@ return [
 
     'cascade_invoice_delete_to_invoice_items' => true,
 
-    /**
-     * This is the class that will used to cast all amount and prices
-     * We recommand to use solution such as:
-     *
-     * @see https://github.com/brick/money or https://github.com/akaunting/laravel-money
-     */
-    'money_cast' => null,
-
     'serial_number' => [
         /**
          * If true, will generate a serial number on creation

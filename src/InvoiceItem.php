@@ -2,16 +2,18 @@
 
 namespace Finller\Invoice;
 
+use Brick\Money\Money;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Finller\Money\MoneyCast;
 
 /**
  * @property int $id
- * @property mixed $unit_price
- * @property mixed $unit_tax
+ * @property ?Money $unit_price
+ * @property ?Money $unit_tax
  * @property ?string $currency
  * @property ?int $quantity
  * @property ?string $quantity_unit
@@ -32,8 +34,8 @@ class InvoiceItem extends Model
         /**
          * This cast will be forwarded to the class defined in config at invoices.money_cast
          */
-        'unit_price' => MoneyCaster::class,
-        'unit_tax' => MoneyCaster::class,
+        'unit_price' => MoneyCast::class . "currency",
+        'unit_tax' => MoneyCast::class . "currency",
         'metadata' => AsArrayObject::class,
     ];
 
@@ -49,8 +51,8 @@ class InvoiceItem extends Model
             quantity: $this->quantity,
             quantity_unit: $this->quantity_unit,
             description: $this->description,
-            unit_price: (int) $this->unit_price,
-            unit_tax: (int) $this->unit_tax,
+            unit_price: $this->unit_price?->getMinorAmount()->toInt(),
+            unit_tax: $this->unit_tax?->getMinorAmount()->toInt(),
             currency: $this->currency,
         );
     }
