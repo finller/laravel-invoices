@@ -102,8 +102,8 @@ class Invoice extends Model
 
     public static function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
     {
-        $latestSerialNumber = static::getLatestSerialNumber();
         $generator = new SerialNumberGenerator();
+        $latestSerialNumber = static::getLatestSerialNumber();
 
         if ($latestSerialNumber) {
             $parsedSerialNumber = $generator->parse($latestSerialNumber);
