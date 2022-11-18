@@ -47,4 +47,37 @@ return [
         'prefix' => 'IN',
 
     ],
+
+    'default_seller' => [
+        'name' => null,
+        'address' => [
+            'street' => null,
+            'city' => null,
+            'postal_code' => null,
+            'state' => null,
+            'country' => null,
+        ],
+        'email' => null,
+        'phone_number' => null,
+        'tax_number' => null,
+    ],
+
+    'default_logo' => null,
+
+    'default_template' => 'default',
+
+    /**
+     * ISO 4217 currency code
+     */
+    'default_currency' => 'USD',
+
+    /**
+     * Default DOM PDF options
+     * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
+     */
+    'pdf_options' => [],
+    'paper_options' => [
+        'paper' => 'a4',
+        'orientation' => 'portrait',
+    ],
 ];

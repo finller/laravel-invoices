@@ -41,4 +41,17 @@ class InvoiceItem extends Model
     {
         return $this->belongsTo(config('invoices.model_invoice'));
     }
+
+    public function toPdfInvoiceItem()
+    {
+        return new PdfInvoiceItem(
+            label: $this->label,
+            quantity: $this->quantity,
+            quantity_unit: $this->quantity_unit,
+            description: $this->description,
+            unit_price: (int) $this->unit_price,
+            unit_tax: (int) $this->unit_tax,
+            currency: $this->currency,
+        );
+    }
 }

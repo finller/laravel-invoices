@@ -33,11 +33,11 @@ class Invoice extends Model
     protected $fillable = [];
 
     protected $casts = [
-        'metadata' => AsArrayObject::class,
-        'seller_information' => AsArrayObject::class,
-        'buyer_information' => AsArrayObject::class,
         'state_set_at' => 'datetime',
         'due_at' => 'datetime',
+        'seller_information' => AsArrayObject::class,
+        'buyer_information' => AsArrayObject::class,
+        'metadata' => AsArrayObject::class,
     ];
 
     public static function booted()
@@ -58,37 +58,6 @@ class Invoice extends Model
     public function items()
     {
         return $this->hasMany(config('invoices.model_invoice_item'));
-    }
-
-    /**
-     * Custom your strategy to get the last created serial number
-     * Query the last record in the database or use a cache for example
-     */
-    public static function getLatestSerialNumber(): ?string
-    {
-        /** @var ?static */
-        $latestInvoice = static::query()->latest('serial_number')->first();
-
-        return $latestInvoice?->serial_number;
-    }
-
-    public static function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
-    {
-        $latestSerialNumber = static::getLatestSerialNumber();
-        $generator = new SerialNumberGenerator();
-
-        if ($latestSerialNumber) {
-            $parsedSerialNumber = $generator->parse($latestSerialNumber);
-            $latestCount = data_get($parsedSerialNumber, 'count', 0);
-        } else {
-            $latestCount = 0;
-        }
-
-        return $generator->generate(
-            serie: $serie,
-            date: $date ?? now(),
-            count: $latestCount + 1
-        );
     }
 
     /**
@@ -117,5 +86,50 @@ class Invoice extends Model
     public function seller(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Custom your strategy to get the lastest created serial number
+     * For example, you can query the last record in the database or use a cache
+     */
+    public static function getLatestSerialNumber(): ?string
+    {
+        /** @var ?static */
+        $latestInvoice = static::query()->latest('serial_number')->first();
+
+        return $latestInvoice?->serial_number;
+    }
+
+    public static function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
+    {
+        $latestSerialNumber = static::getLatestSerialNumber();
+        $generator = new SerialNumberGenerator();
+
+        if ($latestSerialNumber) {
+            $parsedSerialNumber = $generator->parse($latestSerialNumber);
+            $latestCount = data_get($parsedSerialNumber, 'count', 0);
+        } else {
+            $latestCount = 0;
+        }
+
+        return $generator->generate(
+            serie: $serie,
+            date: $date ?? now(),
+            count: $latestCount + 1
+        );
+    }
+
+    public function toPdfInvoice()
+    {
+        return new PdfInvoice(
+            name: "Invoice",
+            serial_number: $this->serial_number,
+            state: $this->state,
+            due_at: $this->due_at,
+            created_at: $this->created_at,
+            buyer: $this->buyer_information?->toArray(),
+            seller: $this->seller_information?->toArray(),
+            items: $this->items->map(fn (InvoiceItem $item) => $item->toPdfInvoiceItem())->all()
+        );
     }
 }
