@@ -159,9 +159,9 @@
         <tbody>
             <tr>
                 <td class="border-0 pl-0" width="70%">
-                    <h4 class="text-uppercase">
+                    <h1 class="text-uppercase">
                         <strong>{{ $invoice->name }}</strong>
-                    </h4>
+                    </h1>
                 </td>
                 <td class="border-0 pl-0">
                     @if ($invoice->state)
@@ -169,8 +169,9 @@
                             <strong>{{ $invoice->state }}</strong>
                         </h4>
                     @endif
-                    <p>{{ __('invoices::invoice.serial') }} <strong>{{ $invoice->serial_number }}</strong></p>
-                    <p>{{ __('invoices::invoice.date') }}: <strong>{{ $invoice->due_at }}</strong></p>
+                    <p>{{ __('invoices::invoice.serial_number') }} <strong>{{ $invoice->serial_number }}</strong></p>
+                    <p>{{ __('invoices::invoice.created_at') }}: {{ $invoice->created_at }}</p>
+                    <p>{{ __('invoices::invoice.due_at') }}: {{ $invoice->due_at }}</p>
                 </td>
             </tr>
         </tbody>
