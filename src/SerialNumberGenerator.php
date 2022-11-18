@@ -14,12 +14,12 @@ class SerialNumberGenerator implements GenerateSerialNumber
         $this->prefix = $prefix ?? config('invoices.serial_number.prefix', '');
     }
 
-    public function generate(?int $serie, ?Carbon $date, int $count): string
+    public function generate(int $count, ?int $serie = null, ?Carbon $date = null): string
     {
         return preg_replace_callback_array(
             [
                 '/P+/' => function ($matches) {
-                    if (! $matches[0]) {
+                    if (!$matches[0]) {
                         return '';
                     }
                     $slotLength = strlen($matches[0]);
@@ -33,11 +33,11 @@ class SerialNumberGenerator implements GenerateSerialNumber
                     return substr($this->prefix, 0, strlen($matches[0]));
                 },
                 '/S+/' => function ($matches) use ($serie) {
-                    if (! $matches[0]) {
+                    if (!$matches[0]) {
                         return '';
                     }
                     $slotLength = strlen($matches[0]);
-                    throw_if(! $serie, "The serial Number format includes a $slotLength long Serie (S), but no serie has been passed");
+                    throw_if(!$serie, "The serial Number format includes a $slotLength long Serie (S), but no serie has been passed");
 
                     $serieLength = strlen(strval($serie));
                     throw_if(
@@ -55,7 +55,7 @@ class SerialNumberGenerator implements GenerateSerialNumber
                 '/M+/' => fn ($matches) => $matches[0] && $date ? substr($date->format('m'), -strlen($matches[0])) : '',
                 '/Y+/' => fn ($matches) => $matches[0] && $date ? substr($date->format('Y'), -strlen($matches[0])) : '',
                 '/C+/' => function ($matches) use ($count) {
-                    if (! $matches[0]) {
+                    if (!$matches[0]) {
                         return '';
                     }
                     throw_if(
