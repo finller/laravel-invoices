@@ -33,7 +33,7 @@ class InvoiceFactory extends Factory
                 ],
                 'email' => fake()->email(),
                 'phone_number' => fake()->phoneNumber(),
-                'tax_number' => fake()->numberBetween(12345678,99999999),
+                'tax_number' => fake()->numberBetween(12345678, 99999999),
             ],
         ];
     }
