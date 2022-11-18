@@ -4,11 +4,11 @@ namespace Finller\Invoice;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
+use Finller\Money\MoneyCast;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Finller\Money\MoneyCast;
 
 /**
  * @property int $id
@@ -34,8 +34,8 @@ class InvoiceItem extends Model
         /**
          * This cast will be forwarded to the class defined in config at invoices.money_cast
          */
-        'unit_price' => MoneyCast::class . "currency",
-        'unit_tax' => MoneyCast::class . "currency",
+        'unit_price' => MoneyCast::class.'currency',
+        'unit_tax' => MoneyCast::class.'currency',
         'metadata' => AsArrayObject::class,
     ];
 
