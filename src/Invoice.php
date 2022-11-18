@@ -122,7 +122,7 @@ class Invoice extends Model
     public function toPdfInvoice()
     {
         return new PdfInvoice(
-            name: "Invoice",
+            name: 'Invoice',
             serial_number: $this->serial_number,
             state: $this->state,
             due_at: $this->due_at,

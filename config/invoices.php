@@ -73,6 +73,7 @@ return [
 
     /**
      * Default DOM PDF options
+     *
      * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
      */
     'pdf_options' => [],

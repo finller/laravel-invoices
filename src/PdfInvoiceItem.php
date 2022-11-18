@@ -4,7 +4,6 @@ namespace Finller\Invoice;
 
 class PdfInvoiceItem
 {
-
     public function __construct(
         public string $label,
         public int $unit_price,

@@ -2,16 +2,15 @@
 
 namespace Finller\Invoice;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class PdfInvoice
 {
-
     /**
-     * @param null|PdfInvoiceItem[] $items
+     * @param  null|PdfInvoiceItem[]  $items
      */
     public function __construct(
         public string $name,
@@ -47,7 +46,7 @@ class PdfInvoice
         $type = pathinfo($this->logo, PATHINFO_EXTENSION);
         $data = file_get_contents($this->logo);
 
-        return 'data:image/' . $type . ';base64,' . base64_encode($data);
+        return 'data:image/'.$type.';base64,'.base64_encode($data);
     }
 
     public function pdf(): \Barryvdh\DomPDF\PDF
@@ -57,19 +56,19 @@ class PdfInvoice
             config('invoices.paper_options.orientation', 'portrait')
         );
 
-        foreach (config("invoices.pdf_options") as $attribute => $value) {
+        foreach (config('invoices.pdf_options') as $attribute => $value) {
             $pdf->setOption($attribute, $value);
         }
 
         return $pdf->loadView($this->template, ['invoice' => $this]);
     }
 
-    public function stream(): \Illuminate\Http\Response
+    public function stream(): Response
     {
         return $this->pdf()->stream($this->getFilename());
     }
 
-    public function download(): \Illuminate\Http\Response
+    public function download(): Response
     {
         return $this->pdf()->download($this->getFilename());
     }
