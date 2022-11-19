@@ -209,15 +209,15 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="pr-2 nowrap">{{ __('invoices::invoice.due_at') }}</td>
-                                    <td width="100%">
+                                    <td class="pb-1 pr-2 nowrap">{{ __('invoices::invoice.due_at') }}</td>
+                                    <td class="pb-1" width="100%">
                                         {{ $invoice->due_at->format(config('invoices.date_format')) }}
                                     </td>
                                 </tr>
-                                @if ($invoice->paid_at === 'paid')
+                                @if ($invoice->paid_at)
                                     <tr>
-                                        <td class="pr-2 nowrap">{{ __('invoices::invoice.paid_at') }}</td>
-                                        <td width="100%">
+                                        <td class="pb-1 pr-2 nowrap">{{ __('invoices::invoice.paid_at') }}</td>
+                                        <td class="pb-1" width="100%">
                                             {{ $invoice->paid_at->format(config('invoices.date_format')) }}
                                         </td>
                                     </tr>

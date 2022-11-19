@@ -24,5 +24,6 @@ return [
         'draft' => 'Draft',
         'pending' => 'Pending',
         'paid' => 'Paid',
+        'deleted' => 'Deleted',
     ],
 ];

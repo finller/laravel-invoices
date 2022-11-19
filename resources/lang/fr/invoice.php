@@ -24,5 +24,6 @@ return [
         'draft' => 'Brouillon',
         'pending' => 'En attente',
         'paid' => 'Payée',
+        'deleted' => 'Supprimée',
     ],
 ];
