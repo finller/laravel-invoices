@@ -3,6 +3,7 @@
 namespace Finller\Invoice\Database\Factories;
 
 use Finller\Invoice\Invoice;
+use Finller\Invoice\InvoiceState;
 use Finller\Invoice\SerialNumberGenerator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,7 +17,7 @@ class InvoiceFactory extends Factory
 
         return [
             'serial_number' => (new SerialNumberGenerator())->generate(count: fake()->numberBetween(0, 100)),
-            'state' => fake()->randomElement(['paid', 'pending']),
+            'state' => fake()->randomElement(InvoiceState::cases()),
             'state_set_at' => fake()->dateTimeBetween($created_at),
             'updated_at' => fake()->dateTimeBetween($created_at),
             'created_at' => $created_at,

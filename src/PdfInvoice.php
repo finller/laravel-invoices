@@ -20,6 +20,7 @@ class PdfInvoice
         public Carbon $due_at,
         public Carbon $created_at,
         public array $buyer,
+        public ?Carbon $paid_at = null,
         public ?array $seller = null,
         public ?string $description = null,
         public ?string $logo = null,

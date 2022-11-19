@@ -6,10 +6,11 @@ return [
     | Invoice Language Lines
     |--------------------------------------------------------------------------
     */
-    'invoice'=> 'Invoice',
+    'invoice' => 'Invoice',
     'serial_number' => 'Invoice number',
     'due_at' => 'Date due',
     'created_at' => 'Date of issue',
+    'paid_at' => 'Date of payment',
     'description' => 'Description',
     'total_amount' => 'Total',
     'tax' => 'Tax',
@@ -18,4 +19,10 @@ return [
     'amount' => 'Amount',
     'unit_price' => 'Unit price',
     'quantity' => 'Qty',
+
+    'states' => [
+        'draft' => 'Draft',
+        'pending' => 'Pending',
+        'paid' => 'Paid',
+    ],
 ];

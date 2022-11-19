@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string $description
  * @property ?ArrayObject $seller_information
  * @property ?ArrayObject $buyer_information
- * @property ?string $state
+ * @property ?InvoiceState $state
  * @property ?Carbon $state_set_at
  * @property ?Carbon $due_at
  * @property Collection<int, InvoiceItem> $items
@@ -35,6 +35,7 @@ class Invoice extends Model
     protected $casts = [
         'state_set_at' => 'datetime',
         'due_at' => 'datetime',
+        'state' => InvoiceState::class,
         'seller_information' => AsArrayObject::class,
         'buyer_information' => AsArrayObject::class,
         'metadata' => AsArrayObject::class,
@@ -124,7 +125,8 @@ class Invoice extends Model
         return new PdfInvoice(
             name: __('invoices::invoice.invoice'),
             serial_number: $this->serial_number,
-            state: $this->state,
+            state: $this->state ? __("invoices::invoice.states.{$this->state->value}") : null,
+            paid_at: ($this->state === InvoiceState::Paid) ? $this->state_set_at : null,
             due_at: $this->due_at,
             created_at: $this->created_at,
             buyer: $this->buyer_information?->toArray(),

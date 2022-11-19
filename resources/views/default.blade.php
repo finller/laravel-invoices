@@ -214,6 +214,14 @@
                                         {{ $invoice->due_at->format(config('invoices.date_format')) }}
                                     </td>
                                 </tr>
+                                @if ($invoice->paid_at === 'paid')
+                                    <tr>
+                                        <td class="pr-2 nowrap">{{ __('invoices::invoice.paid_at') }}</td>
+                                        <td width="100%">
+                                            {{ $invoice->paid_at->format(config('invoices.date_format')) }}
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </td>
@@ -292,14 +300,14 @@
             </tbody>
         </table>
 
-        <table>
+        <table class="mb-5">
             <thead>
                 <tr>
-                    <th class="py-2 pr-2">{{ __('invoices::invoice.description')}}</th>
-                    <th class="p-2">{{ __('invoices::invoice.quantity')}}</th>
-                    <th class="p-2">{{ __('invoices::invoice.unit_price')}}</th>
-                    <th class="p-2">{{ __('invoices::invoice.tax')}}</th>
-                    <th class="has-text-right py-2 pl-2">{{ __('invoices::invoice.amount')}}</th>
+                    <th class="py-2 pr-2">{{ __('invoices::invoice.description') }}</th>
+                    <th class="p-2">{{ __('invoices::invoice.quantity') }}</th>
+                    <th class="p-2">{{ __('invoices::invoice.unit_price') }}</th>
+                    <th class="p-2">{{ __('invoices::invoice.tax') }}</th>
+                    <th class="has-text-right py-2 pl-2">{{ __('invoices::invoice.amount') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -335,7 +343,8 @@
                 <tr>
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
-                    <td class="p-2 has-border-bottom-light" colspan="3">{{ __('invoices::invoice.subtotal_amount')}}</td>
+                    <td class="p-2 has-border-bottom-light" colspan="3">
+                        {{ __('invoices::invoice.subtotal_amount') }}</td>
                     <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
                         {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
                     </td>
@@ -343,7 +352,8 @@
                 <tr>
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
-                    <td class="p-2 has-border-bottom-light" colspan="3">{{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}</td>
+                    <td class="p-2 has-border-bottom-light" colspan="3">
+                        {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}</td>
                     <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
                         {{ $invoice->formatMoney($invoice->totalTaxAmount()) }}
                     </td>
@@ -351,7 +361,8 @@
                 <tr>
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
-                    <td class="p-2 has-border-bottom-light" colspan="3"><strong>{{ __('invoices::invoice.total_amount')}}</strong></td>
+                    <td class="p-2 has-border-bottom-light" colspan="3">
+                        <strong>{{ __('invoices::invoice.total_amount') }}</strong></td>
                     <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
                         <strong>
                             {{ $invoice->formatMoney($invoice->totalAmount()) }}
