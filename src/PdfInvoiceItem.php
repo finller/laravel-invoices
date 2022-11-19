@@ -19,7 +19,7 @@ class PdfInvoiceItem
         public ?string $description = null,
         public ?string $quantity_unit = null,
     ) {
-        if (!($currency instanceof Currency)) {
+        if (! ($currency instanceof Currency)) {
             $this->currency = Currency::of($currency ?? config('invoices.default_currency'));
         }
 
@@ -35,11 +35,12 @@ class PdfInvoiceItem
 
     public function formatPercentage(null|float|int $percentage, ?string $locale = null)
     {
-        if (!$percentage) {
+        if (! $percentage) {
             return null;
         }
 
         $formatter = new NumberFormatter($locale ?? app()->getLocale(), NumberFormatter::PERCENT);
+
         return $formatter->format(($percentage > 1) ? ($percentage / 100) : $percentage);
     }
 
