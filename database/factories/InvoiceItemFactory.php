@@ -18,7 +18,8 @@ class InvoiceItemFactory extends Factory
             'description' => fake()->sentence(),
             'unit_price' => $price,
             'unit_tax' => fake()->numberBetween(0, $price),
-            'currency' => 'USD',
+            'currency' => fake()->currencyCode(),
+            'quantity' => fake()->numberBetween(1, 10),
         ];
     }
 }
