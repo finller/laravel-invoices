@@ -9,8 +9,8 @@ class PdfInvoiceItem
 {
     public function __construct(
         public string $label,
-        public Money $unit_price,
-        public Money $unit_tax,
+        public ?Money $unit_price,
+        public ?Money $unit_tax,
         public ?int $quantity = 1,
         public null|string|Currency $currency = null,
         public ?string $description = null,
@@ -21,8 +21,8 @@ class PdfInvoiceItem
         }
     }
 
-    public function formatMoney(Money $money, ?string $locale = null)
+    public function formatMoney(?Money $money = null, ?string $locale = null)
     {
-        return $money->formatTo($locale ?? app()->getLocale());
+        return $money ? $money->formatTo($locale ?? app()->getLocale()) : null;
     }
 }

@@ -51,8 +51,8 @@ class InvoiceItem extends Model
             quantity: $this->quantity,
             quantity_unit: $this->quantity_unit,
             description: $this->description,
-            unit_price: $this->unit_price?->getMinorAmount()->toInt(),
-            unit_tax: $this->unit_tax?->getMinorAmount()->toInt(),
+            unit_price: $this->unit_price,
+            unit_tax: $this->unit_tax,
             currency: $this->currency,
         );
     }
