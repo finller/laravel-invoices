@@ -16,7 +16,7 @@ class PdfInvoiceItem
         public ?string $description = null,
         public ?string $quantity_unit = null,
     ) {
-        if (!($currency instanceof Currency)) {
+        if (! ($currency instanceof Currency)) {
             $this->currency = Currency::of($currency ?? config('invoices.default_currency'));
         }
     }
