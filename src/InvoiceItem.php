@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property ?Money $unit_price
  * @property ?Money $unit_tax
+ * @property ?float $tax_percentage
  * @property ?string $currency
  * @property ?int $quantity
  * @property ?string $quantity_unit
@@ -34,9 +35,10 @@ class InvoiceItem extends Model
         /**
          * This cast will be forwarded to the class defined in config at invoices.money_cast
          */
-        'unit_price' => MoneyCast::class.':currency',
-        'unit_tax' => MoneyCast::class.':currency',
+        'unit_price' => MoneyCast::class . ':currency',
+        'unit_tax' => MoneyCast::class . ':currency',
         'metadata' => AsArrayObject::class,
+        'tax_percentage' => 'float'
     ];
 
     public function invoice()

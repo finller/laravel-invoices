@@ -329,7 +329,11 @@
                             <p>{{ $item->formatMoney($item->unit_price) }}</p>
                         </td>
                         <td @class(['nowrap align-top p-2', 'has-border-bottom-light'])>
-                            <p>{{ $item->formatMoney($item->unit_tax) }}</p>
+                            @if ($item->unit_tax)
+                                <p>{{ $item->formatMoney($item->unit_tax) }}</p>
+                            @else
+                                <p>{{ $item->formatPercentage($item->tax_percentage) }}</p>
+                            @endif
                         </td>
                         <td @class([
                             'nowrap align-top has-text-right pl-2 py-2',
@@ -362,7 +366,8 @@
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
                     <td class="p-2 has-border-bottom-light" colspan="3">
-                        <strong>{{ __('invoices::invoice.total_amount') }}</strong></td>
+                        <strong>{{ __('invoices::invoice.total_amount') }}</strong>
+                    </td>
                     <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
                         <strong>
                             {{ $invoice->formatMoney($invoice->totalAmount()) }}
