@@ -35,10 +35,10 @@ class InvoiceItem extends Model
         /**
          * This cast will be forwarded to the class defined in config at invoices.money_cast
          */
-        'unit_price' => MoneyCast::class . ':currency',
-        'unit_tax' => MoneyCast::class . ':currency',
+        'unit_price' => MoneyCast::class.':currency',
+        'unit_tax' => MoneyCast::class.':currency',
         'metadata' => AsArrayObject::class,
-        'tax_percentage' => 'float'
+        'tax_percentage' => 'float',
     ];
 
     public function invoice()
