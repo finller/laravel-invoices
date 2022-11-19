@@ -19,7 +19,7 @@ class InvoiceItemFactory extends Factory
             'label' => fake()->sentence(),
             'description' => fake()->sentence(),
             'unit_price' => $price,
-            'unit_tax' => !$useTaxPercentage ? fake()->numberBetween(0, $price) : null,
+            'unit_tax' => ! $useTaxPercentage ? fake()->numberBetween(0, $price) : null,
             'tax_percentage' => $useTaxPercentage ? fake()->numberBetween(0, 100) : null,
             'currency' => fake()->currencyCode(),
             'quantity' => fake()->numberBetween(1, 10),
