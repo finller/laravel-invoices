@@ -16,7 +16,7 @@ class PdfInvoiceItem
         public ?string $description = null,
         public ?string $quantity_unit = null,
     ) {
-        if (!($currency instanceof Currency)) {
+        if (! ($currency instanceof Currency)) {
             $this->currency = Currency::of($currency ?? config('invoices.default_currency'));
         }
     }
@@ -31,6 +31,7 @@ class PdfInvoiceItem
         if ($this->unit_price === null) {
             return Money::ofMinor(0, $this->currency);
         }
+
         return $this->quantity ? $this->unit_price->multipliedBy($this->quantity) : $this->unit_price;
     }
 
@@ -39,6 +40,7 @@ class PdfInvoiceItem
         if ($this->unit_tax === null) {
             return Money::ofMinor(0, $this->currency);
         }
+
         return $this->quantity ? $this->unit_tax->multipliedBy($this->quantity) : $this->unit_tax;
     }
 
