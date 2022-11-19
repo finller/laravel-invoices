@@ -23,7 +23,7 @@ class PdfInvoiceItem
 
     public function formatMoney(?Money $money = null, ?string $locale = null)
     {
-        return $money ? $money->formatTo($locale ?? app()->getLocale()) : null;
+        return $money ? str_replace("\xe2\x80\xaf", ' ', $money->formatTo($locale ?? app()->getLocale())) : null;
     }
 
     public function subTotalAmount(): Money

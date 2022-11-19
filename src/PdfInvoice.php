@@ -47,7 +47,7 @@ class PdfInvoice
         $type = pathinfo($this->logo, PATHINFO_EXTENSION);
         $data = file_get_contents($this->logo);
 
-        return 'data:image/'.$type.';base64,'.base64_encode($data);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 
     public function subTotalAmount(): Money
@@ -103,7 +103,7 @@ class PdfInvoice
 
     public function formatMoney(?Money $money = null, ?string $locale = null)
     {
-        return $money ? $money->formatTo($locale ?? app()->getLocale()) : null;
+        return $money ? str_replace("\xe2\x80\xaf", ' ', $money->formatTo($locale ?? app()->getLocale())) : null;
     }
 
     public function pdf(): \Barryvdh\DomPDF\PDF
