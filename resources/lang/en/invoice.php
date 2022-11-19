@@ -6,7 +6,7 @@ return [
     | Invoice Language Lines
     |--------------------------------------------------------------------------
     */
-    'invoice'=> 'Invoice',
+    'invoice' => 'Invoice',
     'serial_number' => 'Invoice number',
     'due_at' => 'Date due',
     'created_at' => 'Date of issue',
