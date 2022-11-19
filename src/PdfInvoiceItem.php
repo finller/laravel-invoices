@@ -19,7 +19,7 @@ class PdfInvoiceItem
         public ?string $description = null,
         public ?string $quantity_unit = null,
     ) {
-        if (!($currency instanceof Currency)) {
+        if (! ($currency instanceof Currency)) {
             $this->currency = Currency::of($currency ?? config('invoices.default_currency'));
         }
 
@@ -36,6 +36,7 @@ class PdfInvoiceItem
     public function formatPercentage(float|int $percentage, ?string $locale = null)
     {
         $formatter = new NumberFormatter($locale ?? app()->getLocale(), NumberFormatter::PERCENT);
+
         return $formatter->format(($percentage > 1) ? ($percentage / 100) : $percentage);
     }
 
@@ -56,10 +57,11 @@ class PdfInvoiceItem
 
         if ($this->tax_percentage) {
             [$tax] = $this->subTotalAmount()->allocate($this->tax_percentage, 100 - $this->tax_percentage);
+
             return $tax;
         }
 
-        return Money::ofMinor(0, $this->currency);;
+        return Money::ofMinor(0, $this->currency);
     }
 
     public function totalAmount(): Money
