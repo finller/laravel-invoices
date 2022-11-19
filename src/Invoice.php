@@ -122,13 +122,14 @@ class Invoice extends Model
     public function toPdfInvoice()
     {
         return new PdfInvoice(
-            name: 'Invoice',
+            name: __('invoices::invoice.invoice'),
             serial_number: $this->serial_number,
             state: $this->state,
             due_at: $this->due_at,
             created_at: $this->created_at,
             buyer: $this->buyer_information?->toArray(),
             seller: $this->seller_information?->toArray(),
+            description: $this->description,
             items: $this->items->map(fn (InvoiceItem $item) => $item->toPdfInvoiceItem())->all()
         );
     }

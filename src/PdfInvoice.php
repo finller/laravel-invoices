@@ -25,7 +25,8 @@ class PdfInvoice
         public ?string $logo = null,
         public ?string $template = null,
         public ?string $filename = null,
-        public ?array $items = null
+        public ?array $items = null,
+        public ?string $tax_label = null
     ) {
         $this->seller = $seller ?? config('invoices.default_seller', []);
         $this->logo = $logo ?? config('invoices.default_logo', null);
