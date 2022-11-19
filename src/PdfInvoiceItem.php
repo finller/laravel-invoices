@@ -8,7 +8,7 @@ class PdfInvoiceItem
         public string $label,
         public int $unit_price,
         public int $unit_tax,
-        public int $quantity = 1,
+        public ?int $quantity = 1,
         public ?string $currency = null,
         public ?string $description = null,
         public ?string $quantity_unit = null,
