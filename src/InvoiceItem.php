@@ -55,6 +55,7 @@ class InvoiceItem extends Model
             description: $this->description,
             unit_price: $this->unit_price,
             unit_tax: $this->unit_tax,
+            tax_percentage: $this->tax_percentage,
             currency: $this->currency,
         );
     }
