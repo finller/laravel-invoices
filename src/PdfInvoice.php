@@ -3,6 +3,7 @@
 namespace Finller\Invoice;
 
 use Barryvdh\DomPDF\Facade\Pdf;
+use Brick\Money\Money;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -46,7 +47,58 @@ class PdfInvoice
         $type = pathinfo($this->logo, PATHINFO_EXTENSION);
         $data = file_get_contents($this->logo);
 
-        return 'data:image/'.$type.';base64,'.base64_encode($data);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
+    }
+
+    public function subTotalAmount(): Money
+    {
+        if (empty($this->items)) {
+            return Money::ofMinor(0, config('invoices.default_currency'));
+        }
+
+        $firstItem = $this->items[0];
+
+        $currency = $firstItem->currency;
+
+        return array_reduce(
+            $this->items,
+            fn (Money $total, PdfInvoiceItem $item) => $total->plus($item->subTotalAmount()),
+            Money::of(0, $currency)
+        );
+    }
+
+    public function totalTaxAmount(): Money
+    {
+        if (empty($this->items)) {
+            return Money::ofMinor(0, config('invoices.default_currency'));
+        }
+
+        $firstItem = $this->items[0];
+
+        $currency = $firstItem->currency;
+
+        return array_reduce(
+            $this->items,
+            fn (Money $total, PdfInvoiceItem $item) => $total->plus($item->totalTaxAmount()),
+            Money::of(0, $currency)
+        );
+    }
+
+    public function totalAmount(): Money
+    {
+        if (empty($this->items)) {
+            return Money::ofMinor(0, config('invoices.default_currency'));
+        }
+
+        $firstItem = $this->items[0];
+
+        $currency = $firstItem->currency;
+
+        return array_reduce(
+            $this->items,
+            fn (Money $total, PdfInvoiceItem $item) => $total->plus($item->totalAmount()),
+            Money::of(0, $currency)
+        );
     }
 
     public function pdf(): \Barryvdh\DomPDF\PDF
