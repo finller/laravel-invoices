@@ -101,6 +101,11 @@ class PdfInvoice
         );
     }
 
+    public function formatMoney(?Money $money = null, ?string $locale = null)
+    {
+        return $money ? $money->formatTo($locale ?? app()->getLocale()) : null;
+    }
+
     public function pdf(): \Barryvdh\DomPDF\PDF
     {
         $pdf = Pdf::setPaper(
