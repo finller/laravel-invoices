@@ -11,7 +11,7 @@ class InvoiceItemFactory extends Factory
 
     public function definition()
     {
-        $price = fake()->numberBetween(100, 100000);
+        $price = fake()->numberBetween(100.00, 100000.00);
 
         $useTaxPercentage = fake()->boolean();
 
