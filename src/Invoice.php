@@ -53,7 +53,10 @@ class Invoice extends Model
     {
         static::creating(function (Invoice $invoice) {
             if (config('invoices.serial_number.auto_generate')) {
-                $invoice->serial_number = $invoice->generateSerialNumber();
+                $invoice->serial_number = $invoice->generateSerialNumber(
+                    serie: $invoice->getSerialNumberSerie(),
+                    date: now()
+                );
             }
         });
 
@@ -107,6 +110,11 @@ class Invoice extends Model
         $latestInvoice = static::query()->latest('serial_number')->first();
 
         return $latestInvoice?->serial_number;
+    }
+
+    public function getSerialNumberSerie(): ?string
+    {
+        return null;
     }
 
     public function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
