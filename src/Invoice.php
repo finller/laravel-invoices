@@ -30,6 +30,8 @@ class Invoice extends Model
 {
     use HasFactory;
 
+    public ?string $serie = null;
+
     protected $fillable = [
         "serial_number",
         "description",
@@ -114,7 +116,7 @@ class Invoice extends Model
 
     public function getSerialNumberSerie(): ?string
     {
-        return null;
+        return $this->serie;
     }
 
     public function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
