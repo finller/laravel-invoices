@@ -34,6 +34,7 @@ class Invoice extends Model
      * Allow setting serie on the fly for the generation of the serialNumber
      */
     public ?int $serie = null;
+
     /**
      * Allow setting prefix on the fly for the generation of the serialNumber
      */
@@ -128,7 +129,7 @@ class Invoice extends Model
 
     public function getSerialNumberPrefix(): ?string
     {
-        return $this->prefix ?? config("invoices.serial_number.prefix");
+        return $this->prefix ?? config('invoices.serial_number.prefix');
     }
 
     public function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
