@@ -16,7 +16,6 @@ class InvoiceFactory extends Factory
         $created_at = fake()->dateTime();
 
         return [
-            'serial_number' => (new SerialNumberGenerator())->generate(count: fake()->numberBetween(0, 100)),
             'state' => fake()->randomElement(InvoiceState::cases()),
             'state_set_at' => fake()->dateTimeBetween($created_at),
             'updated_at' => fake()->dateTimeBetween($created_at),
@@ -37,5 +36,12 @@ class InvoiceFactory extends Factory
                 'tax_number' => fake()->numberBetween(12345678, 99999999),
             ],
         ];
+    }
+
+    public function withSerialNumber()
+    {
+        $this->state([
+            'serial_number' => (new SerialNumberGenerator())->generate(count: fake()->numberBetween(0, 100)),
+        ]);
     }
 }

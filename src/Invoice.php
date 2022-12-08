@@ -30,7 +30,7 @@ class Invoice extends Model
 {
     use HasFactory;
 
-    public ?string $serie = null;
+    public ?int $serie = null;
 
     protected $fillable = [
         'serial_number',
@@ -114,7 +114,7 @@ class Invoice extends Model
         return $latestInvoice?->serial_number;
     }
 
-    public function getSerialNumberSerie(): ?string
+    public function getSerialNumberSerie(): ?int
     {
         return $this->serie;
     }
