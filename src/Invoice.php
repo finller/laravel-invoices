@@ -31,13 +31,13 @@ class Invoice extends Model
     use HasFactory;
 
     protected $fillable = [
-        "serial_number",
-        "description",
-        "seller_information",
-        "buyer_information",
-        "state",
-        "due_at",
-        "state_set_at"
+        'serial_number',
+        'description',
+        'seller_information',
+        'buyer_information',
+        'state',
+        'due_at',
+        'state_set_at',
     ];
 
     protected $casts = [
