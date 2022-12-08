@@ -30,7 +30,15 @@ class Invoice extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = [
+        "serial_number",
+        "description",
+        "seller_information",
+        "buyer_information",
+        "state",
+        "due_at",
+        "state_set_at"
+    ];
 
     protected $casts = [
         'state_set_at' => 'datetime',
@@ -45,7 +53,7 @@ class Invoice extends Model
     {
         static::creating(function (Invoice $invoice) {
             if (config('invoices.serial_number.auto_generate')) {
-                $invoice->serial_number = static::generateSerialNumber();
+                $invoice->serial_number = $invoice->generateSerialNumber();
             }
         });
 
@@ -93,7 +101,7 @@ class Invoice extends Model
      * Custom your strategy to get the lastest created serial number
      * For example, you can query the last record in the database or use a cache
      */
-    public static function getLatestSerialNumber(): ?string
+    public function getLatestSerialNumber(): ?string
     {
         /** @var ?static */
         $latestInvoice = static::query()->latest('serial_number')->first();
@@ -101,10 +109,10 @@ class Invoice extends Model
         return $latestInvoice?->serial_number;
     }
 
-    public static function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
+    public function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
     {
         $generator = new SerialNumberGenerator();
-        $latestSerialNumber = static::getLatestSerialNumber();
+        $latestSerialNumber = $this->getLatestSerialNumber();
 
         if ($latestSerialNumber) {
             $parsedSerialNumber = $generator->parse($latestSerialNumber);

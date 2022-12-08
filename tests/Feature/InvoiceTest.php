@@ -17,5 +17,5 @@ it('can create and generate unique serial numbers', function () {
     expect($invoice->serial_number)->toBe("{$prefix}{$year}0001");
     expect($invoice2->serial_number)->toBe("{$prefix}{$year}0002");
 
-    expect(Invoice::generateSerialNumber())->toBe("{$prefix}{$year}0003");
+    expect((new Invoice())->generateSerialNumber())->toBe("{$prefix}{$year}0003");
 });
