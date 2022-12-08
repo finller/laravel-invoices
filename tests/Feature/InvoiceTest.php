@@ -38,3 +38,23 @@ it('can create serial number with serie defined on the fly', function () {
 
     expect($invoice->serial_number)->toBe("{$prefix}0042-{$year}0001");
 });
+
+
+it('can create serial number with prefix defined on the fly', function () {
+    config()->set('invoices.serial_number.format', 'PPPSSSS-YYCCCC');
+
+    $year = now()->format('y');
+
+    /** @var Invoice */
+    $invoice = Invoice::factory()->make();
+
+    $invoice->serie = 42;
+    $invoice->prefix = "ORG";
+
+    expect($invoice->getSerialNumberSerie())->toBe(42);
+    expect($invoice->getSerialNumberPrefix())->toBe("ORG");
+
+    $invoice->save();
+
+    expect($invoice->serial_number)->toBe("ORG0042-{$year}0001");
+});

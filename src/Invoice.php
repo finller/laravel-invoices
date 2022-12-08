@@ -30,7 +30,14 @@ class Invoice extends Model
 {
     use HasFactory;
 
+    /**
+     * Allow setting serie on the fly for the generation of the serialNumber
+     */
     public ?int $serie = null;
+    /**
+     * Allow setting prefix on the fly for the generation of the serialNumber
+     */
+    public ?string $prefix = null;
 
     protected $fillable = [
         'serial_number',
@@ -119,9 +126,14 @@ class Invoice extends Model
         return $this->serie;
     }
 
+    public function getSerialNumberPrefix(): ?string
+    {
+        return $this->prefix ?? config("invoices.serial_number.prefix");
+    }
+
     public function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
     {
-        $generator = new SerialNumberGenerator();
+        $generator = new SerialNumberGenerator(prefix: $this->getSerialNumberPrefix());
         $latestSerialNumber = $this->getLatestSerialNumber();
 
         if ($latestSerialNumber) {
