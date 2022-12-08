@@ -26,7 +26,6 @@ it('can create serial number with serie defined on the fly', function () {
     config()->set('invoices.serial_number.prefix', $prefix);
     $year = now()->format('y');
 
-
     /** @var Invoice */
     $invoice = Invoice::factory()->make();
 
