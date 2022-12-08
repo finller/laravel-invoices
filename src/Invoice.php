@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * @property int $id
  * @property string $serial_number
+ * @property ArrayObject $serial_number_details
  * @property string $description
  * @property ?ArrayObject $seller_information
  * @property ?ArrayObject $buyer_information
@@ -21,8 +22,14 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property ?Carbon $due_at
  * @property Collection<int, InvoiceItem> $items
  * @property ?Model $buyer
+ * @property ?int $buyer_id
+ * @property ?string $buyer_type
  * @property ?Model $seller
+ * @property ?int $seller_id
+ * @property ?string $seller_type
  * @property ?Model $invoiceable
+ * @property ?int $invoiceable_id
+ * @property ?string $invoiceable_type
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -56,6 +63,7 @@ class Invoice extends Model
         'seller_information' => AsArrayObject::class,
         'buyer_information' => AsArrayObject::class,
         'metadata' => AsArrayObject::class,
+        "serial_number_details" => AsArrayObject::class,
     ];
 
     public static function booted()
@@ -65,6 +73,10 @@ class Invoice extends Model
                 $invoice->serial_number = $invoice->generateSerialNumber(
                     serie: $invoice->getSerialNumberSerie(),
                     date: now()
+                );
+
+                $invoice->serial_number_details = new ArrayObject(
+                    $invoice->parseSerialNumber()
                 );
             }
         });
@@ -147,6 +159,15 @@ class Invoice extends Model
             serie: $serie,
             date: $date ?? now(),
             count: $latestCount + 1
+        );
+    }
+
+    public function parseSerialNumber(): array
+    {
+        $generator = new SerialNumberGenerator();
+
+        return $generator->parse(
+            $this->serial_number
         );
     }
 

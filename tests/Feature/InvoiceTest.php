@@ -15,6 +15,14 @@ it('can create and generate unique serial numbers', function () {
     $invoice2 = Invoice::factory()->create();
 
     expect($invoice->serial_number)->toBe("{$prefix}{$year}0001");
+    expect($invoice->serial_number_details)->toMatchArray([
+        'prefix' => $prefix,
+        'serie' => null,
+        'month' => null,
+        'year' => intval($year),
+        'count' => 1,
+    ]);
+
     expect($invoice2->serial_number)->toBe("{$prefix}{$year}0002");
 
     expect((new Invoice())->generateSerialNumber())->toBe("{$prefix}{$year}0003");
@@ -56,4 +64,12 @@ it('can create serial number with prefix defined on the fly', function () {
     $invoice->save();
 
     expect($invoice->serial_number)->toBe("ORG0042-{$year}0001");
+
+    expect($invoice->serial_number_details)->toMatchArray([
+        'prefix' => "ORG",
+        'serie' => 42,
+        'month' => null,
+        'year' => intval($year),
+        'count' => 1,
+    ]);
 });

@@ -11,6 +11,8 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->string('serial_number')->unique();
+            $table->json('serial_number_details')->nullable();
+            
             $table->text('description')->nullable();
 
             /**
@@ -39,13 +41,13 @@ return new class extends Migration
             /**
             * Typically this relationship will refer to your users, teams or companies
             **/
-            $table->nullableMorphs('buyer_id');
+            $table->nullableMorphs('buyer');
 
             /**
             * If your application is a marketplace with both buyers and seller, you would certainly like to 
             * attach the invoice to both of them
             **/
-            $table->nullableMorphs('seller_id');
+            $table->nullableMorphs('seller');
 
             $table->json('metadata')->nullable();
 
