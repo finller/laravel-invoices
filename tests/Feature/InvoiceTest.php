@@ -65,7 +65,7 @@ it('can create serial number with prefix defined on the fly', function () {
     expect($invoice->serial_number)->toBe("ORG0042-{$year}0001");
 
     expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => "ORG",
+        'prefix' => 'ORG',
         'serie' => 42,
         'month' => null,
         'year' => intval($year),

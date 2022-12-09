@@ -64,7 +64,7 @@ class Invoice extends Model
         'seller_information' => AsArrayObject::class,
         'buyer_information' => AsArrayObject::class,
         'metadata' => AsArrayObject::class,
-        "serial_number_details" => AsArrayObject::class,
+        'serial_number_details' => AsArrayObject::class,
     ];
 
     public static function booted()
