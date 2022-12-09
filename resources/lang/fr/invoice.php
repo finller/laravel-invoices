@@ -25,6 +25,6 @@ return [
         'pending' => 'En attente',
         'paid' => 'Payée',
         'deleted' => 'Supprimée',
-        'refunded' => 'Remboursée'
+        'refunded' => 'Remboursée',
     ],
 ];
