@@ -16,6 +16,11 @@ return new class extends Migration
             $table->text('description')->nullable();
 
             /**
+            * Store the type of tax collected and display the right label
+            **/
+            $table->string('tax_type')->nullable();
+
+            /**
             * In most of the cases, you want to store the logo like it was when the invoice was created.
             * That's why we will store it in the database.
             **/

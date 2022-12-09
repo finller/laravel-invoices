@@ -8,4 +8,5 @@ enum InvoiceState: string
     case Pending = 'pending';
     case Paid = 'paid';
     case Deleted = 'deleted';
+    case Refunded = 'refunded';
 }
