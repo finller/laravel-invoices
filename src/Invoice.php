@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property ?InvoiceState $state
  * @property ?Carbon $state_set_at
  * @property ?Carbon $due_at
+ * @property ?string $tax_type
  * @property Collection<int, InvoiceItem> $items
  * @property ?Model $buyer
  * @property ?int $buyer_id
@@ -55,6 +56,7 @@ class Invoice extends Model
         'state',
         'due_at',
         'state_set_at',
+        'tax_type'
     ];
 
     protected $casts = [
