@@ -56,7 +56,7 @@ class Invoice extends Model
         'state',
         'due_at',
         'state_set_at',
-        'tax_type'
+        'tax_type',
     ];
 
     protected $casts = [
