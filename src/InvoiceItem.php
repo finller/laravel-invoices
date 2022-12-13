@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property ?Money $unit_price
  * @property ?Money $unit_tax
- * @property ?float $tax_percentage
+ * @property ?float $tax_percentage between 0 and 100
  * @property ?string $currency
  * @property ?int $quantity
  * @property ?string $quantity_unit

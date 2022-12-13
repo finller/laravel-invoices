@@ -70,10 +70,6 @@ class PdfInvoiceItem
 
     public function totalAmount(): Money
     {
-        if ($this->unit_tax === null) {
-            return $this->subTotalAmount();
-        }
-
         return $this->subTotalAmount()->plus($this->totalTaxAmount());
     }
 }
