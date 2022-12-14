@@ -19,6 +19,7 @@ return new class extends Migration
             * Store the type of tax collected and display the right label
             **/
             $table->string('tax_type')->nullable();
+            $table->string('tax_exempt')->nullable(); // Tax exemption status like reverse charge
 
             /**
             * In most of the cases, you want to store the logo like it was when the invoice was created.
