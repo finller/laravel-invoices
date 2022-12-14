@@ -174,6 +174,11 @@ class Invoice extends Model
         );
     }
 
+    public function getTaxLabel(): ?string
+    {
+        return null;
+    }
+
     public function toPdfInvoice()
     {
         return new PdfInvoice(
@@ -186,7 +191,8 @@ class Invoice extends Model
             buyer: $this->buyer_information?->toArray(),
             seller: $this->seller_information?->toArray(),
             description: $this->description,
-            items: $this->items->map(fn (InvoiceItem $item) => $item->toPdfInvoiceItem())->all()
+            items: $this->items->map(fn (InvoiceItem $item) => $item->toPdfInvoiceItem())->all(),
+            tax_label: $this->getTaxLabel()
         );
     }
 }
