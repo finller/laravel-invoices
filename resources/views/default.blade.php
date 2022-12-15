@@ -359,7 +359,7 @@
                         {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
                     </td>
                 </tr>
-                @if ($invoice->tax_label || !$invoice->totalTaxAmount()->isZero())
+                @if ($invoice->tax_label || $displayTaxColumn)
                     <tr>
                         {{-- empty space --}}
                         <td class="py-2 pr-2"></td>
