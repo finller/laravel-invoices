@@ -350,10 +350,12 @@
                     </tr>
                 @endforeach
 
+                @php($colspan = $displayTaxColumn ? "3" : "2")
+
                 <tr>
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
-                    <td class="p-2 has-border-bottom-light" colspan="3">
+                    <td class="p-2 has-border-bottom-light" colspan="{{ $colspan }}">
                         {{ __('invoices::invoice.subtotal_amount') }}</td>
                     <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
                         {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
@@ -363,7 +365,7 @@
                     <tr>
                         {{-- empty space --}}
                         <td class="py-2 pr-2"></td>
-                        <td class="p-2 has-border-bottom-light" colspan="3">
+                        <td class="p-2 has-border-bottom-light" colspan="{{ $colspan }}">
                             {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}
                         </td>
                         <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
@@ -374,7 +376,7 @@
                 <tr>
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
-                    <td class="p-2 has-border-bottom-light" colspan="3">
+                    <td class="p-2 has-border-bottom-light" colspan="{{ $colspan }}">
                         <strong>{{ __('invoices::invoice.total_amount') }}</strong>
                     </td>
                     <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
