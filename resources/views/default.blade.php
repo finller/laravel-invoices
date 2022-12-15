@@ -328,13 +328,15 @@
                         <td @class(['nowrap align-top p-2', 'has-border-bottom-light'])>
                             <p>{{ $item->formatMoney($item->unit_price) }}</p>
                         </td>
-                        <td @class(['nowrap align-top p-2', 'has-border-bottom-light'])>
-                            @if ($item->unit_tax)
-                                <p>{{ $item->formatMoney($item->unit_tax) }}</p>
-                            @else
-                                <p>{{ $item->formatPercentage($item->tax_percentage) }}</p>
-                            @endif
-                        </td>
+                        @if($item->unit_tax || $item->tax_percentage)
+                            <td @class(['nowrap align-top p-2', 'has-border-bottom-light'])>
+                                @if ($item->unit_tax)
+                                    <p>{{ $item->formatMoney($item->unit_tax) }}</p>
+                                @else
+                                    <p>{{ $item->formatPercentage($item->tax_percentage) }}</p>
+                                @endif
+                            </td>
+                        @endif
                         <td @class([
                             'nowrap align-top has-text-right pl-2 py-2',
                             'has-border-bottom-light',
@@ -353,15 +355,18 @@
                         {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
                     </td>
                 </tr>
-                <tr>
-                    {{-- empty space --}}
-                    <td class="py-2 pr-2"></td>
-                    <td class="p-2 has-border-bottom-light" colspan="3">
-                        {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}</td>
-                    <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
-                        {{ $invoice->formatMoney($invoice->totalTaxAmount()) }}
-                    </td>
-                </tr>
+                @if($invoice->tax_label || !$invoice->totalTaxAmount()->isZero())
+                    <tr>
+                        {{-- empty space --}}
+                        <td class="py-2 pr-2"></td>
+                        <td class="p-2 has-border-bottom-light" colspan="3">
+                            {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}
+                        </td>
+                        <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
+                            {{ $invoice->formatMoney($invoice->totalTaxAmount()) }}
+                        </td>
+                    </tr>
+                @endif
                 <tr>
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
