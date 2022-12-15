@@ -306,7 +306,9 @@
                     <th class="py-2 pr-2">{{ __('invoices::invoice.description') }}</th>
                     <th class="p-2">{{ __('invoices::invoice.quantity') }}</th>
                     <th class="p-2">{{ __('invoices::invoice.unit_price') }}</th>
-                    <th class="p-2">{{ __('invoices::invoice.tax') }}</th>
+                    @if (!$invoice->totalTaxAmount()->isZero())
+                        <th class="p-2">{{ __('invoices::invoice.tax') }}</th>
+                    @endif
                     <th class="has-text-right py-2 pl-2">{{ __('invoices::invoice.amount') }}</th>
                 </tr>
             </thead>
@@ -328,7 +330,7 @@
                         <td @class(['nowrap align-top p-2', 'has-border-bottom-light'])>
                             <p>{{ $item->formatMoney($item->unit_price) }}</p>
                         </td>
-                        @if($item->unit_tax || $item->tax_percentage)
+                        @if (!$item->unit_tax?->isZero() || $item->tax_percentage)
                             <td @class(['nowrap align-top p-2', 'has-border-bottom-light'])>
                                 @if ($item->unit_tax)
                                     <p>{{ $item->formatMoney($item->unit_tax) }}</p>
@@ -355,7 +357,7 @@
                         {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
                     </td>
                 </tr>
-                @if($invoice->tax_label || !$invoice->totalTaxAmount()->isZero())
+                @if ($invoice->tax_label || !$invoice->totalTaxAmount()->isZero())
                     <tr>
                         {{-- empty space --}}
                         <td class="py-2 pr-2"></td>
