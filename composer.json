@@ -20,8 +20,8 @@
         "php": "^8.1",
         "barryvdh/laravel-dompdf": "^2.0.1",
         "finller/laravel-money": "^0.1.0",
-        "illuminate/contracts": "^9.0",
-        "spatie/laravel-package-tools": "^1.13"
+        "illuminate/contracts": "^9.0|^10.0",
+        "spatie/laravel-package-tools": "^1.14"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
