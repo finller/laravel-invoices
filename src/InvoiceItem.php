@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Casts\ArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
@@ -35,18 +36,18 @@ class InvoiceItem extends Model
         /**
          * This cast will be forwarded to the class defined in config at invoices.money_cast
          */
-        'unit_price' => MoneyCast::class.':currency',
-        'unit_tax' => MoneyCast::class.':currency',
+        'unit_price' => MoneyCast::class . ':currency',
+        'unit_tax' => MoneyCast::class . ':currency',
         'metadata' => AsArrayObject::class,
         'tax_percentage' => 'float',
     ];
 
-    public function invoice()
+    public function invoice(): BelongsTo
     {
         return $this->belongsTo(config('invoices.model_invoice'));
     }
 
-    public function toPdfInvoiceItem()
+    public function toPdfInvoiceItem(): PdfInvoiceItem
     {
         return new PdfInvoiceItem(
             label: $this->label,

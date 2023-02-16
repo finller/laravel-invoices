@@ -21,6 +21,5 @@ class InvoiceServiceProvider extends PackageServiceProvider
             ->hasTranslations()
             ->hasMigration('create_invoices_table')
             ->hasMigration('create_invoice_items_table');
-        // ->hasCommand(InvoiceCommand::class);
     }
 }

@@ -181,7 +181,7 @@ class Invoice extends Model
         return null;
     }
 
-    public function toPdfInvoice()
+    public function toPdfInvoice(): PdfInvoice
     {
         return new PdfInvoice(
             name: __('invoices::invoice.invoice'),

@@ -19,7 +19,7 @@ class PdfInvoiceItem
         public ?string $description = null,
         public ?string $quantity_unit = null,
     ) {
-        if (! ($currency instanceof Currency)) {
+        if (!($currency instanceof Currency)) {
             $this->currency = Currency::of($currency ?? config('invoices.default_currency'));
         }
 
@@ -28,14 +28,14 @@ class PdfInvoiceItem
         }
     }
 
-    public function formatMoney(?Money $money = null, ?string $locale = null)
+    public function formatMoney(?Money $money = null, ?string $locale = null): string
     {
         return $money ? str_replace("\xe2\x80\xaf", ' ', $money->formatTo($locale ?? app()->getLocale())) : null;
     }
 
-    public function formatPercentage(null|float|int $percentage, ?string $locale = null)
+    public function formatPercentage(null|float|int $percentage, ?string $locale = null): string|false|null
     {
-        if (! $percentage) {
+        if (!$percentage) {
             return null;
         }
 

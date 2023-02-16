@@ -38,9 +38,9 @@ class InvoiceFactory extends Factory
         ];
     }
 
-    public function withSerialNumber()
+    public function withSerialNumber(): static
     {
-        $this->state([
+        return $this->state([
             'serial_number' => (new SerialNumberGenerator())->generate(count: fake()->numberBetween(0, 100)),
         ]);
     }
