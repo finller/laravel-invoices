@@ -18,20 +18,6 @@ class SerialNumberGenerator implements GenerateSerialNumber
     {
         return preg_replace_callback_array(
             [
-                '/P+/' => function ($matches) {
-                    if (! $matches[0]) {
-                        return '';
-                    }
-                    $slotLength = strlen($matches[0]);
-                    $prefixLength = strlen($this->prefix);
-
-                    throw_if(
-                        $prefixLength < $slotLength,
-                        "The serial Number can't be formatted, the prefix provided is $prefixLength letters long ({$this->prefix}), while the format require at minimum a $slotLength letters long prefix"
-                    );
-
-                    return substr($this->prefix, 0, strlen($matches[0]));
-                },
                 '/S+/' => function ($matches) use ($serie) {
                     if (! $matches[0]) {
                         return '';
@@ -69,6 +55,20 @@ class SerialNumberGenerator implements GenerateSerialNumber
                         '0',
                         STR_PAD_LEFT
                     );
+                },
+                '/P+/' => function ($matches) {
+                    if (! $matches[0]) {
+                        return '';
+                    }
+                    $slotLength = strlen($matches[0]);
+                    $prefixLength = strlen($this->prefix);
+
+                    throw_if(
+                        $prefixLength < $slotLength,
+                        "The serial Number can't be formatted, the prefix provided is $prefixLength letters long ({$this->prefix}), while the format require at minimum a $slotLength letters long prefix"
+                    );
+
+                    return substr($this->prefix, 0, strlen($matches[0]));
                 },
             ],
             $this->format
