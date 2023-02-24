@@ -3,28 +3,29 @@
 use Carbon\Carbon;
 use Finller\Invoice\SerialNumberGenerator;
 
-it('can generate serial number from format', function ($format, $serie, $count, $expected) {
+it('can generate serial number from format', function ($format, $prefix, $serie, $count, $expected) {
     $generator = new SerialNumberGenerator(
         format: $format,
-        prefix: 'IN'
+        prefix: $prefix
     );
 
     $serialNumber = $generator->generate(count: $count, serie: $serie, date: Carbon::parse('2022-01-01'));
 
     expect($serialNumber)->toBe($expected);
 })->with([
-    ['PPSSSS-YYCCCC', 1, 2, 'IN0001-220002'],
-    ['PP-YYCCCC', null, 2, 'IN-220002'],
-    ['SSSS-YYCCCC', 1, 2, '0001-220002'],
-    ['SSSS-CCCC', 1, 2, '0001-0002'],
-    ['SSCC', 1, 2, '0102'],
-    ['CCCC', 1, 2, '0002'],
-    ['SSSSPP-YYCCCC', 1, 2, '0001IN-220002'],
-    ['YYSSSSPPCCCC', 1, 2, '220001IN0002'],
-    ['YYCCCCSSSSPP', 1, 2, '2200020001IN'],
-    ['PPSSSS-YYYYCCCC', 1, 2, 'IN0001-20220002'],
-    ['PPSSSS-YYYCCCC', 1, 2, 'IN0001-0220002'],
-    ['PPCCCC', null, 102, 'IN0102'],
+    ['PP-YYCCCC', "IN", null, 2, 'IN-220002'],
+    ['SSSS-YYCCCC', null, 1, 2, '0001-220002'],
+    ['SSSS-CCCC', null, 1, 2, '0001-0002'],
+    ['SSCC', null, 1, 2, '0102'],
+    ['CCCC', null, 1, 2, '0002'],
+    ['SSSSPP-YYCCCC', "IN", 1, 2, '0001IN-220002'],
+    ['YYSSSSPPCCCC', "IN", 1, 2, '220001IN0002'],
+    ['YYCCCCSSSSPP', "IN", 1, 2, '2200020001IN'],
+    ['PPSSSS-YYYYCCCC', "IN", 1, 2, 'IN0001-20220002'],
+    ['PPSSSS-YYYCCCC', "IN", 1, 2, 'IN0001-0220002'],
+    ['PPCCCC', "IN", null, 102, 'IN0102'],
+    ['PPSSSS-YYCCCC', "YC", 1, 2, 'YC0001-220002'],
+    ['PPSSSS-YYCCCC', "PS", 1, 2, 'PS0001-220002'],
 ]);
 
 it('can parse serial number from format', function ($format, $serialNumber, $prefix, $serie, $year, $count) {
@@ -45,4 +46,5 @@ it('can parse serial number from format', function ($format, $serialNumber, $pre
     ['SSYYCCCC', '01220002', null, 1, 22, 2],
     ['YYCCCC', '220002', null, null, 22, 2],
     ['YYPPCCCSSSS', '22IN0020001', 'IN', 1, 22, 2],
+    ['YYPPCCCSSSS', '22CS0020001', 'CS', 1, 22, 2],
 ]);
