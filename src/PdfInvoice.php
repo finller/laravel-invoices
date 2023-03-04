@@ -6,7 +6,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Brick\Money\Money;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
-use Illuminate\Support\Str;
 
 class PdfInvoice
 {
