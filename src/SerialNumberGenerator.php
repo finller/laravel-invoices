@@ -56,7 +56,7 @@ class SerialNumberGenerator implements GenerateSerialNumber
                         STR_PAD_LEFT
                     );
                 },
-                // Keep last to not interfer with other callbacks
+                // Must be kept last to avoid interfering with other callbacks
                 '/P+/' => function ($matches) {
                     if (!$matches[0]) {
                         return '';

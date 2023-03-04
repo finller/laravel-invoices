@@ -7,7 +7,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/finller/laravel-invoices.svg?style=flat-square)](https://packagist.org/packages/finller/laravel-invoices)
 
 Creating invoices is not a basic operation as you must ensure that it's done safely.
-This package provid all the basics to create and stores invoices in your app.
+This package provid all the basics to store invoices in your app and display them in a PDF.
 
 ## Installation
 

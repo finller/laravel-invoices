@@ -50,13 +50,13 @@ class PdfInvoiceItem
             return Money::ofMinor(0, $this->currency);
         }
 
-        return $this->quantity ? $this->unit_price->multipliedBy($this->quantity) : $this->unit_price;
+        return $this->quantity !== null ? $this->unit_price->multipliedBy($this->quantity) : $this->unit_price;
     }
 
     public function totalTaxAmount(): Money
     {
         if ($this->unit_tax) {
-            return $this->quantity ? $this->unit_tax->multipliedBy($this->quantity) : $this->unit_tax;
+            return $this->quantity !== null ? $this->unit_tax->multipliedBy($this->quantity) : $this->unit_tax;
         }
 
         if ($this->tax_percentage) {
