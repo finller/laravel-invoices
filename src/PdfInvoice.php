@@ -36,7 +36,7 @@ class PdfInvoice
 
     public function generateFilename(): string
     {
-        return Str::snake("{$this->name}_{$this->serial_number}.pdf");
+        return "{$this->serial_number}.pdf";
     }
 
     public function getFilename(): string
