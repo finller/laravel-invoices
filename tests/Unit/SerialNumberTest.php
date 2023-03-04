@@ -13,19 +13,19 @@ it('can generate serial number from format', function ($format, $prefix, $serie,
 
     expect($serialNumber)->toBe($expected);
 })->with([
-    ['PP-YYCCCC', "IN", null, 2, 'IN-220002'],
+    ['PP-YYCCCC', 'IN', null, 2, 'IN-220002'],
     ['SSSS-YYCCCC', null, 1, 2, '0001-220002'],
     ['SSSS-CCCC', null, 1, 2, '0001-0002'],
     ['SSCC', null, 1, 2, '0102'],
     ['CCCC', null, 1, 2, '0002'],
-    ['SSSSPP-YYCCCC', "IN", 1, 2, '0001IN-220002'],
-    ['YYSSSSPPCCCC', "IN", 1, 2, '220001IN0002'],
-    ['YYCCCCSSSSPP', "IN", 1, 2, '2200020001IN'],
-    ['PPSSSS-YYYYCCCC', "IN", 1, 2, 'IN0001-20220002'],
-    ['PPSSSS-YYYCCCC', "IN", 1, 2, 'IN0001-0220002'],
-    ['PPCCCC', "IN", null, 102, 'IN0102'],
-    ['PPSSSS-YYCCCC', "YC", 1, 2, 'YC0001-220002'],
-    ['PPSSSS-YYCCCC', "PS", 1, 2, 'PS0001-220002'],
+    ['SSSSPP-YYCCCC', 'IN', 1, 2, '0001IN-220002'],
+    ['YYSSSSPPCCCC', 'IN', 1, 2, '220001IN0002'],
+    ['YYCCCCSSSSPP', 'IN', 1, 2, '2200020001IN'],
+    ['PPSSSS-YYYYCCCC', 'IN', 1, 2, 'IN0001-20220002'],
+    ['PPSSSS-YYYCCCC', 'IN', 1, 2, 'IN0001-0220002'],
+    ['PPCCCC', 'IN', null, 102, 'IN0102'],
+    ['PPSSSS-YYCCCC', 'YC', 1, 2, 'YC0001-220002'],
+    ['PPSSSS-YYCCCC', 'PS', 1, 2, 'PS0001-220002'],
 ]);
 
 it('can parse serial number from format', function ($format, $serialNumber, $prefix, $serie, $year, $count) {
