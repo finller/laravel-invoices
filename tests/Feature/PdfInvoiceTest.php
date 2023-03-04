@@ -6,9 +6,9 @@ use Finller\Invoice\PdfInvoiceItem;
 
 it('computes the right subTotalAmount, totalTaxAmount and totalAmount', function () {
     $pdfInvoice = new PdfInvoice(
-        name: "Invoice",
-        serial_number: "FAKE-INVOICE-01",
-        state: "paid",
+        name: 'Invoice',
+        serial_number: 'FAKE-INVOICE-01',
+        state: 'paid',
         due_at: now(),
         created_at: now(),
         buyer: config('invoices.default_seller')
@@ -16,12 +16,12 @@ it('computes the right subTotalAmount, totalTaxAmount and totalAmount', function
 
     $pdfInvoice->items = [
         new PdfInvoiceItem(
-            label: "Item 1",
+            label: 'Item 1',
             unit_price: Money::of(110, 'USD'),
             unit_tax: Money::of(10, 'USD')
         ),
         new PdfInvoiceItem(
-            label: "Item 1",
+            label: 'Item 1',
             unit_price: Money::of(234, 'USD'),
             unit_tax: Money::of(12, 'USD')
         ),
