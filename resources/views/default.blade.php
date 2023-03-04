@@ -334,7 +334,10 @@
                         </td>
                         @if ($displayTaxColumn)
                             <td @class(['nowrap align-top p-2', 'has-border-bottom-light'])>
-                                @if ($item->unit_tax)
+                                @if ($item->unit_tax && $item->tax_percentage)
+                                    <p>{{ $item->formatMoney($item->unit_tax) }}
+                                        ({{ $item->formatPercentage($item->tax_percentage) }})</p>
+                                @elseif ($item->unit_tax)
                                     <p>{{ $item->formatMoney($item->unit_tax) }}</p>
                                 @else
                                     <p>{{ $item->formatPercentage($item->tax_percentage) }}</p>
@@ -350,7 +353,7 @@
                     </tr>
                 @endforeach
 
-                @php($colspan = $displayTaxColumn ? "3" : "2")
+                @php($colspan = $displayTaxColumn ? '3' : '2')
 
                 <tr>
                     {{-- empty space --}}
