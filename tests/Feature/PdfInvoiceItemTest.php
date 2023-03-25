@@ -11,7 +11,7 @@ it('computes the right subTotalAmount', function ($unit_price, $quantity, $unit_
         unit_tax: Money::of($unit_tax, 'USD')
     );
 
-    expect($item->subTotalAmount())->toCost($expected, 'USD');
+    expect($item->subTotalAmount()->getAmount()->toFloat())->toEqual($expected);
 })->with([
     [110, 3, 10, 330],
     [1567, 3, 209, 4701],
@@ -26,7 +26,7 @@ it('computes the right totalTaxAmount with unit_tax', function ($unit_price, $qu
         unit_tax: Money::of($unit_tax, 'USD')
     );
 
-    expect($item->totalTaxAmount())->toCost($expected, 'USD');
+    expect($item->totalTaxAmount()->getAmount()->toFloat())->toEqual($expected);
 })->with([
     [110, 3, 10, 30],
     [1567, 3, 209, 627],
@@ -42,7 +42,7 @@ it('computes the right totalTaxAmount with tax_percentage', function ($unit_pric
         tax_percentage: $tax_percentage
     );
 
-    expect($item->totalTaxAmount())->toCost($expected, 'USD');
+    expect($item->totalTaxAmount()->getAmount()->toFloat())->toEqual($expected);
 })->with([
     [110, 3, 20, 66],
     [1567, 3, 10, 470.1],
@@ -60,7 +60,7 @@ it('computes the right totalTaxAmount with unit_tax when both unit_tax and tax_p
         unit_tax: Money::of($unit_tax, 'USD')
     );
 
-    expect($item->totalTaxAmount())->toCost($expected, 'USD');
+    expect($item->totalTaxAmount()->getAmount()->toFloat())->toEqual($expected);
 })->with([
     [110, 3, 100, 20, 300],
     [1567, 3, 30, 10, 90],

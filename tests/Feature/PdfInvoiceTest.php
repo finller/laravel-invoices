@@ -27,7 +27,7 @@ it('computes the right subTotalAmount, totalTaxAmount and totalAmount', function
         ),
     ];
 
-    expect($pdfInvoice->subTotalAmount())->toCost(344, 'USD');
-    expect($pdfInvoice->totalTaxAmount())->toCost(22, 'USD');
-    expect($pdfInvoice->totalAmount())->toCost(366, 'USD');
+    expect($pdfInvoice->subTotalAmount()->getAmount()->toFloat())->toEqual(344);
+    expect($pdfInvoice->totalTaxAmount()->getAmount()->toFloat())->toEqual(22);
+    expect($pdfInvoice->totalAmount()->getAmount()->toFloat())->toEqual(366);
 });
