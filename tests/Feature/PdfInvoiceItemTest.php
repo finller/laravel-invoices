@@ -5,7 +5,7 @@ use Finller\Invoice\PdfInvoiceItem;
 
 it('computes the right subTotalAmount', function ($unit_price, $quantity, $unit_tax, $expected) {
     $item = new PdfInvoiceItem(
-        label: "Item 1",
+        label: 'Item 1',
         unit_price: Money::of($unit_price, 'USD'),
         quantity: $quantity,
         unit_tax: Money::of($unit_tax, 'USD')
@@ -20,7 +20,7 @@ it('computes the right subTotalAmount', function ($unit_price, $quantity, $unit_
 
 it('computes the right totalTaxAmount with unit_tax', function ($unit_price, $quantity, $unit_tax, $expected) {
     $item = new PdfInvoiceItem(
-        label: "Item 1",
+        label: 'Item 1',
         unit_price: Money::of($unit_price, 'USD'),
         quantity: $quantity,
         unit_tax: Money::of($unit_tax, 'USD')
@@ -36,7 +36,7 @@ it('computes the right totalTaxAmount with unit_tax', function ($unit_price, $qu
 
 it('computes the right totalTaxAmount with tax_percentage', function ($unit_price, $quantity, $tax_percentage, $expected) {
     $item = new PdfInvoiceItem(
-        label: "Item 1",
+        label: 'Item 1',
         unit_price: Money::of($unit_price, 'USD'),
         quantity: $quantity,
         tax_percentage: $tax_percentage
@@ -53,7 +53,7 @@ it('computes the right totalTaxAmount with tax_percentage', function ($unit_pric
 
 it('computes the right totalTaxAmount with unit_tax when both unit_tax and tax_percentage are defined', function ($unit_price, $quantity, $unit_tax, $tax_percentage, $expected) {
     $item = new PdfInvoiceItem(
-        label: "Item 1",
+        label: 'Item 1',
         unit_price: Money::of($unit_price, 'USD'),
         quantity: $quantity,
         tax_percentage: $tax_percentage,
