@@ -264,8 +264,18 @@
                             <p class="pb-1">{{ $phone_number }}</p>
                         @endif
                         @if ($tax_number = data_get($invoice->seller, 'tax_number'))
-                            <p>{{ $tax_number }}</p>
+                            <p class="pb-1">{{ $tax_number }}</p>
                         @endif
+                        @if ($company_number = data_get($invoice->seller, 'company_number'))
+                            <p class="pb-1">{{ $company_number }}</p>
+                        @endif
+                        @foreach (data_get($invoice->seller, 'data', []) as $key => $item)
+                            @if (is_string($key))
+                                <p class="pb-1">{{ $key }}: {{ $item }}</p>
+                            @else
+                                <p class="pb-1">{{ $item }}</p>
+                            @endif
+                        @endforeach
                     </td>
                     <td class="align-top" width="50%">
                         @if ($name = data_get($invoice->buyer, 'name'))
@@ -293,8 +303,18 @@
                             <p class="pb-1">{{ $phone_number }}</p>
                         @endif
                         @if ($tax_number = data_get($invoice->buyer, 'tax_number'))
-                            <p>{{ $tax_number }}</p>
+                            <p class="pb-1">{{ $tax_number }}</p>
                         @endif
+                        @if ($company_number = data_get($invoice->buyer, 'company_number'))
+                            <p class="pb-1">{{ $company_number }}</p>
+                        @endif
+                        @foreach (data_get($invoice->buyer, 'data', []) as $key => $item)
+                            @if (is_string($key))
+                                <p class="pb-1">{{ $key }}: {{ $item }}</p>
+                            @else
+                                <p class="pb-1">{{ $item }}</p>
+                            @endif
+                        @endforeach
                     </td>
                 </tr>
             </tbody>

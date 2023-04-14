@@ -54,6 +54,7 @@ return [
         'email' => null,
         'phone_number' => null,
         'tax_number' => null,
+        'company_number' => null,
     ],
 
     'default_logo' => null,
