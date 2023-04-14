@@ -6,6 +6,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Brick\Money\Money;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class PdfInvoice
@@ -36,7 +37,7 @@ class PdfInvoice
 
     public function generateFilename(): string
     {
-        return Str::snake("{$this->name}_{$this->serial_number}.pdf");
+        return Str::snake($this->name) . "_{$this->serial_number}.pdf";
     }
 
     public function getFilename(): string
@@ -49,7 +50,7 @@ class PdfInvoice
         $type = pathinfo($this->logo, PATHINFO_EXTENSION);
         $data = file_get_contents($this->logo);
 
-        return 'data:image/'.$type.';base64,'.base64_encode($data);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 
     public function subTotalAmount(): Money
@@ -58,7 +59,7 @@ class PdfInvoice
             return Money::ofMinor(0, config('invoices.default_currency'));
         }
 
-        $firstItem = $this->items[0];
+        $firstItem = Arr::first($this->items);
 
         $currency = $firstItem->currency;
 
@@ -75,7 +76,7 @@ class PdfInvoice
             return Money::ofMinor(0, config('invoices.default_currency'));
         }
 
-        $firstItem = $this->items[0];
+        $firstItem = Arr::first($this->items);
 
         $currency = $firstItem->currency;
 
@@ -92,7 +93,7 @@ class PdfInvoice
             return Money::ofMinor(0, config('invoices.default_currency'));
         }
 
-        $firstItem = $this->items[0];
+        $firstItem = Arr::first($this->items);
 
         $currency = $firstItem->currency;
 
