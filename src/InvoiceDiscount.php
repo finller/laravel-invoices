@@ -16,7 +16,7 @@ class InvoiceDiscount implements Arrayable
         public ?Money $amount_off = null,
         public ?float $percent_off = null,
     ) {
-        # code...
+        // code...
     }
 
     public function computeDiscountAmountOn(Money $amout): Money
@@ -25,7 +25,7 @@ class InvoiceDiscount implements Arrayable
             return $this->amount_off;
         }
 
-        if (!is_null($this->percent_off)) {
+        if (! is_null($this->percent_off)) {
             return $amout->multipliedBy($this->percent_off / 100, RoundingMode::HALF_CEILING);
         }
 
@@ -34,13 +34,13 @@ class InvoiceDiscount implements Arrayable
 
     public static function fromArray(?array $array)
     {
-        $currency = data_get($array, "currency", config('invoices.default_currency'));
-        $amount_off = data_get($array, "amount_off");
-        $percent_off = data_get($array, "percent_off");
+        $currency = data_get($array, 'currency', config('invoices.default_currency'));
+        $amount_off = data_get($array, 'amount_off');
+        $percent_off = data_get($array, 'percent_off');
 
         return new InvoiceDiscount(
-            name: data_get($array, "name"),
-            code: data_get($array, "code"),
+            name: data_get($array, 'name'),
+            code: data_get($array, 'code'),
             amount_off: $amount_off ? Money::ofMinor($amount_off, $currency) : null,
             percent_off: $percent_off ? (float) $percent_off : null
         );
@@ -49,11 +49,11 @@ class InvoiceDiscount implements Arrayable
     public function toArray()
     {
         return [
-            "name" => $this->name,
-            "code" => $this->code,
-            "amount_off" => $this->amount_off?->getMinorAmount()->toInt(),
-            "currency" => $this->amount_off?->getCurrency()->getCurrencyCode(),
-            "currpercent_offency" => $this->percent_off,
+            'name' => $this->name,
+            'code' => $this->code,
+            'amount_off' => $this->amount_off?->getMinorAmount()->toInt(),
+            'currency' => $this->amount_off?->getCurrency()->getCurrencyCode(),
+            'currpercent_offency' => $this->percent_off,
         ];
     }
 }
