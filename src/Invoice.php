@@ -3,12 +3,15 @@
 namespace Finller\Invoice;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Mail\Attachment;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property int $id
@@ -36,7 +39,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Carbon $updated_at
  * @property ?ArrayObject $metadata
  */
-class Invoice extends Model
+class Invoice extends Model implements Attachable
 {
     use HasFactory;
 
@@ -191,6 +194,41 @@ class Invoice extends Model
             fn (array $item) => InvoiceDiscount::fromArray($item),
             data_get($this->metadata, 'discounts', [])
         );
+    }
+
+    public function scopePaid(Builder $query): Builder
+    {
+        return $query->where('state', InvoiceState::Paid);
+    }
+
+    public function scopeRefunded(Builder $query): Builder
+    {
+        return $query->where('state', InvoiceState::Refunded);
+    }
+
+    public function scopeDraft(Builder $query): Builder
+    {
+        return $query->where('state', InvoiceState::Draft);
+    }
+
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->where('state', InvoiceState::Pending);
+    }
+
+    public function scopeDeleted(Builder $query): Builder
+    {
+        return $query->where('state', InvoiceState::Deleted);
+    }
+
+    /**
+     * Get the attachable representation of the model.
+     */
+    public function toMailAttachment(): Attachment
+    {
+        return Attachment::fromData(fn () => $this->toPdfInvoice()->pdf()->output())
+            ->as($this->toPdfInvoice()->getFilename())
+            ->withMime('application/pdf');
     }
 
     public function toPdfInvoice(): PdfInvoice
