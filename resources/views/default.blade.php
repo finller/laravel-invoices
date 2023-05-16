@@ -384,6 +384,23 @@
                         {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
                     </td>
                 </tr>
+                @if ($invoice->discounts)
+                    @foreach ($invoice->discounts as $discount)
+                        <tr>
+                            {{-- empty space --}}
+                            <td class="py-2 pr-2"></td>
+                            <td class="p-2 has-border-bottom-light" colspan="{{ $colspan }}">
+                                {{ __($discount->name) ?? __('invoices::invoice.discount_name') }}
+                                @if ($discount->percent_off)
+                                    ({{ $discount->formatPercentage($discount->percent_off) }})
+                                @endif
+                            </td>
+                            <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
+                                {{ $invoice->formatMoney($discount->computeDiscountAmountOn($invoice->subTotalAmount())) }}
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
                 @if ($invoice->tax_label || $displayTaxColumn)
                     <tr>
                         {{-- empty space --}}

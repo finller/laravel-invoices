@@ -19,6 +19,7 @@ return [
     'amount' => 'Amount',
     'unit_price' => 'Unit price',
     'quantity' => 'Qty',
+    'discount_name' => 'Discount',
 
     'states' => [
         'draft' => 'Draft',

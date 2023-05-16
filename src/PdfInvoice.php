@@ -11,16 +11,19 @@ use Illuminate\Support\Str;
 
 class PdfInvoice
 {
+    use FormatForPdf;
+
     /**
      * @param  null|PdfInvoiceItem[]  $items
+     * @param  null|InvoiceDiscount[]  $discounts
      */
     public function __construct(
         public string $name,
         public string $serial_number,
         public string $state,
+        public array $buyer,
         public Carbon $due_at,
         public Carbon $created_at,
-        public array $buyer,
         public ?Carbon $paid_at = null,
         public ?array $seller = null,
         public ?string $description = null,
@@ -28,7 +31,8 @@ class PdfInvoice
         public ?string $template = null,
         public ?string $filename = null,
         public ?array $items = null,
-        public ?string $tax_label = null
+        public ?string $tax_label = null,
+        public ?array $discounts = null
     ) {
         $this->seller = $seller ?? config('invoices.default_seller', []);
         $this->logo = $logo ?? config('invoices.default_logo', null);
@@ -37,7 +41,7 @@ class PdfInvoice
 
     public function generateFilename(): string
     {
-        return Str::snake($this->name)."_{$this->serial_number}.pdf";
+        return Str::snake($this->name) . "_{$this->serial_number}.pdf";
     }
 
     public function getFilename(): string
@@ -50,9 +54,12 @@ class PdfInvoice
         $type = pathinfo($this->logo, PATHINFO_EXTENSION);
         $data = file_get_contents($this->logo);
 
-        return 'data:image/'.$type.';base64,'.base64_encode($data);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 
+    /**
+     * Before discount and taxes
+     */
     public function subTotalAmount(): Money
     {
         if (empty($this->items)) {
@@ -87,6 +94,19 @@ class PdfInvoice
         );
     }
 
+    public function totalDiscountAmount(): Money
+    {
+        if (!$this->discounts) {
+            return Money::of(0, $this->subTotalAmount()->getCurrency());
+        }
+
+        $subtotal = $this->subTotalAmount();
+
+        return array_reduce($this->discounts, function (Money $total, InvoiceDiscount $discount) use ($subtotal) {
+            return $total->minus($discount->computeDiscountAmountOn($subtotal));
+        }, $subtotal);
+    }
+
     public function totalAmount(): Money
     {
         if (empty($this->items)) {
@@ -97,16 +117,13 @@ class PdfInvoice
 
         $currency = $firstItem->currency;
 
-        return array_reduce(
+        $total = array_reduce(
             $this->items,
             fn (Money $total, PdfInvoiceItem $item) => $total->plus($item->totalAmount()),
             Money::of(0, $currency)
         );
-    }
 
-    public function formatMoney(?Money $money = null, ?string $locale = null): ?string
-    {
-        return $money ? str_replace("\xe2\x80\xaf", ' ', $money->formatTo($locale ?? app()->getLocale())) : null;
+        return $total->minus($this->totalDiscountAmount());
     }
 
     public function pdf(): \Barryvdh\DomPDF\PDF

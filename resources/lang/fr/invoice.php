@@ -19,6 +19,7 @@ return [
     'amount' => 'Montant',
     'unit_price' => 'Prix unitaire',
     'quantity' => 'Qté',
+    'discount_name' => 'Remise',
 
     'states' => [
         'draft' => 'Brouillon',

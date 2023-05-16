@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property ?string $invoiceable_type
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property ?ArrayObject $metadata
  */
 class Invoice extends Model
 {
@@ -181,6 +182,17 @@ class Invoice extends Model
         return null;
     }
 
+    /**
+     * @return InvoiceDiscount[]
+     */
+    public function getDiscounts(): array
+    {
+        return array_map(
+            fn (array $item) => InvoiceDiscount::fromArray($item),
+            data_get($this->metadata, 'discounts', [])
+        );
+    }
+
     public function toPdfInvoice(): PdfInvoice
     {
         return new PdfInvoice(
@@ -194,7 +206,8 @@ class Invoice extends Model
             seller: $this->seller_information?->toArray(),
             description: $this->description,
             items: $this->items->map(fn (InvoiceItem $item) => $item->toPdfInvoiceItem())->all(),
-            tax_label: $this->getTaxLabel()
+            tax_label: $this->getTaxLabel(),
+            discounts: $this->getDiscounts()
         );
     }
 }
