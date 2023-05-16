@@ -5,8 +5,9 @@ namespace Finller\Invoice;
 use Brick\Math\RoundingMode;
 use Brick\Money\Money;
 use Illuminate\Contracts\Support\Arrayable;
+use JsonSerializable;
 
-class InvoiceDiscount implements Arrayable
+class InvoiceDiscount implements Arrayable, JsonSerializable
 {
     use FormatForPdf;
 
@@ -25,7 +26,7 @@ class InvoiceDiscount implements Arrayable
             return $this->amount_off;
         }
 
-        if (! is_null($this->percent_off)) {
+        if (!is_null($this->percent_off)) {
             return $amout->multipliedBy($this->percent_off / 100, RoundingMode::HALF_CEILING);
         }
 
@@ -55,5 +56,10 @@ class InvoiceDiscount implements Arrayable
             'currency' => $this->amount_off?->getCurrency()->getCurrencyCode(),
             'currpercent_offency' => $this->percent_off,
         ];
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 }

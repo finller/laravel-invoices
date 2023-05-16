@@ -3,6 +3,7 @@
 namespace Finller\Invoice;
 
 use Carbon\Carbon;
+use Finller\Invoice\Casts\Discounts;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
@@ -36,7 +37,8 @@ use Illuminate\Mail\Attachment;
  * @property ?int $invoiceable_id
  * @property ?string $invoiceable_type
  * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property Carbon $updated_at 
+ * @property null|InvoiceDiscount[] $discounts
  * @property ?ArrayObject $metadata
  */
 class Invoice extends Model implements Attachable
@@ -72,6 +74,7 @@ class Invoice extends Model implements Attachable
         'seller_information' => AsArrayObject::class,
         'buyer_information' => AsArrayObject::class,
         'metadata' => AsArrayObject::class,
+        'discounts' => Discounts::class,
         'serial_number_details' => AsArrayObject::class,
     ];
 
@@ -190,10 +193,7 @@ class Invoice extends Model implements Attachable
      */
     public function getDiscounts(): array
     {
-        return array_map(
-            fn (array $item) => InvoiceDiscount::fromArray($item),
-            data_get($this->metadata, 'discounts', [])
-        );
+        return $this->discounts;
     }
 
     public function scopePaid(Builder $query): Builder
