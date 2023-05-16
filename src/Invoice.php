@@ -37,7 +37,7 @@ use Illuminate\Mail\Attachment;
  * @property ?int $invoiceable_id
  * @property ?string $invoiceable_type
  * @property Carbon $created_at
- * @property Carbon $updated_at 
+ * @property Carbon $updated_at
  * @property null|InvoiceDiscount[] $discounts
  * @property ?ArrayObject $metadata
  */
