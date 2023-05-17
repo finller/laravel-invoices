@@ -396,7 +396,7 @@
                                 @endif
                             </td>
                             <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
-                                {{ $invoice->formatMoney($discount->computeDiscountAmountOn($invoice->subTotalAmount())) }}
+                                -{{ $invoice->formatMoney($discount->computeDiscountAmountOn($invoice->subTotalAmount())) }}
                             </td>
                         </tr>
                     @endforeach
