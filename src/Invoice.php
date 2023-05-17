@@ -189,9 +189,9 @@ class Invoice extends Model implements Attachable
     }
 
     /**
-     * @return InvoiceDiscount[]
+     * @return null|InvoiceDiscount[]
      */
-    public function getDiscounts(): array
+    public function getDiscounts(): ?array
     {
         return $this->discounts;
     }
