@@ -320,7 +320,9 @@
             </tbody>
         </table>
 
-        @php($displayTaxColumn = !$invoice->totalTaxAmount()->isZero())
+        @php
+            $displayTaxColumn = !$invoice->totalTaxAmount()->isZero();
+        @endphp
 
         <table class="mb-5">
             <thead>
@@ -373,7 +375,9 @@
                     </tr>
                 @endforeach
 
-                @php($colspan = $displayTaxColumn ? '3' : '2')
+                @php
+                    $colspan = $displayTaxColumn ? '3' : '2';
+                @endphp
 
                 <tr>
                     {{-- empty space --}}
