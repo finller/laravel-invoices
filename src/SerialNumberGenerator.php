@@ -14,7 +14,7 @@ class SerialNumberGenerator implements GenerateSerialNumber
         $this->prefix = $prefix ?? config('invoices.serial_number.prefix', '');
     }
 
-    public function generate(int $count, ?int $serie = null, ?Carbon $date = null): string
+    public function generate(int $count, int $serie = null, Carbon $date = null): string
     {
         return preg_replace_callback_array(
             [

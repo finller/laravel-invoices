@@ -155,7 +155,7 @@ class Invoice extends Model implements Attachable
         return $this->prefix ?? config('invoices.serial_number.prefix');
     }
 
-    public function generateSerialNumber(?int $serie = null, ?Carbon $date = null): string
+    public function generateSerialNumber(int $serie = null, Carbon $date = null): string
     {
         $generator = new SerialNumberGenerator(prefix: $this->getSerialNumberPrefix());
         $latestSerialNumber = $this->getLatestSerialNumber();
