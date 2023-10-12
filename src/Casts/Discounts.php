@@ -16,11 +16,9 @@ class Discounts implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        $data = Json::decode($attributes[$key]);
+        $data = Json::decode(data_get($attributes, $key));
 
         return is_array($data) ? array_map(fn (?array $item) => InvoiceDiscount::fromArray($item), $data) : null;
-
-        return $value;
     }
 
     /**
