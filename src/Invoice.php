@@ -141,7 +141,8 @@ class Invoice extends Model implements Attachable
 
     /**
      * Invoice can be attached with another one
-     * A Quote or a Credit can have another Invoice as parent
+     * A Quote or a Credit can have another Invoice as parent.
+     * Ex: $invoice = $quote->parent and $quote = $invoice->quote
      */
     function parent(): BelongsTo
     {
