@@ -52,6 +52,10 @@ class Invoice extends Model implements Attachable
 {
     use HasFactory;
 
+    protected $attributes = [
+        'type' => InvoiceType::Invoice,
+    ];
+
     protected $guarded = [];
 
     protected $casts = [
@@ -156,7 +160,7 @@ class Invoice extends Model implements Attachable
 
     public function initSerialNumberDetailst(): static
     {
-        if (! $this->serial_number_details) {
+        if (!$this->serial_number_details) {
             $this->serial_number_details = new ArrayObject();
         }
 
