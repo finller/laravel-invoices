@@ -151,12 +151,12 @@ class Invoice extends Model implements Attachable
 
     public function quote(): HasOne
     {
-        return $this->hasOne(Invoice::class)->where('type', InvoiceType::Quote->value);
+        return $this->hasOne(Invoice::class, 'parent_id')->where('type', InvoiceType::Quote->value);
     }
 
     public function credit(): HasOne
     {
-        return $this->hasOne(Invoice::class)->where('type', InvoiceType::Credit->value);
+        return $this->hasOne(Invoice::class, 'parent_id')->where('type', InvoiceType::Credit->value);
     }
 
     /**
