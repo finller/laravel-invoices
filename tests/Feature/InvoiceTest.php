@@ -37,7 +37,7 @@ it('can create serial number with serie defined on the fly', function () {
     /** @var Invoice */
     $invoice = Invoice::factory()->make();
 
-    $invoice->serie = 42;
+    $invoice->setSerialNumberSerie(42);
 
     expect($invoice->getSerialNumberSerie())->toBe(42);
 
@@ -54,8 +54,8 @@ it('can create serial number with prefix defined on the fly', function () {
     /** @var Invoice */
     $invoice = Invoice::factory()->make();
 
-    $invoice->serie = 42;
-    $invoice->prefix = 'ORG';
+    $invoice->setSerialNumberSerie(42);
+    $invoice->setSerialNumberPrefix('ORG');
 
     expect($invoice->getSerialNumberSerie())->toBe(42);
     expect($invoice->getSerialNumberPrefix())->toBe('ORG');

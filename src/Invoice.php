@@ -49,28 +49,7 @@ class Invoice extends Model implements Attachable
 {
     use HasFactory;
 
-    /**
-     * Allow setting serie on the fly for the generation of the serialNumber
-     */
-    public ?int $serie = null;
-
-    /**
-     * Allow setting prefix on the fly for the generation of the serialNumber
-     */
-    public ?string $prefix = null;
-
-    protected $fillable = [
-        'serial_number',
-        'description',
-        'seller_information',
-        'buyer_information',
-        'state',
-        'due_at',
-        'state_set_at',
-        'tax_type',
-        'tax_exempt',
-        'type',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'type' => InvoiceType::class,
@@ -88,10 +67,7 @@ class Invoice extends Model implements Attachable
     {
         static::creating(function (Invoice $invoice) {
             if (config('invoices.serial_number.auto_generate')) {
-                $invoice->serial_number = $invoice->generateSerialNumber(
-                    serie: $invoice->getSerialNumberSerie(),
-                    date: now()
-                );
+                $invoice->serial_number = $invoice->generateSerialNumber();
 
                 $invoice->serial_number_details = new ArrayObject(
                     $invoice->parseSerialNumber()
@@ -171,17 +147,83 @@ class Invoice extends Model implements Attachable
         return $latestInvoice?->serial_number;
     }
 
-    public function getSerialNumberSerie(): ?int
+    function initSerialNumberDetailst(): static
     {
-        return $this->serie;
+        if (!$this->serial_number_details) {
+            $this->serial_number_details = new ArrayObject();
+        }
+        return $this;
+    }
+
+    public function setSerialNumberPrefix(string $value): static
+    {
+        $this->initSerialNumberDetailst();
+        $this->serial_number_details['prefix'] = $value;
+        return $this;
+    }
+
+    public function setSerialNumberSerie(int $value): static
+    {
+        $this->initSerialNumberDetailst();
+        $this->serial_number_details['serie'] = $value;
+        return $this;
+    }
+
+    public function setSerialNumberYear(int $value): static
+    {
+        $this->initSerialNumberDetailst();
+        $this->serial_number_details['year'] = $value;
+        return $this;
+    }
+
+    public function setSerialNumberMonth(int $value): static
+    {
+        $this->initSerialNumberDetailst();
+        $this->serial_number_details['month'] = $value;
+        return $this;
+    }
+
+    public function setSerialNumberCount(int $value): static
+    {
+        $this->initSerialNumberDetailst();
+        $this->serial_number_details['count'] = $value;
+        return $this;
+    }
+
+    public function setSerialNumberDate(Carbon $value): static
+    {
+        $this->initSerialNumberDetailst();
+        $this->serial_number_details['year'] = (int) $value->format('Y');
+        $this->serial_number_details['month'] = (int) $value->format('m');
+        return $this;
     }
 
     public function getSerialNumberPrefix(): ?string
     {
-        return $this->prefix ?? config('invoices.serial_number.prefix');
+        return data_get($this->serial_number_details, 'prefix', config('invoices.serial_number.prefix'));
     }
 
-    public function generateSerialNumber(int $serie = null, Carbon $date = null): string
+    public function getSerialNumberSerie(): ?int
+    {
+        return data_get($this->serial_number_details, 'serie');
+    }
+
+    public function getSerialNumberYear(): ?int
+    {
+        return data_get($this->serial_number_details, 'year');
+    }
+
+    public function getSerialNumberMonth(): ?int
+    {
+        return data_get($this->serial_number_details, 'month');
+    }
+
+    public function getSerialNumberCount(): ?int
+    {
+        return data_get($this->serial_number_details, 'count');
+    }
+
+    public function generateSerialNumber(): string
     {
         $generator = new SerialNumberGenerator(prefix: $this->getSerialNumberPrefix());
         $latestSerialNumber = $this->getLatestSerialNumber();
@@ -194,8 +236,9 @@ class Invoice extends Model implements Attachable
         }
 
         return $generator->generate(
-            serie: $serie,
-            date: $date ?? now(),
+            serie: $this->getSerialNumberSerie(),
+            year: $this->getSerialNumberYear() ?? now()->format('Y'),
+            month: $this->getSerialNumberMonth() ?? now()->format('m'),
             count: $latestCount + 1
         );
     }

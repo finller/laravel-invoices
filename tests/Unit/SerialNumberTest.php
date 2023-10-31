@@ -1,6 +1,5 @@
 <?php
 
-use Carbon\Carbon;
 use Finller\Invoice\SerialNumberGenerator;
 
 it('can generate serial number from format', function ($format, $prefix, $serie, $count, $expected) {
@@ -9,7 +8,7 @@ it('can generate serial number from format', function ($format, $prefix, $serie,
         prefix: $prefix
     );
 
-    $serialNumber = $generator->generate(count: $count, serie: $serie, date: Carbon::parse('2022-01-01'));
+    $serialNumber = $generator->generate(count: $count, serie: $serie, year: "2022", month: '01');
 
     expect($serialNumber)->toBe($expected);
 })->with([

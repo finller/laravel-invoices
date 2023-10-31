@@ -14,16 +14,20 @@ class SerialNumberGenerator implements GenerateSerialNumber
         $this->prefix = $prefix ?? config('invoices.serial_number.prefix', '');
     }
 
-    public function generate(int $count, int $serie = null, Carbon $date = null): string
-    {
+    public function generate(
+        int $count,
+        int $serie = null,
+        string|int|null $year = null,
+        string|int|null $month = null,
+    ): string {
         return preg_replace_callback_array(
             [
                 '/S+/' => function ($matches) use ($serie) {
-                    if (! $matches[0]) {
+                    if (!$matches[0]) {
                         return '';
                     }
                     $slotLength = strlen($matches[0]);
-                    throw_if(! $serie, "The serial Number format includes a $slotLength long Serie (S), but no serie has been passed");
+                    throw_if(!$serie, "The serial Number format includes a $slotLength long Serie (S), but no serie has been passed");
 
                     $serieLength = strlen(strval($serie));
                     throw_if(
@@ -38,10 +42,10 @@ class SerialNumberGenerator implements GenerateSerialNumber
                         STR_PAD_LEFT
                     );
                 },
-                '/M+/' => fn ($matches) => $matches[0] && $date ? substr($date->format('m'), -strlen($matches[0])) : '',
-                '/Y+/' => fn ($matches) => $matches[0] && $date ? substr($date->format('Y'), -strlen($matches[0])) : '',
+                '/M+/' => fn ($matches) => $matches[0] && $month ? substr((string) $month, -strlen($matches[0])) : '',
+                '/Y+/' => fn ($matches) => $matches[0] && $year ? substr((string) $year, -strlen($matches[0])) : '',
                 '/C+/' => function ($matches) use ($count) {
-                    if (! $matches[0]) {
+                    if (!$matches[0]) {
                         return '';
                     }
                     throw_if(
@@ -58,7 +62,7 @@ class SerialNumberGenerator implements GenerateSerialNumber
                 },
                 // Must be kept last to avoid interfering with other callbacks
                 '/P+/' => function ($matches) {
-                    if (! $matches[0]) {
+                    if (!$matches[0]) {
                         return '';
                     }
                     $slotLength = strlen($matches[0]);
