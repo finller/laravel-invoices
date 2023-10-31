@@ -140,7 +140,7 @@ class Invoice extends Model implements Attachable
     }
 
     /**
-     * Invoice can be atteched together
+     * Invoice can be attached with another one
      * A Quote or a Credit can have another Invoice as parent
      */
     function parent(): BelongsTo
