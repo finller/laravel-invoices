@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('invoices', function (Blueprint $table) {
             $table->string('type')->default('invoice');
+            $table->foreignId('parent_id')->nullable()
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('invoices', function (Blueprint $table) {
             $table->dropColumn('type');
+            $table->dropColumn('parent_id');
         });
     }
 };

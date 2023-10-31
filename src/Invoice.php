@@ -11,11 +11,14 @@ use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Mail\Attachment;
 
 /**
  * @property int $id
+ * @property ?int $parent_id
  * @property InvoiceType $type
  * @property string $serial_number
  * @property ArrayObject $serial_number_details
@@ -134,6 +137,25 @@ class Invoice extends Model implements Attachable
     public function seller(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Invoice can be atteched together
+     * A Quote or a Credit can have another Invoice as parent
+     */
+    function parent(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
+    function quote(): HasOne
+    {
+        return $this->hasOne(Invoice::class)->where('type', InvoiceType::Quote->value);
+    }
+
+    function credit(): HasOne
+    {
+        return $this->hasOne(Invoice::class)->where('type', InvoiceType::Credit->value);
     }
 
     /**
