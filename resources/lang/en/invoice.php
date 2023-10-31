@@ -31,6 +31,6 @@ return [
     'types' => [
         'invoice' => 'Invoice',
         'quote' => 'Quote',
-        'credit' => "Credit note",
+        'credit' => 'Credit note',
     ],
 ];

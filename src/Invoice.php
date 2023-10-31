@@ -66,7 +66,7 @@ class Invoice extends Model implements Attachable
         'state_set_at',
         'tax_type',
         'tax_exempt',
-        'type'
+        'type',
     ];
 
     protected $casts = [
@@ -218,7 +218,6 @@ class Invoice extends Model implements Attachable
     {
         return $query->where('state', InvoiceState::Pending);
     }
-
 
     /**
      * Get the attachable representation of the model.

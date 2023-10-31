@@ -8,7 +8,7 @@ enum InvoiceType: string
     case Quote = 'quote';
     case Credit = 'credit';
 
-    function trans()
+    public function trans()
     {
         return match ($this) {
             self::Invoice => __('invoices::invoice.types.invoice'),
