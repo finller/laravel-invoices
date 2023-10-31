@@ -25,7 +25,12 @@ return [
         'draft' => 'Draft',
         'pending' => 'Pending',
         'paid' => 'Paid',
-        'deleted' => 'Deleted',
         'refunded' => 'Refunded',
+    ],
+
+    'types' => [
+        'invoice' => 'Invoice',
+        'quote' => 'Quote',
+        'credit' => "Credit note",
     ],
 ];

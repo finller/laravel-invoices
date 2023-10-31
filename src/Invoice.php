@@ -16,6 +16,7 @@ use Illuminate\Mail\Attachment;
 
 /**
  * @property int $id
+ * @property InvoiceType $type
  * @property string $serial_number
  * @property ArrayObject $serial_number_details
  * @property string $description
@@ -65,9 +66,11 @@ class Invoice extends Model implements Attachable
         'state_set_at',
         'tax_type',
         'tax_exempt',
+        'type'
     ];
 
     protected $casts = [
+        'type' => InvoiceType::class,
         'state_set_at' => 'datetime',
         'due_at' => 'datetime',
         'state' => InvoiceState::class,
@@ -216,10 +219,6 @@ class Invoice extends Model implements Attachable
         return $query->where('state', InvoiceState::Pending);
     }
 
-    public function scopeDeleted(Builder $query): Builder
-    {
-        return $query->where('state', InvoiceState::Deleted);
-    }
 
     /**
      * Get the attachable representation of the model.
@@ -234,9 +233,9 @@ class Invoice extends Model implements Attachable
     public function toPdfInvoice(): PdfInvoice
     {
         return new PdfInvoice(
-            name: __('invoices::invoice.invoice'),
+            name: $this->type->trans(),
             serial_number: $this->serial_number,
-            state: $this->state ? __("invoices::invoice.states.{$this->state->value}") : null,
+            state: $this->state?->trans(),
             paid_at: ($this->state === InvoiceState::Paid) ? $this->state_set_at : null,
             due_at: $this->due_at,
             created_at: $this->created_at,
