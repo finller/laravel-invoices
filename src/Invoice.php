@@ -19,6 +19,9 @@ use Illuminate\Mail\Attachment;
 /**
  * @property int $id
  * @property ?int $parent_id
+ * @property ?Invoice $parent
+ * @property ?Invoice $quote
+ * @property ?Invoice $credit
  * @property InvoiceType $type
  * @property string $serial_number
  * @property ArrayObject $serial_number_details
@@ -142,7 +145,11 @@ class Invoice extends Model implements Attachable
     public function getLatestSerialNumber(): ?string
     {
         /** @var ?static */
-        $latestInvoice = static::query()->latest('serial_number')->first();
+        $latestInvoice = static::query()
+            ->when($this->getSerialNumberPrefix(), fn (Builder $query) => $query->where('serial_number_details->prefix', $this->getSerialNumberPrefix()))
+            ->when($this->getSerialNumberSerie(), fn (Builder $query) => $query->where('serial_number_details->serie', $this->getSerialNumberSerie()))
+            ->latest('serial_number')
+            ->first();
 
         return $latestInvoice?->serial_number;
     }
