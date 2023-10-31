@@ -144,17 +144,17 @@ class Invoice extends Model implements Attachable
      * A Quote or a Credit can have another Invoice as parent.
      * Ex: $invoice = $quote->parent and $quote = $invoice->quote
      */
-    function parent(): BelongsTo
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }
 
-    function quote(): HasOne
+    public function quote(): HasOne
     {
         return $this->hasOne(Invoice::class)->where('type', InvoiceType::Quote->value);
     }
 
-    function credit(): HasOne
+    public function credit(): HasOne
     {
         return $this->hasOne(Invoice::class)->where('type', InvoiceType::Credit->value);
     }
