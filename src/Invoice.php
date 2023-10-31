@@ -147,11 +147,12 @@ class Invoice extends Model implements Attachable
         return $latestInvoice?->serial_number;
     }
 
-    function initSerialNumberDetailst(): static
+    public function initSerialNumberDetailst(): static
     {
-        if (!$this->serial_number_details) {
+        if (! $this->serial_number_details) {
             $this->serial_number_details = new ArrayObject();
         }
+
         return $this;
     }
 
@@ -159,6 +160,7 @@ class Invoice extends Model implements Attachable
     {
         $this->initSerialNumberDetailst();
         $this->serial_number_details['prefix'] = $value;
+
         return $this;
     }
 
@@ -166,6 +168,7 @@ class Invoice extends Model implements Attachable
     {
         $this->initSerialNumberDetailst();
         $this->serial_number_details['serie'] = $value;
+
         return $this;
     }
 
@@ -173,6 +176,7 @@ class Invoice extends Model implements Attachable
     {
         $this->initSerialNumberDetailst();
         $this->serial_number_details['year'] = $value;
+
         return $this;
     }
 
@@ -180,6 +184,7 @@ class Invoice extends Model implements Attachable
     {
         $this->initSerialNumberDetailst();
         $this->serial_number_details['month'] = $value;
+
         return $this;
     }
 
@@ -187,6 +192,7 @@ class Invoice extends Model implements Attachable
     {
         $this->initSerialNumberDetailst();
         $this->serial_number_details['count'] = $value;
+
         return $this;
     }
 
@@ -195,6 +201,7 @@ class Invoice extends Model implements Attachable
         $this->initSerialNumberDetailst();
         $this->serial_number_details['year'] = (int) $value->format('Y');
         $this->serial_number_details['month'] = (int) $value->format('m');
+
         return $this;
     }
 

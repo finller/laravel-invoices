@@ -2,8 +2,6 @@
 
 namespace Finller\Invoice;
 
-use Carbon\Carbon;
-
 interface GenerateSerialNumber
 {
     public function __construct(string $format = null, string $prefix = null);
@@ -11,8 +9,8 @@ interface GenerateSerialNumber
     public function generate(
         int $count,
         int $serie = null,
-        string|int|null $year = null,
-        string|int|null $month = null
+        string|int $year = null,
+        string|int $month = null
     ): string;
 
     public function parse(string $serialNumber): array;

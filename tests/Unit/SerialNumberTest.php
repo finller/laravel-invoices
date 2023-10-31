@@ -8,7 +8,7 @@ it('can generate serial number from format', function ($format, $prefix, $serie,
         prefix: $prefix
     );
 
-    $serialNumber = $generator->generate(count: $count, serie: $serie, year: "2022", month: '01');
+    $serialNumber = $generator->generate(count: $count, serie: $serie, year: '2022', month: '01');
 
     expect($serialNumber)->toBe($expected);
 })->with([
