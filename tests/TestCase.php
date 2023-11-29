@@ -27,8 +27,17 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        config()->set('money.default_currency', 'USD');
 
         $migration = include __DIR__.'/../database/migrations/create_invoices_table.php.stub';
+        $migration->up();
+        $migration = include __DIR__.'/../database/migrations/create_invoice_items_table.php.stub';
+        $migration->up();
+        $migration = include __DIR__.'/../database/migrations/add_type_column_to_invoices_table.php.stub';
+        $migration->up();
+        $migration = include __DIR__.'/../database/migrations/add_discounts_column_to_invoices_table.php.stub';
+        $migration->up();
+        $migration = include __DIR__.'/../database/migrations/add_denormalized_columns_to_invoices_table.php.stub';
         $migration->up();
     }
 }

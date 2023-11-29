@@ -22,6 +22,7 @@ class InvoiceServiceProvider extends PackageServiceProvider
             ->hasMigration('create_invoices_table')
             ->hasMigration('create_invoice_items_table')
             ->hasMigration('add_discounts_column_to_invoices_table')
-            ->hasMigration('add_type_column_to_invoices_table');
+            ->hasMigration('add_type_column_to_invoices_table')
+            ->hasMigration('add_denormalized_columns_to_invoices_table');
     }
 }

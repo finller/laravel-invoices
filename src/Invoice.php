@@ -2,8 +2,10 @@
 
 namespace Finller\Invoice;
 
+use Brick\Money\Money;
 use Carbon\Carbon;
 use Finller\Invoice\Casts\Discounts;
+use Finller\Money\MoneyCast;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
@@ -24,7 +26,7 @@ use Illuminate\Mail\Attachment;
  * @property ?Invoice $credit
  * @property InvoiceType $type
  * @property string $serial_number
- * @property ArrayObject $serial_number_details
+ * @property ?ArrayObject $serial_number_details
  * @property string $description
  * @property ?ArrayObject $seller_information
  * @property ?ArrayObject $buyer_information
@@ -47,6 +49,11 @@ use Illuminate\Mail\Attachment;
  * @property Carbon $updated_at
  * @property null|InvoiceDiscount[] $discounts
  * @property ?ArrayObject $metadata
+ * @property ?Money $subtotal_amount
+ * @property ?Money $discount_amount
+ * @property ?Money $tax_amount
+ * @property ?Money $total_amount
+ * @property ?string $currency
  */
 class Invoice extends Model implements Attachable
 {
@@ -68,6 +75,10 @@ class Invoice extends Model implements Attachable
         'metadata' => AsArrayObject::class,
         'discounts' => Discounts::class,
         'serial_number_details' => AsArrayObject::class,
+        'total_amount' => MoneyCast::class.':currency',
+        'subtotal_amount' => MoneyCast::class.':currency',
+        'discount' => MoneyCast::class.':currency',
+        'tax' => MoneyCast::class.':currency',
     ];
 
     public static function booted()
@@ -281,6 +292,22 @@ class Invoice extends Model implements Attachable
     public function getDiscounts(): ?array
     {
         return $this->discounts;
+    }
+
+    /**
+     * Denormalize amounts computed from items to the invoice table
+     * Allowing easier query
+     */
+    public function denormalize(): static
+    {
+        $pdfInvoice = $this->toPdfInvoice();
+        $this->currency = $pdfInvoice->getCurrency();
+        $this->subtotal_amount = $pdfInvoice->subTotalAmount();
+        $this->discount_amount = $pdfInvoice->totalDiscountAmount();
+        $this->tax_amount = $pdfInvoice->totalTaxAmount();
+        $this->total_amount = $pdfInvoice->totalAmount();
+
+        return $this;
     }
 
     public function scopePaid(Builder $query): Builder

@@ -1,6 +1,7 @@
 <?php
 
 use Finller\Invoice\Invoice;
+use Finller\Invoice\InvoiceItem;
 
 it('can create and generate unique serial numbers', function () {
     $prefix = 'INV';
@@ -71,4 +72,27 @@ it('can create serial number with prefix defined on the fly', function () {
         'year' => intval($year),
         'count' => 1,
     ]);
+});
+
+it('denormalize amounts in invoice', function () {
+    /** @var Invoice */
+    $invoice = Invoice::factory()->make();
+    $invoice->save();
+
+    $invoice->items()->saveMany(InvoiceItem::factory(2)->make());
+
+    $invoice->denormalize()->save();
+    $pdfInvoice = $invoice->toPdfInvoice();
+
+    expect($invoice->subtotal_amount->getAmount()->toFloat())
+        ->toEqual($pdfInvoice->subTotalAmount()->getAmount()->toFloat());
+
+    expect($invoice->discount_amount->getAmount()->toFloat())
+        ->toEqual($pdfInvoice->totalDiscountAmount()->getAmount()->toFloat());
+
+    expect($invoice->tax_amount->getAmount()->toFloat())
+        ->toEqual($pdfInvoice->totalTaxAmount()->getAmount()->toFloat());
+
+    expect($invoice->total_amount->getAmount()->toFloat())
+        ->toEqual($pdfInvoice->totalAmount()->getAmount()->toFloat());
 });

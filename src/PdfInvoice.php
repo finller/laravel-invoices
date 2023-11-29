@@ -49,6 +49,14 @@ class PdfInvoice
         return $this->filename ?? $this->generateFilename();
     }
 
+    public function getCurrency(): string
+    {
+        /** @var ?PdfInvoiceItem $firstItem */
+        $firstItem = Arr::first($this->items);
+
+        return $firstItem?->currency ?? config('invoices.default_currency');
+    }
+
     public function getLogo(): string
     {
         $type = pathinfo($this->logo, PATHINFO_EXTENSION);
@@ -62,42 +70,26 @@ class PdfInvoice
      */
     public function subTotalAmount(): Money
     {
-        if (empty($this->items)) {
-            return Money::ofMinor(0, config('invoices.default_currency'));
-        }
-
-        $firstItem = Arr::first($this->items);
-
-        $currency = $firstItem->currency;
-
         return array_reduce(
             $this->items,
             fn (Money $total, PdfInvoiceItem $item) => $total->plus($item->subTotalAmount()),
-            Money::of(0, $currency)
+            Money::of(0, $this->getCurrency())
         );
     }
 
     public function totalTaxAmount(): Money
     {
-        if (empty($this->items)) {
-            return Money::ofMinor(0, config('invoices.default_currency'));
-        }
-
-        $firstItem = Arr::first($this->items);
-
-        $currency = $firstItem->currency;
-
         return array_reduce(
             $this->items,
             fn (Money $total, PdfInvoiceItem $item) => $total->plus($item->totalTaxAmount()),
-            Money::of(0, $currency)
+            Money::of(0, $this->getCurrency())
         );
     }
 
     public function totalDiscountAmount(): Money
     {
         if (! $this->discounts) {
-            return Money::of(0, $this->subTotalAmount()->getCurrency());
+            return Money::of(0, $this->getCurrency());
         }
 
         $subtotal = $this->subTotalAmount();
@@ -109,18 +101,10 @@ class PdfInvoice
 
     public function totalAmount(): Money
     {
-        if (empty($this->items)) {
-            return Money::ofMinor(0, config('invoices.default_currency'));
-        }
-
-        $firstItem = Arr::first($this->items);
-
-        $currency = $firstItem->currency;
-
         $total = array_reduce(
             $this->items,
             fn (Money $total, PdfInvoiceItem $item) => $total->plus($item->totalAmount()),
-            Money::of(0, $currency)
+            Money::of(0, $this->getCurrency())
         );
 
         return $total->minus($this->totalDiscountAmount());
