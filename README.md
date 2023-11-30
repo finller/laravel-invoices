@@ -118,8 +118,8 @@ When creating an invoice, you can define the prefix and the serie on the fly lik
 ```php
 use Finller\Invoice\Invoice;
 $invoice = new Invoice();
-$invoice->prefix = "SPECIAL";
-$invoice->serie = $buyer_id;
+$invoice->setSerialNumberPrefix("ORG");
+$invoice->setSerialNumberSerie($buyer_id);
 $invoice->save();
 ```
 
