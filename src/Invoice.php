@@ -75,10 +75,10 @@ class Invoice extends Model implements Attachable
         'metadata' => AsArrayObject::class,
         'discounts' => Discounts::class,
         'serial_number_details' => AsArrayObject::class,
-        'subtotal_amount' => MoneyCast::class . ':currency',
-        'discount_amount' => MoneyCast::class . ':currency',
-        'tax_amount' => MoneyCast::class . ':currency',
-        'total_amount' => MoneyCast::class . ':currency',
+        'subtotal_amount' => MoneyCast::class.':currency',
+        'discount_amount' => MoneyCast::class.':currency',
+        'tax_amount' => MoneyCast::class.':currency',
+        'total_amount' => MoneyCast::class.':currency',
     ];
 
     public static function booted()
@@ -171,7 +171,7 @@ class Invoice extends Model implements Attachable
 
     public function initSerialNumberDetailst(): static
     {
-        if (!$this->serial_number_details) {
+        if (! $this->serial_number_details) {
             $this->serial_number_details = new ArrayObject();
         }
 
