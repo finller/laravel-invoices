@@ -2,6 +2,7 @@
 
 namespace Finller\Invoice;
 
+use Finller\Invoice\Commands\DenormalizeInvoicesCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
