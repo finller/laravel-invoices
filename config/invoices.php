@@ -3,12 +3,15 @@
 // config for Finller/Invoice
 
 use Finller\Invoice\Invoice;
+use Finller\Invoice\InvoiceDiscount;
 use Finller\Invoice\InvoiceItem;
 
 return [
 
     'model_invoice' => Invoice::class,
     'model_invoice_item' => InvoiceItem::class,
+
+    'discount_class' => InvoiceDiscount::class,
 
     'cascade_invoice_delete_to_invoice_items' => true,
 

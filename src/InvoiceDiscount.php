@@ -7,6 +7,7 @@ use Brick\Money\Money;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
+/** @phpstan-consistent-constructor */
 class InvoiceDiscount implements Arrayable, JsonSerializable
 {
     use FormatForPdf;
@@ -39,7 +40,7 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
         $amount_off = data_get($array, 'amount_off');
         $percent_off = data_get($array, 'percent_off');
 
-        return new InvoiceDiscount(
+        return new static(
             name: data_get($array, 'name'),
             code: data_get($array, 'code'),
             amount_off: $amount_off ? Money::ofMinor($amount_off, $currency) : null,
@@ -61,5 +62,15 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
     public function jsonSerialize(): mixed
     {
         return $this->toArray();
+    }
+
+    public function toLivewire()
+    {
+        return $this->toArray();
+    }
+
+    public static function fromLivewire($value)
+    {
+        return static::fromArray($value);
     }
 }

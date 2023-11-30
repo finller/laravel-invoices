@@ -2,7 +2,6 @@
 
 namespace Finller\Invoice\Casts;
 
-use Finller\Invoice\InvoiceDiscount;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +17,9 @@ class Discounts implements CastsAttributes
     {
         $data = Json::decode(data_get($attributes, $key, ''));
 
-        return is_array($data) ? array_map(fn (?array $item) => InvoiceDiscount::fromArray($item), $data) : null;
+        $class = config('invoices.discount_class');
+
+        return is_array($data) ? array_map(fn (?array $item) => $class::fromArray($item), $data) : null;
     }
 
     /**
