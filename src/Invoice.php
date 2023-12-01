@@ -93,6 +93,10 @@ class Invoice extends Model implements Attachable
             }
         });
 
+        static::updating(function (Invoice $invoice) {
+            $invoice->denormalize();
+        });
+
         static::deleting(function (Invoice $invoice) {
             if (config('invoices.cascade_invoice_delete_to_invoice_items')) {
                 $invoice->items()->delete();
