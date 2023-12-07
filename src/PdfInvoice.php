@@ -42,7 +42,7 @@ class PdfInvoice
 
     public function generateFilename(): string
     {
-        return Str::slug("{$this->name}_{$this->serial_number}", separator: '_') . '.pdf';
+        return Str::slug("{$this->name}_{$this->serial_number}", separator: '_').'.pdf';
     }
 
     public function getFilename(): string
@@ -63,7 +63,7 @@ class PdfInvoice
         $type = pathinfo($this->logo, PATHINFO_EXTENSION);
         $data = file_get_contents($this->logo);
 
-        return 'data:image/' . $type . ';base64,' . base64_encode($data);
+        return 'data:image/'.$type.';base64,'.base64_encode($data);
     }
 
     /**
@@ -89,7 +89,7 @@ class PdfInvoice
 
     public function totalDiscountAmount(): Money
     {
-        if (!$this->discounts) {
+        if (! $this->discounts) {
             return Money::of(0, $this->getCurrency());
         }
 
