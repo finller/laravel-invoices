@@ -91,6 +91,8 @@ class Invoice extends Model implements Attachable
                     $invoice->parseSerialNumber()
                 );
             }
+
+            $invoice->denormalize();
         });
 
         static::updating(function (Invoice $invoice) {
