@@ -314,6 +314,21 @@ class Invoice extends Model implements Attachable
         return $this;
     }
 
+    public function scopeInvoice(Builder $query): Builder
+    {
+        return $query->where('type', InvoiceType::Invoice);
+    }
+
+    public function scopeCredit(Builder $query): Builder
+    {
+        return $query->where('type', InvoiceType::Credit);
+    }
+
+    public function scopeQuote(Builder $query): Builder
+    {
+        return $query->where('type', InvoiceType::Quote);
+    }
+
     public function scopePaid(Builder $query): Builder
     {
         return $query->where('state', InvoiceState::Paid);
