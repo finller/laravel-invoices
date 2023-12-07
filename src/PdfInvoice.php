@@ -18,12 +18,12 @@ class PdfInvoice
      * @param  null|InvoiceDiscount[]  $discounts
      */
     public function __construct(
-        public string $name,
-        public string $serial_number,
-        public string $state,
-        public array $buyer,
-        public Carbon $due_at,
-        public Carbon $created_at,
+        public ?string $name = null,
+        public string $state = InvoiceState::Draft->value,
+        public ?string $serial_number = null,
+        public ?array $buyer = null,
+        public ?Carbon $due_at = null,
+        public ?Carbon $created_at = null,
         public ?Carbon $paid_at = null,
         public ?array $seller = null,
         public ?string $description = null,
@@ -34,6 +34,7 @@ class PdfInvoice
         public ?string $tax_label = null,
         public ?array $discounts = null
     ) {
+        $this->name = $name ?? __('invoices::invoice.invoice');
         $this->seller = $seller ?? config('invoices.default_seller', []);
         $this->logo = $logo ?? config('invoices.default_logo', null);
         $this->template = sprintf('invoices::%s', $template ?? config('invoices.default_template', null));
@@ -41,7 +42,7 @@ class PdfInvoice
 
     public function generateFilename(): string
     {
-        return Str::slug("{$this->name}_{$this->serial_number}", separator: '_').'.pdf';
+        return Str::slug("{$this->name}_{$this->serial_number}", separator: '_') . '.pdf';
     }
 
     public function getFilename(): string
@@ -62,7 +63,7 @@ class PdfInvoice
         $type = pathinfo($this->logo, PATHINFO_EXTENSION);
         $data = file_get_contents($this->logo);
 
-        return 'data:image/'.$type.';base64,'.base64_encode($data);
+        return 'data:image/' . $type . ';base64,' . base64_encode($data);
     }
 
     /**
@@ -88,7 +89,7 @@ class PdfInvoice
 
     public function totalDiscountAmount(): Money
     {
-        if (! $this->discounts) {
+        if (!$this->discounts) {
             return Money::of(0, $this->getCurrency());
         }
 

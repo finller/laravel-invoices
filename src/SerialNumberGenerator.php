@@ -14,9 +14,9 @@ class SerialNumberGenerator implements GenerateSerialNumber
 
     public function generate(
         int $count,
-        int $serie = null,
-        string|int $year = null,
-        string|int $month = null,
+        ?int $serie = null,
+        string|int|null $year = null,
+        string|int|null $month = null,
     ): string {
         return preg_replace_callback_array(
             [

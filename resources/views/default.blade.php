@@ -205,13 +205,13 @@
                                 <tr class="">
                                     <td class="pb-1 pr-2 nowrap">{{ __('invoices::invoice.created_at') }}</td>
                                     <td class="pb-1" width="100%">
-                                        {{ $invoice->created_at->format(config('invoices.date_format')) }}
+                                        {{ $invoice->created_at?->format(config('invoices.date_format')) }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="pb-1 pr-2 nowrap">{{ __('invoices::invoice.due_at') }}</td>
                                     <td class="pb-1" width="100%">
-                                        {{ $invoice->due_at->format(config('invoices.date_format')) }}
+                                        {{ $invoice->due_at?->format(config('invoices.date_format')) }}
                                     </td>
                                 </tr>
                                 @if ($invoice->paid_at)
