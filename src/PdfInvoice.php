@@ -19,7 +19,7 @@ class PdfInvoice
      */
     public function __construct(
         public ?string $name = null,
-        public string $state = InvoiceState::Draft->value,
+        public ?string $state = null,
         public ?string $serial_number = null,
         public ?array $buyer = null,
         public ?Carbon $due_at = null,

@@ -30,7 +30,7 @@ use Illuminate\Mail\Attachment;
  * @property string $description
  * @property ?ArrayObject $seller_information
  * @property ?ArrayObject $buyer_information
- * @property ?InvoiceState $state
+ * @property InvoiceState $state
  * @property ?Carbon $state_set_at
  * @property ?Carbon $due_at
  * @property ?string $tax_type
@@ -61,6 +61,7 @@ class Invoice extends Model implements Attachable
 
     protected $attributes = [
         'type' => InvoiceType::Invoice,
+        'state' => InvoiceState::Draft,
     ];
 
     protected $guarded = [];
@@ -363,8 +364,8 @@ class Invoice extends Model implements Attachable
     {
         return new PdfInvoice(
             name: $this->type->trans(),
+            state: $this->state->trans(),
             serial_number: $this->serial_number,
-            state: $this->state?->trans(),
             paid_at: ($this->state === InvoiceState::Paid) ? $this->state_set_at : null,
             due_at: $this->due_at,
             created_at: $this->created_at,
