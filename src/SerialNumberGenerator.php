@@ -9,7 +9,6 @@ class SerialNumberGenerator implements GenerateSerialNumber
         public ?string $prefix = null,
     ) {
         $this->format = $format ?? config('invoices.serial_number.format', '');
-        $this->prefix = $prefix ?? config('invoices.serial_number.prefix', '');
     }
 
     public function generate(

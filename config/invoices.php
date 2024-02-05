@@ -5,6 +5,7 @@
 use Finller\Invoice\Invoice;
 use Finller\Invoice\InvoiceDiscount;
 use Finller\Invoice\InvoiceItem;
+use Finller\Invoice\InvoiceType;
 
 return [
 
@@ -39,7 +40,12 @@ return [
          */
         'format' => 'PPYYCCCC',
 
-        'prefix' => 'IN',
+        'prefix' => [
+            InvoiceType::Invoice->value => 'IN',
+            InvoiceType::Quote->value => 'QO',
+            InvoiceType::Credit->value => 'CR',
+            InvoiceType::Proforma->value => 'PF',
+        ],
 
     ],
 

@@ -32,5 +32,6 @@ return [
         'invoice' => 'Facture',
         'quote' => 'Devis',
         'credit' => "Facture d'avoir",
+        'proforma' => 'Facture Proforma',
     ],
 ];

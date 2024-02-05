@@ -32,5 +32,6 @@ return [
         'invoice' => 'Invoice',
         'quote' => 'Quote',
         'credit' => 'Credit note',
+        'proforma' => 'Proforma invoice',
     ],
 ];

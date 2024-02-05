@@ -232,9 +232,25 @@ class Invoice extends Model implements Attachable
         return $this;
     }
 
+    /**
+     * Retrieve the matching prefix according to the invoice type
+     */
+    public function getSerialNumberPrefixFromConfig(string $default = ''): string
+    {
+        /** @var string|array $prefixes */
+        $prefixes = config('invoices.serial_number.prefix', '');
+
+        if (is_string($prefixes)) {
+            return $prefixes;
+        }
+
+        return data_get($prefixes, $this->type?->value, $default);
+    }
+
     public function getSerialNumberPrefix(): ?string
     {
-        return data_get($this->serial_number_details, 'prefix', config('invoices.serial_number.prefix'));
+
+        return data_get($this->serial_number_details, 'prefix', $this->getSerialNumberPrefixFromConfig());
     }
 
     public function getSerialNumberSerie(): ?int
