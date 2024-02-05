@@ -244,7 +244,7 @@ class Invoice extends Model implements Attachable
             return $prefixes;
         }
 
-        return data_get($prefixes, $this->type?->value, $default);
+        return data_get($prefixes, $this->type->value, $default);
     }
 
     public function getSerialNumberPrefix(): ?string
