@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-invoices` will be documented in this file.
 
+## v2.3.4 - 2024-02-05
+
+**Full Changelog**: https://github.com/finller/laravel-invoices/compare/v2.3.3...v2.3.4
+
 ## v2.3.3 - 2024-02-05
 
 ### What's Changed
