@@ -88,7 +88,6 @@ class Invoice extends Model implements Attachable
         static::creating(function (Invoice $invoice) {
             if (config('invoices.serial_number.auto_generate')) {
                 $invoice->serial_number = $invoice->generateSerialNumber();
-
                 $invoice->serial_number_details = new ArrayObject(
                     $invoice->parseSerialNumber()
                 );
@@ -322,9 +321,7 @@ class Invoice extends Model implements Attachable
     {
         $generator = new SerialNumberGenerator($this->getSerialNumberFormatFromConfig());
 
-        return $generator->parse(
-            $this->serial_number
-        );
+        return $generator->parse($this->serial_number);
     }
 
     public function getTaxLabel(): ?string
