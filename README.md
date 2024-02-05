@@ -34,18 +34,12 @@ This is the contents of the published config file:
 ```php
 return [
 
-    'model_invoice_item' => InvoiceItem::class,
     'model_invoice' => Invoice::class,
+    'model_invoice_item' => InvoiceItem::class,
+
+    'discount_class' => InvoiceDiscount::class,
 
     'cascade_invoice_delete_to_invoice_items' => true,
-
-    /**
-     * This is the class that will used to cast all amount and prices
-     * We recommand to use solution such as:
-     *
-     * @see https://github.com/brick/money or https://github.com/akaunting/laravel-money
-     */
-    'money_cast' => null,
 
     'serial_number' => [
         /**
@@ -69,12 +63,60 @@ return [
          * - SSSS-CCCC: 0001-0123
          * - YYCCCC: 220123
          */
-        'format' => 'PPYYCCCC',
+        'format' => [
+            InvoiceType::Invoice->value => 'PPYYCCCC',
+            InvoiceType::Quote->value => 'PPYYCCCC',
+            InvoiceType::Credit->value => 'PPYYCCCC',
+            InvoiceType::Proforma->value => 'PPYYCCCC',
+        ],
 
-        'prefix' => 'IN',
+        'prefix' => [
+            InvoiceType::Invoice->value => 'IN',
+            InvoiceType::Quote->value => 'QO',
+            InvoiceType::Credit->value => 'CR',
+            InvoiceType::Proforma->value => 'PF',
+        ],
 
     ],
+
+    'date_format' => 'Y-m-d',
+
+    'default_seller' => [
+        'name' => null,
+        'address' => [
+            'street' => null,
+            'city' => null,
+            'postal_code' => null,
+            'state' => null,
+            'country' => null,
+        ],
+        'email' => null,
+        'phone_number' => null,
+        'tax_number' => null,
+        'company_number' => null,
+    ],
+
+    'default_logo' => null,
+
+    'default_template' => 'default',
+
+    /**
+     * ISO 4217 currency code
+     */
+    'default_currency' => 'USD',
+
+    /**
+     * Default DOM PDF options
+     *
+     * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
+     */
+    'pdf_options' => [],
+    'paper_options' => [
+        'paper' => 'a4',
+        'orientation' => 'portrait',
+    ],
 ];
+;
 ```
 
 ## Usage

@@ -38,7 +38,12 @@ return [
          * - SSSS-CCCC: 0001-0123
          * - YYCCCC: 220123
          */
-        'format' => 'PPYYCCCC',
+        'format' => [
+            InvoiceType::Invoice->value => 'PPYYCCCC',
+            InvoiceType::Quote->value => 'PPYYCCCC',
+            InvoiceType::Credit->value => 'PPYYCCCC',
+            InvoiceType::Proforma->value => 'PPYYCCCC',
+        ],
 
         'prefix' => [
             InvoiceType::Invoice->value => 'IN',

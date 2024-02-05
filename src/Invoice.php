@@ -4,6 +4,7 @@ namespace Finller\Invoice;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
+use Exception;
 use Finller\Invoice\Casts\Discounts;
 use Finller\Money\MoneyCast;
 use Illuminate\Contracts\Mail\Attachable;
@@ -247,6 +248,27 @@ class Invoice extends Model implements Attachable
         return data_get($prefixes, $this->type->value, $default);
     }
 
+    /**
+     * Retrieve the matching prefix according to the invoice type
+     */
+    public function getSerialNumberFormatFromConfig(?string $default = null): string
+    {
+        /** @var string|array $formats */
+        $formats = config('invoices.serial_number.format', '');
+
+        if (is_string($formats)) {
+            return $formats;
+        }
+
+        $format = data_get($formats, $this->type->value, $default);
+
+        if (! $format) {
+            throw new Exception("No serial number format defined in conifg for {$this->type->value} and no default value passed.");
+        }
+
+        return $format;
+    }
+
     public function getSerialNumberPrefix(): ?string
     {
 
@@ -275,7 +297,10 @@ class Invoice extends Model implements Attachable
 
     public function generateSerialNumber(): string
     {
-        $generator = new SerialNumberGenerator(prefix: $this->getSerialNumberPrefix());
+        $generator = new SerialNumberGenerator(
+            format: $this->getSerialNumberFormatFromConfig(),
+            prefix: $this->getSerialNumberPrefix()
+        );
         $latestSerialNumber = $this->getLatestSerialNumber();
 
         if ($latestSerialNumber) {
@@ -295,7 +320,7 @@ class Invoice extends Model implements Attachable
 
     public function parseSerialNumber(): array
     {
-        $generator = new SerialNumberGenerator();
+        $generator = new SerialNumberGenerator($this->getSerialNumberFormatFromConfig());
 
         return $generator->parse(
             $this->serial_number

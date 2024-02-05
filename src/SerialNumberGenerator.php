@@ -5,10 +5,10 @@ namespace Finller\Invoice;
 class SerialNumberGenerator implements GenerateSerialNumber
 {
     public function __construct(
-        public ?string $format = null,
+        public string $format,
         public ?string $prefix = null,
     ) {
-        $this->format = $format ?? config('invoices.serial_number.format', '');
+        //
     }
 
     public function generate(

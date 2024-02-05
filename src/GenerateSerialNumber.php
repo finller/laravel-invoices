@@ -4,7 +4,7 @@ namespace Finller\Invoice;
 
 interface GenerateSerialNumber
 {
-    public function __construct(?string $format = null, ?string $prefix = null);
+    public function __construct(string $format, ?string $prefix = null);
 
     public function generate(
         int $count,

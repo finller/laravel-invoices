@@ -4,6 +4,7 @@ namespace Finller\Invoice\Database\Factories;
 
 use Finller\Invoice\Invoice;
 use Finller\Invoice\InvoiceState;
+use Finller\Invoice\InvoiceType;
 use Finller\Invoice\SerialNumberGenerator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,6 +17,7 @@ class InvoiceFactory extends Factory
         $created_at = fake()->dateTime();
 
         return [
+            'type' => InvoiceType::Invoice,
             'state' => fake()->randomElement(InvoiceState::cases()),
             'state_set_at' => fake()->dateTimeBetween($created_at),
             'updated_at' => fake()->dateTimeBetween($created_at),
@@ -40,8 +42,38 @@ class InvoiceFactory extends Factory
 
     public function withSerialNumber(): static
     {
+        return $this->state(fn (array $attributes) => [
+            'serial_number' => (new SerialNumberGenerator(
+                config('nvoices.serial_number.format.'.$attributes['type'])
+            ))->generate(count: fake()->numberBetween(0, 100)),
+        ]);
+    }
+
+    public function quote(): static
+    {
         return $this->state([
-            'serial_number' => (new SerialNumberGenerator())->generate(count: fake()->numberBetween(0, 100)),
+            'type' => InvoiceType::Quote,
+        ]);
+    }
+
+    public function proforma(): static
+    {
+        return $this->state([
+            'type' => InvoiceType::Proforma,
+        ]);
+    }
+
+    public function invoice(): static
+    {
+        return $this->state([
+            'type' => InvoiceType::Invoice,
+        ]);
+    }
+
+    public function credit(): static
+    {
+        return $this->state([
+            'type' => InvoiceType::Credit,
         ]);
     }
 }
