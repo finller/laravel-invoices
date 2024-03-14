@@ -205,7 +205,7 @@ The Invoice model has a `toPdfInvoice()` that return a `PdfInvoice` class.
 
 ### As a response in a controller
 
-You can stream the `pdfInvoice` instance as a response, download it:
+You can stream the `pdfInvoice` instance as a response, or download it:
 
 ```php
 namespace App\Http\Controllers;
