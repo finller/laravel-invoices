@@ -24,6 +24,8 @@ return [
         'auto_generate' => true,
 
         /**
+         * Define the serial number format used for each invoice type
+         *
          * P: Prefix
          * S: Serie
          * M: Month
@@ -45,6 +47,9 @@ return [
             InvoiceType::Proforma->value => 'PPYYCCCC',
         ],
 
+        /**
+         * Define the default prefix used for each invoice type
+         */
         'prefix' => [
             InvoiceType::Invoice->value => 'IN',
             InvoiceType::Quote->value => 'QO',

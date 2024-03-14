@@ -49,6 +49,8 @@ return [
         'auto_generate' => true,
 
         /**
+         * Define the serial number format used for each invoice type
+         *
          * P: Prefix
          * S: Serie
          * M: Month
@@ -70,6 +72,9 @@ return [
             InvoiceType::Proforma->value => 'PPYYCCCC',
         ],
 
+        /**
+         * Define the default prefix used for each invoice type
+         */
         'prefix' => [
             InvoiceType::Invoice->value => 'IN',
             InvoiceType::Quote->value => 'QO',
@@ -116,7 +121,6 @@ return [
         'orientation' => 'portrait',
     ],
 ];
-;
 ```
 
 ## Usage
@@ -127,12 +131,42 @@ An invoice is just a model with InvoiceItem relationships, so you can create an 
 
 ```php
 use Finller\Invoice\Invoice;
-$invoice = new Invoice();
+use Finller\Invoice\InvoiceState;
+use Finller\Invoice\InvoiceType;
+
+// Define general invoice data
+$invoice = new Invoice([
+    'type' => InvoiceType::Invoice,
+    'state' => InvoiceState::Draft,
+    'description' => 'A description for my invoice',
+    'seller_information' => config('invoices.default_seller'),
+    'buyer_information' => [
+        'name' => 'Client name',
+        'address' => [],
+        'tax_number' => "XYZ",
+    ],
+    // ...
+]);
+
+// Set custom serial number values if you want
+$invoice->setSerialNumberPrefix('CLI');
+// For exemple, you could define a different serie for each of your customer
+$invoice->setSerialNumberSerie($customer->id);
+
+$invoice->buyer()->associate($customer);
+$invoice->invoiceable()->associate($order); // optionnally associate the invoice to a model
+
 $invoice->save();
 
 $invoice->items()->saveMany([
-    new InvoiceItem(),
-    new InvoiceItem(),
+    new InvoiceItem([
+        'unit_price' => Money::of(100, 'USD'),
+        'unit_tax' => Money::of(20, 'USD'),
+        'currency' => 'USD',
+        'quantity' => 1,
+        'label' => 'A label for my item',
+        'description' => 'A description for my item',
+    ]),
 ]);
 ```
 
@@ -163,6 +197,77 @@ $invoice = new Invoice();
 $invoice->setSerialNumberPrefix("ORG");
 $invoice->setSerialNumberSerie($buyer_id);
 $invoice->save();
+```
+
+## Display your invoice as a PDF
+
+The Invoice model has a `toPdfInvoice()` that return a `PdfInvoice` class.
+
+### As a response in a controller
+
+You can stream the `pdfInvoice` instance as a response, download it:
+
+```php
+namespace App\Http\Controllers;
+
+use App\Models\Invoice;
+use Illuminate\Http\Request;
+
+class InvoiceController extends Controller
+{
+    public function show(Request $request, string $serial)
+    {
+        /** @var Invoice $invoice */
+        $invoice = Invoice::where('serial_number', $serial)->firstOrFail();
+
+        $this->authorize('view', $invoice);
+
+        return $invoice->toPdfInvoice()->stream();
+    }
+
+    public function download(Request $request, string $serial)
+    {
+        /** @var Invoice $invoice */
+        $invoice = Invoice::where('serial_number', $serial)->firstOrFail();
+
+        $this->authorize('view', $invoice);
+
+        return $invoice->toPdfInvoice()->download();
+    }
+}
+```
+
+### As a mail Attachment
+
+The `Invoice` model provide a `toMailAttachment` method making it easy to use with `Mailable`
+
+```php
+namespace App\Mail;
+
+use App\Models\Invoice;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class PaymentInvoice extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(
+        protected Invoice $invoice,
+    ) {}
+
+
+    public function attachments(): array
+    {
+        return [
+            $this->invoice->toMailAttachment()
+        ];
+    }
+}
 ```
 
 ## Testing
