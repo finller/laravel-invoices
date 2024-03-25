@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-invoices` will be documented in this file.
 
+## v3.0.1 - 2024-03-25
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 1.6.0 to 2.0.0 by @dependabot in https://github.com/finller/laravel-invoices/pull/16
+
+**Full Changelog**: https://github.com/finller/laravel-invoices/compare/v3.0.0...v3.0.1
+
 ## v3.0.0 - 2024-03-25
 
 ** Breaking change **
