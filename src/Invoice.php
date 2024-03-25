@@ -159,19 +159,15 @@ class Invoice extends Model implements Attachable
     }
 
     /**
-     * Custom your strategy to get the lastest created serial number
-     * For example, you can query the last record in the database or use a cache
+     * Customize your strategy to find the previous serial number in order to generate the next one
      */
-    public function getLatestSerialNumber(): ?string
+    public function getPreviousInvoice(): ?static
     {
-        /** @var ?static */
-        $latestInvoice = static::query()
+        return static::query()
             ->when($this->getSerialNumberPrefix(), fn (Builder $query) => $query->where('serial_number_details->prefix', $this->getSerialNumberPrefix()))
             ->when($this->getSerialNumberSerie(), fn (Builder $query) => $query->where('serial_number_details->serie', $this->getSerialNumberSerie()))
             ->latest('serial_number')
             ->first();
-
-        return $latestInvoice?->serial_number;
     }
 
     public function initSerialNumberDetailst(): static
@@ -300,14 +296,8 @@ class Invoice extends Model implements Attachable
             format: $this->getSerialNumberFormatFromConfig(),
             prefix: $this->getSerialNumberPrefix()
         );
-        $latestSerialNumber = $this->getLatestSerialNumber();
 
-        if ($latestSerialNumber) {
-            $parsedSerialNumber = $generator->parse($latestSerialNumber);
-            $latestCount = data_get($parsedSerialNumber, 'count', 0);
-        } else {
-            $latestCount = 0;
-        }
+        $latestCount = $this->getPreviousInvoice()?->getSerialNumberCount() ?? 0;
 
         return $generator->generate(
             serie: $this->getSerialNumberSerie(),
