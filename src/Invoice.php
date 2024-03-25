@@ -167,7 +167,7 @@ class Invoice extends Model implements Attachable
         $invoice = static::query()
             ->when($this->getSerialNumberPrefix(), fn (Builder $query) => $query->where('serial_number_details->prefix', $this->getSerialNumberPrefix()))
             ->when($this->getSerialNumberSerie(), fn (Builder $query) => $query->where('serial_number_details->serie', $this->getSerialNumberSerie()))
-            ->latest('serial_number')
+            ->latest('serial_number_details->count')
             ->first();
 
         return $invoice;

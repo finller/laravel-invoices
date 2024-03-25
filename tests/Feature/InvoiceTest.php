@@ -153,6 +153,22 @@ it('can create following serial numbers even if config changes', function () {
         'year' => (int) $year,
         'count' => 2,
     ]);
+
+    /** @var Invoice */
+    $invoice = Invoice::factory()->make();
+    $invoice->setSerialNumberSerie(42);
+    $invoice->setSerialNumberPrefix('ORG');
+
+    $invoice->save();
+
+    expect($invoice->serial_number)->toBe("ORG000042-{$year}0003");
+    expect($invoice->serial_number_details)->toMatchArray([
+        'prefix' => 'ORG',
+        'serie' => 42,
+        'month' => null,
+        'year' => (int) $year,
+        'count' => 3,
+    ]);
 });
 
 it('denormalize amounts in invoice', function () {
