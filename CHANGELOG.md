@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-invoices` will be documented in this file.
 
+## v3.0.0 - 2024-03-25
+
+** Breaking change **
+
+- `getPreviousInvoice` method replaces `getLatestSerialNumberCount`.
+
 ## v2.3.7 Laravel 11 - 2024-03-16
 
 **Full Changelog**: https://github.com/finller/laravel-invoices/compare/v2.3.6...v2.3.7
