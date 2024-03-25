@@ -163,11 +163,14 @@ class Invoice extends Model implements Attachable
      */
     public function getPreviousInvoice(): ?static
     {
-        return static::query()
+        /** @var ?static $invoice */
+        $invoice = static::query()
             ->when($this->getSerialNumberPrefix(), fn (Builder $query) => $query->where('serial_number_details->prefix', $this->getSerialNumberPrefix()))
             ->when($this->getSerialNumberSerie(), fn (Builder $query) => $query->where('serial_number_details->serie', $this->getSerialNumberSerie()))
             ->latest('serial_number')
             ->first();
+
+        return $invoice;
     }
 
     public function initSerialNumberDetailst(): static
