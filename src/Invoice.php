@@ -187,6 +187,7 @@ class Invoice extends Model implements Attachable
     public function setSerialNumberPrefix(string $value): static
     {
         $this->initSerialNumberDetailst();
+
         $this->serial_number_details['prefix'] = $value;
 
         return $this;
@@ -220,15 +221,6 @@ class Invoice extends Model implements Attachable
     {
         $this->initSerialNumberDetailst();
         $this->serial_number_details['count'] = $value;
-
-        return $this;
-    }
-
-    public function setSerialNumberDate(Carbon $value): static
-    {
-        $this->initSerialNumberDetailst();
-        $this->serial_number_details['year'] = (int) $value->format('Y');
-        $this->serial_number_details['month'] = (int) $value->format('m');
 
         return $this;
     }
