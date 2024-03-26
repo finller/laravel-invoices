@@ -15,8 +15,8 @@ return new class extends Migration
             $table->string('serial_number_format');
             $table->string('serial_number_prefix')->nullable();
             $table->unsignedBigInteger('serial_number_serie')->nullable();
-            $table->unsignedBigInteger('serial_number_year')->nullable();
-            $table->unsignedBigInteger('serial_number_month')->nullable();
+            $table->unsignedSmallInteger('serial_number_year')->nullable();
+            $table->unsignedTinyInteger('serial_number_month')->nullable();
             $table->unsignedBigInteger('serial_number_count');
         });
 
