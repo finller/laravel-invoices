@@ -5,7 +5,6 @@ namespace Finller\Invoice\Database\Factories;
 use Finller\Invoice\Invoice;
 use Finller\Invoice\InvoiceState;
 use Finller\Invoice\InvoiceType;
-use Finller\Invoice\SerialNumberGenerator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class InvoiceFactory extends Factory
@@ -38,15 +37,6 @@ class InvoiceFactory extends Factory
                 'tax_number' => fake()->numberBetween(12345678, 99999999),
             ],
         ];
-    }
-
-    public function withSerialNumber(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'serial_number' => (new SerialNumberGenerator(
-                config('nvoices.serial_number.format.'.$attributes['type'])
-            ))->generate(count: fake()->numberBetween(0, 100)),
-        ]);
     }
 
     public function quote(): static

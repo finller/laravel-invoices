@@ -8,6 +8,12 @@
 Creating invoices is not a basic operation as you must ensure that it's done safely.
 This package provid all the basics to store invoices in your app and display them in a PDF.
 
+## Migrating to v3
+
+The v3 introduce a more robust way to configure serial numbers.
+
+-   `configureSerialNumber` replaces 'setSerialNumberPrefix`, 'setSerialNumberSerie`, ...
+
 ## Installation
 
 You can install the package via composer:
@@ -148,10 +154,10 @@ $invoice = new Invoice([
     // ...
 ]);
 
-// Set custom serial number values if you want
-$invoice->setSerialNumberPrefix('CLI');
-// For exemple, you could define a different serie for each of your customer
-$invoice->setSerialNumberSerie($customer->id);
+$invoice->configureSerialNumber(
+    prefix: "CLI",
+    serie: 42,
+);
 
 $invoice->buyer()->associate($customer);
 $invoice->invoiceable()->associate($order); // optionnally associate the invoice to a model
@@ -174,14 +180,15 @@ $invoice->items()->saveMany([
 
 This package provid an easy way to generate explicite serial number like "INV-0001" in a safe and automatic way.
 
-You can configure the format of your serial number in the config file. The default format is `PPYYCCCC` (see config to understand the meaning of each letters).
+You can configure the format of your serial numbers in the config file. The default format is `PPYYCCCC` (see config to understand the meaning of each letters).
 
 Each time you create a new invoice, and if `invoices.serial_number.auto_generate` is set to `true`, the invoice will be given a unique serial number.
 
 Serial number are generated one after the other, the new generated serial number is based on the `previous` one available.
 To determine which is the `previous` serial number you can extends `Finller\Invoice\Invoice`
 and override the `getPreviousInvoice` method.
-By default the previous invoice is scoped by prefix and serie as you would expect.
+
+By default the previous invoice is scoped by prefix, serie, year and month as you would expect.
 
 ## Managing multiple prefix and multiple series
 
@@ -194,8 +201,12 @@ When creating an invoice, you can define the prefix and the serie on the fly lik
 ```php
 use Finller\Invoice\Invoice;
 $invoice = new Invoice();
-$invoice->setSerialNumberPrefix("ORG");
-$invoice->setSerialNumberSerie($buyer_id);
+
+$invoice->configureSerialNumber(
+    prefix: "ORG",
+    serie: $buyer_id,
+);
+
 $invoice->save();
 ```
 

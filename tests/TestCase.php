@@ -39,5 +39,7 @@ class TestCase extends Orchestra
         $migration->up();
         $migration = include __DIR__.'/../database/migrations/add_denormalized_columns_to_invoices_table.php.stub';
         $migration->up();
+        $migration = include __DIR__.'/../database/migrations/add_serial_number_details_columns_to_invoices_table.php.stub';
+        $migration->up();
     }
 }

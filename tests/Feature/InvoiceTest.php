@@ -1,36 +1,127 @@
 <?php
 
+use Carbon\Carbon;
 use Finller\Invoice\Invoice;
 use Finller\Invoice\InvoiceItem;
 use Finller\Invoice\InvoiceType;
+use Illuminate\Database\Eloquent\Collection;
 
-it('can create and generate unique serial numbers', function () {
-    $prefix = 'INV';
-    config()->set('invoices.serial_number.format', 'PPPYYCCCC');
-    config()->set('invoices.serial_number.prefix', $prefix);
-
-    $year = now()->format('y');
-
+it('can set the right serial number year and month from a date', function (
+    ?string $format,
+    ?Carbon $date,
+    ?int $expectedYear,
+    ?int $expectedMonth,
+) {
     /** @var Invoice */
-    $invoice = Invoice::factory()->create();
+    $invoice = Invoice::factory()
+        ->state([
+            'serial_number_format' => $format,
+        ])
+        ->make();
+
+    $invoice->configureSerialNumber(
+        year: $date?->format('Y'),
+        month: $date?->format('m'),
+    );
+
+    expect($invoice->serial_number_year)->toBe($expectedYear);
+    expect($invoice->serial_number_month)->toBe($expectedMonth);
+})->with([
+    ['PPPSSS-YYMMCCC', Carbon::create(2024, 6), 24, 6],
+    ['PPPSSS-YYMMCCC', Carbon::create(2004, 12), 04, 12],
+    ['PPPSSS-YYYYMMCCC', Carbon::create(2024, 6), 2024, 6],
+    ['PPPSSS-MMCCC', Carbon::create(2024, 6), null, 6],
+    ['PPPSSS-YYYYCCC', Carbon::create(2024, 6), 2024, null],
+    ['PPPSSS-CC', Carbon::create(2024, 6), null, null],
+]);
+
+it('can generate and denormalize serial numbers', function (
+    ?string $format,
+    ?string $prefix,
+    ?int $serie,
+    ?int $year,
+    string $expectedSerialNumber
+) {
     /** @var Invoice */
-    $invoice2 = Invoice::factory()->create();
+    $invoice = Invoice::factory()
+        ->state([
+            'serial_number_format' => $format,
+            'serial_number_prefix' => $prefix,
+            'serial_number_serie' => $serie,
+            'serial_number_year' => $year,
+        ])
+        ->create();
 
-    expect($invoice->serial_number)->toBe("{$prefix}{$year}0001");
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => $prefix,
-        'serie' => null,
-        'month' => null,
-        'year' => intval($year),
-        'count' => 1,
-    ]);
+    expect($invoice->serial_number)->toBe($expectedSerialNumber);
+    expect($invoice->serial_number_format)->toBe($format);
+    expect($invoice->serial_number_prefix)->toBe($prefix);
+    expect($invoice->serial_number_year)->toBe($year);
+    expect($invoice->serial_number_month)->toBe(null);
+    expect($invoice->serial_number_count)->toBe(1);
+})->with([
+    ['PPPSSS-YYCCC', 'INV', 42, 23, 'INV042-23001'],
+    ['PPP-YYCCC', 'INV', null, 23, 'INV-23001'],
+    ['PPPCCC', 'INV', null, null, 'INV001'],
+    ['CCCCC', null, null, null, '00001'],
+]);
 
-    expect($invoice2->serial_number)->toBe("{$prefix}{$year}0002");
+it('can generate and denormalize serial numbers with values from config file', function () {
+    /** @var Invoice */
+    $invoice = Invoice::factory()
+        ->create();
 
-    expect((new Invoice())->generateSerialNumber())->toBe("{$prefix}{$year}0003");
+    expect($invoice->serial_number)->toBe('IN240001');
+    expect($invoice->serial_number_format)->toBe(config('invoices.serial_number.format.invoice'));
+    expect($invoice->serial_number_prefix)->toBe(config('invoices.serial_number.prefix.invoice'));
+    expect($invoice->serial_number_year)->toBe((int) now()->format('y'));
+    expect($invoice->serial_number_month)->toBe(null);
+    expect($invoice->serial_number_count)->toBe(1);
 });
 
-it('can create and generate unique serial numbers based on invoice type', function () {
+it('can find the previous generate invoice and generate the right following serial number', function (
+    ?string $format,
+    ?string $prefix,
+    ?int $serie,
+    ?int $year,
+    string $expectedLastSerialNumber,
+    string $expectedNextSerialNumber
+) {
+
+    /** @var Collection<int, Invoice> */
+    $invoices = Invoice::factory()
+        ->count(12)
+        ->state([
+            'serial_number_format' => $format,
+            'serial_number_prefix' => $prefix,
+            'serial_number_serie' => $serie,
+            'serial_number_year' => $year,
+        ])
+        ->create();
+
+    $latestInvoice = $invoices->last();
+
+    expect($latestInvoice->serial_number)->toBe($expectedLastSerialNumber);
+
+    /** @var Invoice */
+    $nextInvoice = Invoice::factory()
+        ->state([
+            'serial_number_format' => $format,
+            'serial_number_prefix' => $prefix,
+            'serial_number_serie' => $serie,
+            'serial_number_year' => $year,
+        ])
+        ->make();
+
+    expect($nextInvoice->getPreviousInvoice()->id)->toBe($latestInvoice->id);
+    expect($nextInvoice->generateSerialNumber()->serial_number)->toBe($expectedNextSerialNumber);
+})->with([
+    ['PPPSSS-YYCCC', 'INV', 42, 23, 'INV042-23012', 'INV042-23013'],
+    ['PPP-YYCCC', 'INV', null, 23, 'INV-23012', 'INV-23013'],
+    ['PPPCCC', 'INV', null, null, 'INV012', 'INV013'],
+    ['CCCCC', null, null, null, '00012', '00013'],
+]);
+
+it('can create and generate unique serial numbers based on invoice type from config file', function () {
     config()->set('invoices.serial_number.format', [
         InvoiceType::Invoice->value => 'PPPYYC',
         InvoiceType::Quote->value => 'PPPYYCC',
@@ -60,172 +151,67 @@ it('can create and generate unique serial numbers based on invoice type', functi
     expect($quote->serial_number)->toBe("QUO{$year}01");
     expect($credit->serial_number)->toBe("CRE{$year}001");
     expect($proforma->serial_number)->toBe("PRO{$year}0001");
-
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => 'INV',
-        'serie' => null,
-        'month' => null,
-        'year' => intval($year),
-        'count' => 1,
-    ]);
 });
 
-it('can create serial number with serie defined on the fly', function () {
-    $prefix = 'IN';
-    config()->set('invoices.serial_number.format', 'PPSSSS-YYCCCC');
-    config()->set('invoices.serial_number.prefix', $prefix);
-    $year = now()->format('y');
+it('can create following serial numbers even if format changes', function (
+    string $firstFormat,
+    string $expectedFirstLastSerialNumber,
+    string $secondFormat,
+    string $expectedSecondLastSerialNumber,
+) {
+    config()->set('invoices.serial_number.prefix', 'INV');
+    config()->set('invoices.serial_number.format', $firstFormat);
+
+    /** @var Collection<int, Invoice> $invoices */
+    $invoices = Invoice::factory()
+        ->state([
+            'serial_number_year' => 24,
+            'serial_number_serie' => 42,
+        ])
+        ->count(11)
+        ->create();
+
+    expect($invoices->last()->serial_number)->toBe($expectedFirstLastSerialNumber);
+
+    config()->set('invoices.serial_number.format', $secondFormat);
 
     /** @var Invoice */
-    $invoice = Invoice::factory()->make();
+    $invoice = Invoice::factory()
+        ->state([
+            'serial_number_year' => 24,
+            'serial_number_serie' => 42,
+        ])
+        ->create();
 
-    $invoice->setSerialNumberSerie(42);
-
-    expect($invoice->getSerialNumberSerie())->toBe(42);
-
-    $invoice->save();
-
-    expect($invoice->serial_number)->toBe("{$prefix}0042-{$year}0001");
-});
-
-it('can create serial number with prefix defined on the fly', function () {
-    config()->set('invoices.serial_number.format', 'PPPSSSS-YYCCCC');
-
-    $year = now()->format('y');
-
-    /** @var Invoice */
-    $invoice = Invoice::factory()->make();
-
-    $invoice->setSerialNumberSerie(42);
-    $invoice->setSerialNumberPrefix('ORG');
-
-    expect($invoice->getSerialNumberSerie())->toBe(42);
-    expect($invoice->getSerialNumberPrefix())->toBe('ORG');
-
-    $invoice->save();
-
-    expect($invoice->serial_number)->toBe("ORG0042-{$year}0001");
-
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => 'ORG',
-        'serie' => 42,
-        'month' => null,
-        'year' => intval($year),
-        'count' => 1,
-    ]);
-});
-
-it('can create following serial numbers even if config changes', function () {
-    // First we start with the initial config: Serie is 4 letters long
-    config()->set('invoices.serial_number.format', 'PPPSSSS-YYCCCC');
-
-    $year = now()->format('y');
-
-    /** @var Invoice */
-    $invoice = Invoice::factory()->make();
-    $invoice->setSerialNumberSerie(42);
-    $invoice->setSerialNumberPrefix('ORG');
-    $invoice->save();
-
-    expect($invoice->serial_number)->toBe("ORG0042-{$year}0001");
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => 'ORG',
-        'serie' => 42,
-        'month' => null,
-        'year' => (int) $year,
-        'count' => 1,
-    ]);
-
-    // Then we change the config config: Serie is now 6 letters long
-    config()->set('invoices.serial_number.format', 'PPPSSSSSS-YYCCCC');
-
-    /** @var Invoice */
-    $invoice = Invoice::factory()->make();
-    $invoice->setSerialNumberSerie(42);
-    $invoice->setSerialNumberPrefix('ORG');
-    $invoice->save();
-
-    expect($invoice->serial_number)->toBe("ORG000042-{$year}0002");
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => 'ORG',
-        'serie' => 42,
-        'month' => null,
-        'year' => (int) $year,
-        'count' => 2,
-    ]);
-
-    /** @var Invoice */
-    $invoice = Invoice::factory()->make();
-    $invoice->setSerialNumberSerie(42);
-    $invoice->setSerialNumberPrefix('ORG');
-
-    $invoice->save();
-
-    expect($invoice->serial_number)->toBe("ORG000042-{$year}0003");
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => 'ORG',
-        'serie' => 42,
-        'month' => null,
-        'year' => (int) $year,
-        'count' => 3,
-    ]);
-});
+    expect($invoice->serial_number)->toBe($expectedSecondLastSerialNumber);
+})->with([
+    ['PPPSSSS-YYCCCC', 'INV0042-240011', 'PPPSSSSSS-YYCCCCCC', 'INV000042-24000012'],
+]);
 
 it('can create following serial numbers scoped by year', function () {
-    // First we start with the initial config: Serie is 4 letters long
-    config()->set('invoices.serial_number.format', 'PPPSSSS-YYCCCC');
 
-    $year = 23;
+    /** @var Collection<int, Invoice> $invoices */
+    $invoices = Invoice::factory()
+        ->state([
+            'serial_number_format' => 'PPP-YYCCC',
+            'serial_number_year' => 23,
+            'serial_number_prefix' => 'INV',
+        ])
+        ->count(11)
+        ->create();
 
-    /** @var Invoice */
-    $invoice = Invoice::factory()->make();
-    $invoice->setSerialNumberSerie(42);
-    $invoice->setSerialNumberPrefix('ORG');
-    $invoice->setSerialNumberYear($year);
-    $invoice->save();
-
-    expect($invoice->serial_number)->toBe("ORG0042-{$year}0001");
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => 'ORG',
-        'serie' => 42,
-        'month' => null,
-        'year' => (int) $year,
-        'count' => 1,
-    ]);
+    expect($invoices->last()->serial_number)->toBe('INV-23011');
 
     /** @var Invoice */
-    $invoice = Invoice::factory()->make();
-    $invoice->setSerialNumberSerie(42);
-    $invoice->setSerialNumberPrefix('ORG');
-    $invoice->setSerialNumberYear($year);
-    $invoice->save();
+    $invoice = Invoice::factory()
+        ->state([
+            'serial_number_format' => 'PPP-YYCCC',
+            'serial_number_year' => 24,
+            'serial_number_prefix' => 'INV',
+        ])
+        ->create();
 
-    expect($invoice->serial_number)->toBe("ORG0042-{$year}0002");
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => 'ORG',
-        'serie' => 42,
-        'month' => null,
-        'year' => (int) $year,
-        'count' => 2,
-    ]);
-
-    $year = 24;
-
-    /** @var Invoice */
-    $invoice = Invoice::factory()->make();
-    $invoice->setSerialNumberSerie(42);
-    $invoice->setSerialNumberPrefix('ORG');
-    $invoice->setSerialNumberYear($year);
-    $invoice->save();
-
-    expect($invoice->serial_number)->toBe("ORG0042-{$year}0001");
-    expect($invoice->serial_number_details)->toMatchArray([
-        'prefix' => 'ORG',
-        'serie' => 42,
-        'month' => null,
-        'year' => (int) $year,
-        'count' => 1,
-    ]);
+    expect($invoice->serial_number)->toBe('INV-24001');
 });
 
 it('denormalize amounts in invoice', function () {

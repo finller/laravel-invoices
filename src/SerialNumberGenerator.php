@@ -6,14 +6,14 @@ class SerialNumberGenerator implements GenerateSerialNumber
 {
     public function __construct(
         public string $format,
-        public ?string $prefix = null,
     ) {
         //
     }
 
     public function generate(
         int $count,
-        ?int $serie = null,
+        string|int|null $prefix = null,
+        string|int|null $serie = null,
         string|int|null $year = null,
         string|int|null $month = null,
     ): string {
@@ -58,25 +58,28 @@ class SerialNumberGenerator implements GenerateSerialNumber
                     );
                 },
                 // Must be kept last to avoid interfering with other callbacks
-                '/P+/' => function ($matches) {
+                '/P+/' => function ($matches) use ($prefix) {
                     if (! $matches[0]) {
                         return '';
                     }
                     $slotLength = strlen($matches[0]);
-                    $prefixLength = strlen($this->prefix);
+                    $prefixLength = strlen($prefix);
 
                     throw_if(
                         $prefixLength < $slotLength,
-                        "The serial Number can't be formatted, the prefix provided is $prefixLength letters long ({$this->prefix}), while the format require at minimum a $slotLength letters long prefix"
+                        "The serial Number can't be formatted, the prefix provided is $prefixLength letters long ({$prefix}), while the format require at minimum a $slotLength letters long prefix"
                     );
 
-                    return substr($this->prefix, 0, strlen($matches[0]));
+                    return substr($prefix, 0, strlen($matches[0]));
                 },
             ],
             $this->format
         );
     }
 
+    /**
+     * @return array{ 'prefix': ?string, 'serie': ?int, 'month': ?int, 'year': ?int, 'count': ?int,  }
+     */
     public function parse(string $serialNumber): array
     {
         preg_match("/{$this->formatToRegex()}/", $serialNumber, $matches);

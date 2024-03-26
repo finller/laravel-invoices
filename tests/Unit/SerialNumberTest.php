@@ -5,10 +5,15 @@ use Finller\Invoice\SerialNumberGenerator;
 it('can generate serial number from format', function ($format, $prefix, $serie, $count, $expected) {
     $generator = new SerialNumberGenerator(
         format: $format,
-        prefix: $prefix
     );
 
-    $serialNumber = $generator->generate(count: $count, serie: $serie, year: '2022', month: '01');
+    $serialNumber = $generator->generate(
+        prefix: $prefix,
+        count: $count,
+        serie: $serie,
+        year: '2022',
+        month: '01'
+    );
 
     expect($serialNumber)->toBe($expected);
 })->with([
@@ -34,10 +39,12 @@ it('can parse serial number from format', function ($format, $serialNumber, $pre
 
     $serialNumberParsed = $generator->parse($serialNumber);
 
-    expect(data_get($serialNumberParsed, 'prefix'))->toBe($prefix);
-    expect(data_get($serialNumberParsed, 'serie'))->toBe($serie);
-    expect(data_get($serialNumberParsed, 'year'))->toBe($year);
-    expect(data_get($serialNumberParsed, 'count'))->toBe($count);
+    expect($serialNumberParsed)->toMatchArray([
+        'prefix' => $prefix,
+        'serie' => $serie,
+        'year' => $year,
+        'count' => $count,
+    ]);
 })->with([
     ['PPSSSS-YYCCCC', 'IN0001-220002', 'IN', 1, 22, 2],
     ['SSSS-YYCCCC', '0001-220002', null, 1, 22, 2],

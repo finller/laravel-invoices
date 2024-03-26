@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Mail\Attachment;
+use phpDocumentor\Reflection\Types\This;
 
 /**
  * @property int $id
@@ -26,8 +27,6 @@ use Illuminate\Mail\Attachment;
  * @property ?Invoice $quote
  * @property ?Invoice $credit
  * @property InvoiceType $type
- * @property string $serial_number
- * @property ?ArrayObject $serial_number_details
  * @property string $description
  * @property ?ArrayObject $seller_information
  * @property ?ArrayObject $buyer_information
@@ -55,6 +54,13 @@ use Illuminate\Mail\Attachment;
  * @property ?Money $tax_amount
  * @property ?Money $total_amount
  * @property ?string $currency
+ * @property string $serial_number
+ * @property string $serial_number_format
+ * @property ?string $serial_number_prefix
+ * @property ?int $serial_number_serie
+ * @property ?int $serial_number_year
+ * @property ?int $serial_number_month
+ * @property int $serial_number_count
  */
 class Invoice extends Model implements Attachable
 {
@@ -76,7 +82,6 @@ class Invoice extends Model implements Attachable
         'buyer_information' => AsArrayObject::class,
         'metadata' => AsArrayObject::class,
         'discounts' => Discounts::class,
-        'serial_number_details' => AsArrayObject::class,
         'subtotal_amount' => MoneyCast::class.':currency',
         'discount_amount' => MoneyCast::class.':currency',
         'tax_amount' => MoneyCast::class.':currency',
@@ -86,15 +91,29 @@ class Invoice extends Model implements Attachable
     public static function booted()
     {
         static::creating(function (Invoice $invoice) {
-            if (config('invoices.serial_number.auto_generate')) {
-                $invoice->serial_number = $invoice->generateSerialNumber();
-                $invoice->serial_number_details = new ArrayObject(
-                    $invoice->parseSerialNumber()
-                );
+            if (
+                config('invoices.serial_number.auto_generate') &&
+                blank($invoice->serial_number)
+            ) {
+                $invoice->generateSerialNumber();
+            } else {
+                $invoice->denormalizeSerialNumber();
             }
         });
 
         static::updating(function (Invoice $invoice) {
+            if ($invoice->isDirty([
+                'serial_number',
+                'serial_number_format',
+                'serial_number_prefix',
+                'serial_number_serie',
+                'serial_number_year',
+                'serial_number_month',
+                'serial_number_count',
+            ])) {
+                throw new Exception("Serial number details can't be changed after creation", 500);
+            }
+
             $invoice->denormalize();
         });
 
@@ -159,91 +178,26 @@ class Invoice extends Model implements Attachable
     }
 
     /**
-     * Customize your strategy to find the previous serial number in order to generate the next one
+     * When creating a new serial number
+     * The count value is based on the previous serial number
+     *
+     * This function can be customized to determine what is the previous invoice
      */
     public function getPreviousInvoice(): ?static
     {
         /** @var ?static $invoice */
         $invoice = static::query()
-            ->when($this->getSerialNumberPrefix(), fn (Builder $query) => $query->where('serial_number_details->prefix', $this->getSerialNumberPrefix()))
-            ->when($this->getSerialNumberSerie(), fn (Builder $query) => $query->where('serial_number_details->serie', $this->getSerialNumberSerie()))
-            ->when($this->getSerialNumberYear(), fn (Builder $query) => $query->where('serial_number_details->year', $this->getSerialNumberYear()))
-            ->when($this->getSerialNumberMonth(), fn (Builder $query) => $query->where('serial_number_details->month', $this->getSerialNumberMonth()))
-            ->latest('serial_number_details->count')
+            ->where('serial_number_prefix', $this->serial_number_prefix)
+            ->where('serial_number_serie', $this->serial_number_serie)
+            ->where('serial_number_year', $this->serial_number_year)
+            ->where('serial_number_month', $this->serial_number_month)
+            ->latest('serial_number_count')
             ->first();
 
         return $invoice;
     }
 
-    public function initSerialNumberDetailst(): static
-    {
-        if (! $this->serial_number_details) {
-            $this->serial_number_details = new ArrayObject();
-        }
-
-        return $this;
-    }
-
-    public function setSerialNumberPrefix(string $value): static
-    {
-        $this->initSerialNumberDetailst();
-
-        $this->serial_number_details['prefix'] = $value;
-
-        return $this;
-    }
-
-    public function setSerialNumberSerie(int $value): static
-    {
-        $this->initSerialNumberDetailst();
-        $this->serial_number_details['serie'] = $value;
-
-        return $this;
-    }
-
-    public function setSerialNumberYear(int $value): static
-    {
-        $this->initSerialNumberDetailst();
-        $this->serial_number_details['year'] = $value;
-
-        return $this;
-    }
-
-    public function setSerialNumberMonth(int $value): static
-    {
-        $this->initSerialNumberDetailst();
-        $this->serial_number_details['month'] = $value;
-
-        return $this;
-    }
-
-    public function setSerialNumberCount(int $value): static
-    {
-        $this->initSerialNumberDetailst();
-        $this->serial_number_details['count'] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Retrieve the matching prefix according to the invoice type
-     */
-    public function getSerialNumberPrefixFromConfig(string $default = ''): string
-    {
-        /** @var string|array $prefixes */
-        $prefixes = config('invoices.serial_number.prefix', '');
-
-        if (is_string($prefixes)) {
-            return $prefixes;
-        }
-
-        return data_get($prefixes, $this->type->value, $default);
-    }
-
-    /**
-     * Retrieve the matching prefix according to the invoice type
-     */
-    public function getSerialNumberFormatFromConfig(?string $default = null): string
+    public function getSerialNumberFormatConfiguration(): string
     {
         /** @var string|array $formats */
         $formats = config('invoices.serial_number.format', '');
@@ -252,63 +206,132 @@ class Invoice extends Model implements Attachable
             return $formats;
         }
 
-        $format = data_get($formats, $this->type->value, $default);
+        /** @var ?string $format */
+        $format = data_get($formats, $this->type->value);
 
         if (! $format) {
-            throw new Exception("No serial number format defined in conifg for {$this->type->value} and no default value passed.");
+            throw new Exception("No serial number format defined in conifg for type: {$this->type->value}.");
         }
 
         return $format;
     }
 
-    public function getSerialNumberPrefix(): ?string
+    public function getSerialNumberPrefixConfiguration(): ?string
     {
+        /** @var string|array $prefixes */
+        $prefixes = config('invoices.serial_number.prefix', '');
 
-        return data_get($this->serial_number_details, 'prefix', $this->getSerialNumberPrefixFromConfig());
+        if (is_string($prefixes)) {
+            return $prefixes;
+        }
+
+        return data_get($prefixes, $this->type->value);
     }
 
-    public function getSerialNumberSerie(): ?int
-    {
-        return data_get($this->serial_number_details, 'serie');
+    /**
+     * Usefull to set serial number values while respecting format
+     */
+    public function configureSerialNumber(
+        ?string $format = null,
+        ?string $prefix = null,
+        ?int $serie = null,
+        string|int|null $year = null,
+        string|int|null $month = null,
+    ): static {
+        $this->serial_number_format = $format ?? $this->serial_number_format ?? $this->getSerialNumberFormatConfiguration();
+
+        $prefixLength = substr_count($this->serial_number_format, 'P');
+
+        if ($prefixLength) {
+            if ($prefix) {
+                $this->serial_number_prefix = substr($prefix, -$prefixLength);
+            }
+        } else {
+            $this->serial_number_prefix = null;
+        }
+
+        $serieLength = substr_count($this->serial_number_format, 'S');
+
+        if ($serieLength) {
+            if ($serie) {
+                $this->serial_number_serie = (int) substr((string) $serie, -$serieLength);
+            }
+        } else {
+            $this->serial_number_serie = null;
+        }
+
+        $yearLength = substr_count($this->serial_number_format, 'Y');
+
+        if ($yearLength) {
+            if ($year) {
+                $this->serial_number_year = (int) substr((string) $year, -$yearLength);
+            }
+        } else {
+            $this->serial_number_year = null;
+        }
+
+        $monthLength = substr_count($this->serial_number_format, 'M');
+
+        if ($monthLength) {
+            if ($month) {
+                $this->serial_number_month = (int) substr((string) $month, -$monthLength);
+            }
+        } else {
+            $this->serial_number_month = null;
+        }
+
+        return $this;
     }
 
-    public function getSerialNumberYear(): ?int
+    public function generateSerialNumber(): static
     {
-        return data_get($this->serial_number_details, 'year');
-    }
-
-    public function getSerialNumberMonth(): ?int
-    {
-        return data_get($this->serial_number_details, 'month');
-    }
-
-    public function getSerialNumberCount(): ?int
-    {
-        return data_get($this->serial_number_details, 'count');
-    }
-
-    public function generateSerialNumber(): string
-    {
-        $generator = new SerialNumberGenerator(
-            format: $this->getSerialNumberFormatFromConfig(),
-            prefix: $this->getSerialNumberPrefix()
+        $this->configureSerialNumber(
+            format: $this->serial_number_format,
+            prefix: $this->serial_number_prefix ?? $this->getSerialNumberPrefixConfiguration(),
+            serie: $this->serial_number_serie,
+            year: $this->serial_number_year ?? now()->format('Y'),
+            month: $this->serial_number_month ?? now()->format('m'),
         );
 
-        $latestCount = $this->getPreviousInvoice()?->getSerialNumberCount() ?? 0;
+        $generator = new SerialNumberGenerator($this->serial_number_format);
 
-        return $generator->generate(
-            serie: $this->getSerialNumberSerie(),
-            year: $this->getSerialNumberYear() ?? now()->format('Y'),
-            month: $this->getSerialNumberMonth() ?? now()->format('m'),
-            count: $latestCount + 1
+        $previousCount = $this->getPreviousInvoice()?->serial_number_count ?? 0;
+
+        $this->serial_number = $generator->generate(
+            prefix: $this->serial_number_prefix,
+            serie: $this->serial_number_serie,
+            year: $this->serial_number_year,
+            month: $this->serial_number_month,
+            count: $previousCount + 1
         );
+
+        $this->denormalizeSerialNumber();
+
+        return $this;
     }
 
     public function parseSerialNumber(): array
     {
-        $generator = new SerialNumberGenerator($this->getSerialNumberFormatFromConfig());
+        $format = $this->serial_number_format ?? $this->getSerialNumberFormatConfiguration();
+
+        $generator = new SerialNumberGenerator($format);
 
         return $generator->parse($this->serial_number);
+    }
+
+    public function denormalizeSerialNumber(): static
+    {
+        $this->serial_number_format ??= $this->getSerialNumberFormatConfiguration();
+
+        $values = $this->parseSerialNumber();
+
+        $this->serial_number_prefix = $values['prefix'];
+        $this->serial_number_serie = $values['serie'];
+        $this->serial_number_year = $values['year'];
+        $this->serial_number_month = $values['month'];
+        $this->serial_number_count = $values['count'];
+
+        return $this;
     }
 
     public function getTaxLabel(): ?string
