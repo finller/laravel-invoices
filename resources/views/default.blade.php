@@ -195,7 +195,7 @@
                         <table>
                             <tbody>
                                 <tr class="">
-                                    <td class="pb-1 pr-2 nowrap">
+                                    <td class="nowrap pb-1 pr-2">
                                         <strong>{{ __('invoices::invoice.serial_number') }} </strong>
                                     </td>
                                     <td class="pb-1" width="100%">
@@ -203,14 +203,14 @@
                                     </td>
                                 </tr>
                                 <tr class="">
-                                    <td class="pb-1 pr-2 nowrap">{{ __('invoices::invoice.created_at') }}</td>
+                                    <td class="nowrap pb-1 pr-2">{{ __('invoices::invoice.created_at') }}</td>
                                     <td class="pb-1" width="100%">
                                         {{ $invoice->created_at?->format(config('invoices.date_format')) }}
                                     </td>
                                 </tr>
                                 @if ($invoice->due_at)
                                     <tr>
-                                        <td class="pb-1 pr-2 nowrap">{{ __('invoices::invoice.due_at') }}</td>
+                                        <td class="nowrap pb-1 pr-2">{{ __('invoices::invoice.due_at') }}</td>
                                         <td class="pb-1" width="100%">
                                             {{ $invoice->due_at->format(config('invoices.date_format')) }}
                                         </td>
@@ -218,7 +218,7 @@
                                 @endif
                                 @if ($invoice->paid_at)
                                     <tr>
-                                        <td class="pb-1 pr-2 nowrap">{{ __('invoices::invoice.paid_at') }}</td>
+                                        <td class="nowrap pb-1 pr-2">{{ __('invoices::invoice.paid_at') }}</td>
                                         <td class="pb-1" width="100%">
                                             {{ $invoice->paid_at->format(config('invoices.date_format')) }}
                                         </td>
@@ -271,7 +271,7 @@
                         @if ($company_number = data_get($invoice->seller, 'company_number'))
                             <p class="pb-1">{{ $company_number }}</p>
                         @endif
-                        @foreach (data_get($invoice->seller, 'data', []) as $key => $item)
+                        @foreach (data_get($invoice->seller, 'data') ?? [] as $key => $item)
                             @if (is_string($key))
                                 <p class="pb-1">{{ $key }}: {{ $item }}</p>
                             @else
@@ -310,7 +310,7 @@
                         @if ($company_number = data_get($invoice->buyer, 'company_number'))
                             <p class="pb-1">{{ $company_number }}</p>
                         @endif
-                        @foreach (data_get($invoice->buyer, 'data', []) as $key => $item)
+                        @foreach (data_get($invoice->buyer, 'data') ?? [] as $key => $item)
                             @if (is_string($key))
                                 <p class="pb-1">{{ $key }}: {{ $item }}</p>
                             @else
@@ -384,9 +384,9 @@
                 <tr>
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
-                    <td class="p-2 has-border-bottom-light" colspan="{{ $colspan }}">
+                    <td class="has-border-bottom-light p-2" colspan="{{ $colspan }}">
                         {{ __('invoices::invoice.subtotal_amount') }}</td>
-                    <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
+                    <td class="nowrap has-border-bottom-light has-text-right py-2 pl-2">
                         {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
                     </td>
                 </tr>
@@ -395,13 +395,13 @@
                         <tr>
                             {{-- empty space --}}
                             <td class="py-2 pr-2"></td>
-                            <td class="p-2 has-border-bottom-light" colspan="{{ $colspan }}">
+                            <td class="has-border-bottom-light p-2" colspan="{{ $colspan }}">
                                 {{ __($discount->name) ?? __('invoices::invoice.discount_name') }}
                                 @if ($discount->percent_off)
                                     ({{ $discount->formatPercentage($discount->percent_off) }})
                                 @endif
                             </td>
-                            <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
+                            <td class="nowrap has-border-bottom-light has-text-right py-2 pl-2">
                                 {{ $invoice->formatMoney($discount->computeDiscountAmountOn($invoice->subTotalAmount())?->multipliedBy(-1)) }}
                             </td>
                         </tr>
@@ -411,10 +411,10 @@
                     <tr>
                         {{-- empty space --}}
                         <td class="py-2 pr-2"></td>
-                        <td class="p-2 has-border-bottom-light" colspan="{{ $colspan }}">
+                        <td class="has-border-bottom-light p-2" colspan="{{ $colspan }}">
                             {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}
                         </td>
-                        <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
+                        <td class="nowrap has-border-bottom-light has-text-right py-2 pl-2">
                             {{ $invoice->formatMoney($invoice->totalTaxAmount()) }}
                         </td>
                     </tr>
@@ -422,10 +422,10 @@
                 <tr>
                     {{-- empty space --}}
                     <td class="py-2 pr-2"></td>
-                    <td class="p-2 has-border-bottom-light" colspan="{{ $colspan }}">
+                    <td class="has-border-bottom-light p-2" colspan="{{ $colspan }}">
                         <strong>{{ __('invoices::invoice.total_amount') }}</strong>
                     </td>
-                    <td class="nowrap py-2 pl-2 has-border-bottom-light has-text-right">
+                    <td class="nowrap has-border-bottom-light has-text-right py-2 pl-2">
                         <strong>
                             {{ $invoice->formatMoney($invoice->totalAmount()) }}
                         </strong>
