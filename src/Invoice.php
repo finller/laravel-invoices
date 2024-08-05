@@ -188,6 +188,7 @@ class Invoice extends Model implements Attachable
     {
         /** @var ?static $invoice */
         $invoice = static::query()
+            ->withoutGlobalScopes()
             ->where('serial_number_prefix', $this->serial_number_prefix)
             ->where('serial_number_serie', $this->serial_number_serie)
             ->where('serial_number_year', $this->serial_number_year)
