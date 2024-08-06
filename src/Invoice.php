@@ -103,15 +103,18 @@ class Invoice extends Model implements Attachable
         });
 
         static::updating(function (Invoice $invoice) {
-            if ($invoice->isDirty([
-                'serial_number',
-                'serial_number_format',
-                'serial_number_prefix',
-                'serial_number_serie',
-                'serial_number_year',
-                'serial_number_month',
-                'serial_number_count',
-            ])) {
+            if (
+                $invoice->state !== InvoiceState::Draft &&
+                $invoice->isDirty([
+                    'serial_number',
+                    'serial_number_format',
+                    'serial_number_prefix',
+                    'serial_number_serie',
+                    'serial_number_year',
+                    'serial_number_month',
+                    'serial_number_count',
+                ])
+            ) {
                 throw new Exception("Serial number details can't be changed after creation", 500);
             }
 
