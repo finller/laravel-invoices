@@ -173,6 +173,10 @@
         .has-border-bottom-light {
             border-bottom: 1px solid #f4f4f4;
         }
+
+        .preline {
+            white-space: pre-line;
+        }
     </style>
 </head>
 
@@ -436,7 +440,7 @@
 
         @if ($invoice->description)
             <p class="mb-1"><strong>{{ __('invoices::invoice.description') }}</strong></p>
-            <p>{!! $invoice->description !!}</p>
+            <p class="preline">{!! $invoice->description !!}</p>
         @endif
 
     </div>
