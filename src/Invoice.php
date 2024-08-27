@@ -4,9 +4,10 @@ namespace Finller\Invoice;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
+use Elegantly\Money\MoneyCast;
 use Exception;
 use Finller\Invoice\Casts\Discounts;
-use Finller\Money\MoneyCast;
+use Finller\Invoice\Database\Factories\InvoiceFactory;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
@@ -65,6 +66,9 @@ use phpDocumentor\Reflection\Types\This;
  */
 class Invoice extends Model implements Attachable
 {
+    /**
+     * @use HasFactory<InvoiceFactory>
+     */
     use HasFactory;
 
     protected $attributes = [

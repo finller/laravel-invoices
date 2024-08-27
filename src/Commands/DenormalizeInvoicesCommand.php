@@ -17,10 +17,14 @@ class DenormalizeInvoicesCommand extends Command
     {
         $ids = $this->argument('ids');
 
+        /**
+         * @var string $model
+         */
         $model = config('invoices.model_invoice');
 
-        /** @var Builder $query */
+        /** @var Builder<Invoice> $query */
         $query = $model::query();
+
         $query
             ->with(['items'])
             ->when($ids, fn (Builder $q) => $q->whereIn('id', $ids));
@@ -31,7 +35,7 @@ class DenormalizeInvoicesCommand extends Command
         $bar = $this->output->createProgressBar($total);
 
         $query
-            ->chunk(200, function (Collection $invoices) use ($bar) {
+            ->chunk(2_000, function (Collection $invoices) use ($bar) {
                 $invoices->each(function (Invoice $invoice) use ($bar) {
                     $invoice->denormalize()->saveQuietly();
                     $bar->advance();

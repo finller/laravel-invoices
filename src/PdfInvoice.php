@@ -14,6 +14,8 @@ class PdfInvoice
     use FormatForPdf;
 
     /**
+     * @param  null|array<string, mixed>  $buyer
+     * @param  null|array<string, mixed>  $seller
      * @param  null|PdfInvoiceItem[]  $items
      * @param  null|InvoiceDiscount[]  $discounts
      */

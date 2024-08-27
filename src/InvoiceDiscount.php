@@ -7,7 +7,11 @@ use Brick\Money\Money;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
-/** @phpstan-consistent-constructor */
+/**
+ * @implements Arrayable<string, mixed>
+ *
+ * @phpstan-consistent-constructor
+ */
 class InvoiceDiscount implements Arrayable, JsonSerializable
 {
     use FormatForPdf;
@@ -34,7 +38,10 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
         return Money::of(0, $amout->getCurrency());
     }
 
-    public static function fromArray(?array $array)
+    /**
+     * @param  ?array<int|string, mixed>  $array
+     */
+    public static function fromArray(?array $array): static
     {
         $currency = data_get($array, 'currency', config('invoices.default_currency'));
         $amount_off = data_get($array, 'amount_off');
@@ -48,7 +55,16 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
         );
     }
 
-    public function toArray()
+    /**
+     * @return array{
+     *      name: ?string,
+     *      code: ?string,
+     *      amount_off: ?int,
+     *      currency: ?string,
+     *      percent_off: ?float,
+     * }
+     */
+    public function toArray(): array
     {
         return [
             'name' => $this->name,
@@ -59,17 +75,44 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
         ];
     }
 
-    public function jsonSerialize(): mixed
+    /**
+     * @return array{
+     *      name: ?string,
+     *      code: ?string,
+     *      amount_off: ?int,
+     *      currency: ?string,
+     *      percent_off: ?float,
+     * }
+     */
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
 
-    public function toLivewire()
+    /**
+     * @return array{
+     *      name: ?string,
+     *      code: ?string,
+     *      amount_off: ?int,
+     *      currency: ?string,
+     *      percent_off: ?float,
+     * }
+     */
+    public function toLivewire(): array
     {
         return $this->toArray();
     }
 
-    public static function fromLivewire($value)
+    /**
+     * @param ?array{
+     *      name: ?string,
+     *      code: ?string,
+     *      amount_off: ?int,
+     *      currency: ?string,
+     *      percent_off: ?float,
+     * } $value
+     */
+    public static function fromLivewire(?array $value): static
     {
         return static::fromArray($value);
     }

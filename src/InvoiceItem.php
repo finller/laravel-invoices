@@ -4,7 +4,8 @@ namespace Finller\Invoice;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
-use Finller\Money\MoneyCast;
+use Elegantly\Money\MoneyCast;
+use Finller\Invoice\Database\Factories\InvoiceItemFactory;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class InvoiceItem extends Model
 {
+    /**
+     * @use HasFactory<InvoiceItemFactory>
+     */
     use HasFactory;
 
     protected $guarded = [];

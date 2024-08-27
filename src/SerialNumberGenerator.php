@@ -33,7 +33,7 @@ class SerialNumberGenerator implements GenerateSerialNumber
                     );
 
                     return str_pad(
-                        $serie,
+                        (string) $serie,
                         $slotLength,
                         '0',
                         STR_PAD_LEFT
@@ -51,7 +51,7 @@ class SerialNumberGenerator implements GenerateSerialNumber
                     );
 
                     return str_pad(
-                        $count,
+                        (string) $count,
                         $slotLength,
                         '0',
                         STR_PAD_LEFT

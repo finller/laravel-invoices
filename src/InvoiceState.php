@@ -9,7 +9,7 @@ enum InvoiceState: string
     case Paid = 'paid';
     case Refunded = 'refunded';
 
-    public function trans()
+    public function trans(): string
     {
         return match ($this) {
             self::Draft => __('invoices::invoice.states.draft'),

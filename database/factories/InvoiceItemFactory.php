@@ -6,6 +6,9 @@ use Brick\Money\Money;
 use Finller\Invoice\InvoiceItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<InvoiceItem>
+ */
 class InvoiceItemFactory extends Factory
 {
     protected $model = InvoiceItem::class;

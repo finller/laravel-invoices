@@ -7,6 +7,9 @@ use Finller\Invoice\InvoiceState;
 use Finller\Invoice\InvoiceType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<Invoice>
+ */
 class InvoiceFactory extends Factory
 {
     protected $model = Invoice::class;

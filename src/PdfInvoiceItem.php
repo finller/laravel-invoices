@@ -2,6 +2,7 @@
 
 namespace Finller\Invoice;
 
+use Brick\Math\RoundingMode;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Exception;
@@ -45,9 +46,7 @@ class PdfInvoiceItem
         }
 
         if ($this->tax_percentage) {
-            [$tax] = $this->subTotalAmount()->allocate($this->tax_percentage, 100 - $this->tax_percentage);
-
-            return $tax;
+            return $this->subTotalAmount()->multipliedBy($this->tax_percentage / 100, roundingMode: RoundingMode::HALF_EVEN);
         }
 
         return Money::ofMinor(0, $this->currency);
