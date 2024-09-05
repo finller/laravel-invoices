@@ -98,7 +98,7 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
      *      percent_off: ?float,
      * }
      */
-    public function toLivewire(): array
+    public function toLivewire()
     {
         return $this->toArray();
     }
@@ -112,7 +112,7 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
      *      percent_off: ?float,
      * } $value
      */
-    public static function fromLivewire(?array $value): static
+    public static function fromLivewire($value)
     {
         return static::fromArray($value);
     }
