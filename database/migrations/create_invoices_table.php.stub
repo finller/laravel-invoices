@@ -26,7 +26,7 @@ return new class extends Migration
             **/
             $table->binary('logo')->nullable(); 
 
-            $table->string('state');
+            $table->string('state')->index();
             $table->dateTime('state_set_at')->nullable();
 
             $table->dateTime('due_at')->nullable();

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->string('type')->default('invoice');
+            $table->string('type')->default('invoice')->index();
             $table->foreignId('parent_id')->nullable();
         });
     }
