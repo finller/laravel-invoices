@@ -14,6 +14,10 @@ The v3 introduce a more robust way to configure serial numbers.
 
 -   `configureSerialNumber` replaces 'setSerialNumberPrefix`, 'setSerialNumberSerie`, ...
 
+## Demo
+
+[Interactive demo here](https://elegantengineering.tech/laravel-invoices)
+
 ## Installation
 
 You can install the package via composer:
