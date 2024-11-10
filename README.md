@@ -1,22 +1,15 @@
-# Manage invoices in your Laravel App
+# Everything You Need to Manage Invoices in Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/finller/laravel-invoices.svg?style=flat-square)](https://packagist.org/packages/finller/laravel-invoices)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/finller/laravel-invoices/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/finller/laravel-invoices/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/finller/laravel-invoices/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/finller/laravel-invoices/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/finller/laravel-invoices.svg?style=flat-square)](https://packagist.org/packages/finller/laravel-invoices)
 
-Creating invoices is not a basic operation as you must ensure that it's done safely.
-This package provid all the basics to store invoices in your app and display them in a PDF.
-
-## Migrating to v3
-
-The v3 introduce a more robust way to configure serial numbers.
-
--   `configureSerialNumber` replaces 'setSerialNumberPrefix`, 'setSerialNumberSerie`, ...
+This package provides a robust, easy-to-use system for managing invoices within a Laravel application, with options for database storage, serial numbering, and PDF generation.
 
 ## Demo
 
-[Interactive demo here](https://elegantengineering.tech/laravel-invoices)
+Try out [the interactive demo](https://elegantengineering.tech/laravel-invoices) to explore package capabilities.
 
 ## Installation
 
@@ -143,38 +136,47 @@ return [
 ];
 ```
 
-## Usage
-
 ## Store an invoice in your database
 
-An invoice is just a model with InvoiceItem relationships, so you can create an invoice just like that:
+You can store an Invoice in your database using the Eloquent Model: `Finller\Invoice\Invoice`.
+
+> [!NOTE]
+> Don't forget to publish and run the migrations
+
+Here is a full example:
 
 ```php
 use Finller\Invoice\Invoice;
 use Finller\Invoice\InvoiceState;
 use Finller\Invoice\InvoiceType;
 
-// Define general invoice data
+// Let's say your app edit invoices for your users
+$customer = User::find(1);
+// Let's imagine that your users have purchased something in your app
+$order = Order::find(2);
+
 $invoice = new Invoice([
     'type' => InvoiceType::Invoice,
     'state' => InvoiceState::Draft,
     'description' => 'A description for my invoice',
     'seller_information' => config('invoices.default_seller'),
     'buyer_information' => [
-        'name' => 'Client name',
-        'address' => [],
-        'tax_number' => "XYZ",
+        'name' => 'John Doe',
+        'address' => [
+            'street' => '8405 Old James St.Rochester',
+            'city' => 'New York',
+            'postal_code' => '14609',
+            'state' => 'New York (NY)',
+            'country' => 'United States',
+        ],
+        'email' => 'john.doe@example.com',
+        'tax_number' => "FR123456789",
     ],
     // ...
 ]);
 
-$invoice->configureSerialNumber(
-    prefix: "CLI",
-    serie: 42,
-);
-
-$invoice->buyer()->associate($customer);
-$invoice->invoiceable()->associate($order); // optionnally associate the invoice to a model
+$invoice->buyer()->associate($customer); // optionnally associate the invoice to any model
+$invoice->invoiceable()->associate($order); // optionnally associate the invoice to any model
 
 $invoice->save();
 
@@ -190,27 +192,29 @@ $invoice->items()->saveMany([
 ]);
 ```
 
-## Generate unique serial numbers automatically
+## Automatic Generation of Unique Serial Numbers
 
-This package provid an easy way to generate explicite serial number like "INV-0001" in a safe and automatic way.
+This package provides a simple and reliable way to generate serial numbers automatically, such as "INV240001."
 
-You can configure the format of your serial numbers in the config file. The default format is `PPYYCCCC` (see config to understand the meaning of each letters).
+You can configure the format of your serial numbers in the configuration file. The default format is `PPYYCCCC`, where each letter has a specific meaning (see the config file for details).
 
-Each time you create a new invoice, and if `invoices.serial_number.auto_generate` is set to `true`, the invoice will be given a unique serial number.
+When `invoices.serial_number.auto_generate` is set to `true`, a unique serial number is assigned to each new invoice automatically.
 
-Serial number are generated one after the other, the new generated serial number is based on the `previous` one available.
-To determine which is the `previous` serial number you can extends `Finller\Invoice\Invoice`
-and override the `getPreviousInvoice` method.
+Serial numbers are generated sequentially, with each new serial number based on the latest available one. To define what qualifies as the `previous` serial number, you can extend the `Finller\Invoice\Invoice` class and override the `getPreviousInvoice` method.
 
-By default the previous invoice is scoped by prefix, serie, year and month as you would expect.
+By default, the previous invoice is determined based on criteria such as prefix, series, year, and month for accurate, scoped numbering.
 
-## Managing multiple prefix and multiple series
+## Managing Multiple Prefixes and Series
 
-In more complex app, you might need to have different prefix and/or series for your invoices.
+In more complex applications, you may need to use different prefixes and/or series for your invoices.
 
-For example, you might want to define a serie for each of your user and having serial numbers looking like: INV0001-00X where 1 is the id of the user.
+For instance, you might want to define a unique series for each user, creating serial numbers that look like: `INV0001-2400X`, where `0001` represents the user’s ID, `24` the year and `X` the index of the invoice.
 
-When creating an invoice, you can define the prefix and the serie on the fly like that;
+> [!NOTE]
+> When using IDs for series, it's recommended to plan for future growth to avoid overflow.
+> Even if you have a limited number of users now, ensure that the ID can accommodate the maximum number of digits allowed by the serial number format.
+
+When creating an invoice, you can dynamically specify the prefix and series as follows:
 
 ```php
 use Finller\Invoice\Invoice;
@@ -220,8 +224,31 @@ $invoice->configureSerialNumber(
     prefix: "ORG",
     serie: $buyer_id,
 );
+```
+
+## Customizing the Serial Number Format
+
+In most cases, the format of your serial numbers should remain consistent, so it's recommended to set it in the configuration file.
+
+The format you choose will determine the types of information you need to provide to `configureSerialNumber`.
+
+Below is an example of the most complex serial number format you can create with this package:
+
+```php
+
+$invoice = new Invoice();
+
+$invoice->configureSerialNumber(
+    format: "PP-SSSSSS-YYMMCCCC",
+    prefix: "IN",
+    serie: 100,
+    year: now()->format('Y'),
+    month: now()->format('m')
+);
 
 $invoice->save();
+
+$invoice->serial_number; // IN-000100-2410-0001
 ```
 
 ## Display your invoice as a PDF
