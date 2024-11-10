@@ -38,6 +38,11 @@ php artisan vendor:publish --tag="invoices-config"
 This is the contents of the published config file:
 
 ```php
+use Finller\Invoice\Invoice;
+use Finller\Invoice\InvoiceDiscount;
+use Finller\Invoice\InvoiceItem;
+use Finller\Invoice\InvoiceType;
+
 return [
 
     'model_invoice' => Invoice::class,
@@ -109,7 +114,9 @@ return [
 
     'default_logo' => null,
 
-    'default_template' => 'default',
+    'default_color' => '#050038',
+
+    'default_template' => 'default.layout',
 
     /**
      * ISO 4217 currency code
@@ -121,7 +128,10 @@ return [
      *
      * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
      */
-    'pdf_options' => [],
+    'pdf_options' => [
+        'isPhpEnabled' => true,
+    ],
+
     'paper_options' => [
         'paper' => 'a4',
         'orientation' => 'portrait',

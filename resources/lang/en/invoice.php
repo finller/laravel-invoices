@@ -21,6 +21,9 @@ return [
     'quantity' => 'Qty',
     'discount_name' => 'Discount',
 
+    'from' => 'Bill From',
+    'to' => 'Bill To',
+
     'states' => [
         'draft' => 'Draft',
         'pending' => 'Pending',

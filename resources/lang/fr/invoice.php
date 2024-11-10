@@ -21,6 +21,9 @@ return [
     'quantity' => 'Qté',
     'discount_name' => 'Remise',
 
+    'from' => 'De',
+    'to' => 'Pour',
+
     'states' => [
         'draft' => 'Brouillon',
         'pending' => 'En attente',

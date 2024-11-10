@@ -23,28 +23,30 @@ class PdfInvoice
         public ?string $name = null,
         public ?string $state = null,
         public ?string $serial_number = null,
-        public ?array $buyer = null,
-        public ?Carbon $due_at = null,
-        public ?Carbon $created_at = null,
-        public ?Carbon $paid_at = null,
         public ?array $seller = null,
+        public ?array $buyer = null,
         public ?string $description = null,
-        public ?string $logo = null,
-        public ?string $template = null,
-        public ?string $filename = null,
-        public ?array $items = null,
+        public ?Carbon $created_at = null,
+        public ?Carbon $due_at = null,
+        public ?Carbon $paid_at = null,
         public ?string $tax_label = null,
-        public ?array $discounts = null
+        public ?array $items = null,
+        public ?array $discounts = null,
+        public ?string $logo = null,
+        public ?string $color = null,
+        public ?string $filename = null,
+        public ?string $template = null,
     ) {
         $this->name = $name ?? __('invoices::invoice.invoice');
         $this->seller = $seller ?? config('invoices.default_seller', []);
         $this->logo = $logo ?? config('invoices.default_logo', null);
+        $this->color = $color ?? config('invoices.default_color', null);
         $this->template = sprintf('invoices::%s', $template ?? config('invoices.default_template', null));
     }
 
     public function generateFilename(): string
     {
-        return Str::slug("{$this->name}_{$this->serial_number}", separator: '_').'.pdf';
+        return Str::slug("{$this->name}_{$this->serial_number}", separator: '-').'.pdf';
     }
 
     public function getFilename(): string
@@ -120,7 +122,9 @@ class PdfInvoice
             config('invoices.paper_options.orientation', 'portrait')
         );
 
-        foreach (config('invoices.pdf_options') as $attribute => $value) {
+        $options = config('invoices.pdf_options') ?? [];
+
+        foreach ($options as $attribute => $value) {
             $pdf->setOption($attribute, $value);
         }
 
