@@ -3,7 +3,7 @@
         margin: 0;
         line-height: 1.5;
         tab-size: 4;
-        font-family: "Helvetica", "Courier", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        font-family: "DejaVu Sans", "Courier", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         font-feature-settings: normal;
         font-variation-settings: normal;
     }

@@ -184,13 +184,15 @@
         <table class="mb-5 w-full">
             <thead>
                 <tr>
-                    <th class="border-b py-2 pr-2 text-left">{{ __('invoices::invoice.description') }}</th>
-                    <th class="border-b p-2 text-left">{{ __('invoices::invoice.quantity') }}</th>
-                    <th class="border-b p-2 text-left">{{ __('invoices::invoice.unit_price') }}</th>
+                    <th class="whitespace-nowrap border-b py-2 pr-2 text-left">
+                        {{ __('invoices::invoice.description') }}</th>
+                    <th class="whitespace-nowrap border-b p-2 text-left">{{ __('invoices::invoice.quantity') }}</th>
+                    <th class="whitespace-nowrap border-b p-2 text-left">{{ __('invoices::invoice.unit_price') }}</th>
                     @if ($displayTaxColumn)
-                        <th class="border-b p-2 text-left">{{ __('invoices::invoice.tax') }}</th>
+                        <th class="whitespace-nowrap border-b p-2 text-left">{{ __('invoices::invoice.tax') }}</th>
                     @endif
-                    <th class="border-b py-2 pl-2 text-right">{{ __('invoices::invoice.amount') }}</th>
+                    <th class="whitespace-nowrap border-b py-2 pl-2 text-right">{{ __('invoices::invoice.amount') }}
+                    </th>
                 </tr>
             </thead>
             <tbody>
