@@ -3,7 +3,7 @@
         margin: 0;
         line-height: 1.5;
         tab-size: 4;
-        font-family: "DejaVu Sans", "Courier", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        font-family: 'DejaVu Sans', 'Helvetica', 'Courier', 'Times', 'Symbol', 'ZapfDingbats';
         font-feature-settings: normal;
         font-variation-settings: normal;
     }
@@ -158,20 +158,20 @@
     }
 
     .pb-1 {
-        padding-bottom: 0.25rem;
+        padding-bottom: 4px;
     }
 
     .pr-1 {
-        padding-right: 0.25rem;
+        padding-right: 4px;
     }
 
     .p-1 {
-        padding: 0.25rem;
+        padding: 4px;
     }
 
     .py-1,
     .pt-1 {
-        padding-top: 0.25rem;
+        padding-top: 4px;
     }
 
     .pr-2,
@@ -205,11 +205,11 @@
     }
 
     .mb-1 {
-        margin-bottom: 0.25rem;
+        margin-bottom: 4px;
     }
 
     .mt-1 {
-        margin-top: 0.25rem;
+        margin-top: 4px;
     }
 
     .mb-6 {

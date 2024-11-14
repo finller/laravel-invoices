@@ -94,7 +94,9 @@ return [
      * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
      */
     'pdf_options' => [
+        'isRemoteEnabled' => true,
         'isPhpEnabled' => true,
+        'fontHeightRatio' => 0.9,
     ],
 
     'paper_options' => [

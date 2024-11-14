@@ -86,7 +86,7 @@
                             $tax_number = data_get($invoice->seller, 'tax_number');
                             $company_number = data_get($invoice->seller, 'company_number');
                         @endphp
-                        <p><strong>{{ __('invoices::invoice.from') }}</strong></p>
+                        <p class="pb-1"><strong>{{ __('invoices::invoice.from') }}</strong></p>
                         @if ($name)
                             <p class="pb-1 text-sm">{{ $name }}</p>
                         @endif
@@ -138,7 +138,7 @@
                             $tax_number = data_get($invoice->buyer, 'tax_number');
                             $company_number = data_get($invoice->buyer, 'company_number');
                         @endphp
-                        <p><strong>{{ __('invoices::invoice.to') }}</strong></p>
+                        <p class="pb-1"><strong>{{ __('invoices::invoice.to') }}</strong></p>
                         @if ($name)
                             <p class="pb-1 text-sm">{{ $name }}</p>
                         @endif
