@@ -96,6 +96,15 @@
         height: auto;
     }
 
+    .font-normal {
+        font-weight: normal;
+    }
+
+    .text-xs {
+        font-size: 12px;
+        line-height: 16px;
+    }
+
     .text-sm {
         font-size: 14px;
         line-height: 20px;
