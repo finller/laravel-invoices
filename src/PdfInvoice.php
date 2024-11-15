@@ -36,12 +36,18 @@ class PdfInvoice
         public ?string $color = null,
         public ?string $filename = null,
         public ?string $template = null,
+        /**
+         * Can be a standard or custom font name
+         */
+        public ?string $font = null,
     ) {
         $this->name = $name ?? __('invoices::invoice.invoice');
         $this->seller = $seller ?? config('invoices.default_seller', []);
-        $this->logo = $logo ?? config('invoices.default_logo', null);
-        $this->color = $color ?? config('invoices.default_color', null);
-        $this->template = sprintf('invoices::%s', $template ?? config('invoices.default_template', null));
+        $this->logo = $logo ?? config('invoices.pdf.logo') ?? config('invoices.default_logo');
+        $this->color = $color ?? config('invoices.pdf.color') ?? config('invoices.default_color');
+        $this->template = sprintf('invoices::%s', $template ?? config('invoices.pdf.template') ?? config('invoices.default_template'));
+
+        $this->font = $font ?? config('invoices.pdf.font');
     }
 
     public function generateFilename(): string
@@ -115,20 +121,26 @@ class PdfInvoice
         return $total->minus($this->totalDiscountAmount());
     }
 
-    public function pdf(): \Barryvdh\DomPDF\PDF
+    public function pdf(array $options = []): \Barryvdh\DomPDF\PDF
     {
         $pdf = Pdf::setPaper(
-            config('invoices.paper_options.paper', 'a4'),
-            config('invoices.paper_options.orientation', 'portrait')
+            config('invoices.pdf.paper.paper') ?? config('invoices.paper_options.paper', 'a4'),
+            config('invoices.pdf.paper.orientation') ?? config('invoices.paper_options.orientation', 'portrait')
         );
 
-        $options = config('invoices.pdf_options') ?? [];
+        $allOptions = array_merge(
+            config('invoices.pdf.options') ?? config('invoices.pdf_options') ?? [],
+            $options,
+        );
 
-        foreach ($options as $attribute => $value) {
+        foreach ($allOptions as $attribute => $value) {
             $pdf->setOption($attribute, $value);
         }
 
-        return $pdf->loadView($this->template, ['invoice' => $this]);
+        return $pdf->loadView($this->template, [
+            'invoice' => $this,
+            'customFonts' => config('invoices.pdf.custom_fonts') ?? [],
+        ]);
     }
 
     public function stream(): Response
