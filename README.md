@@ -128,7 +128,7 @@ return [
             /**
              * Supported values are: 'DejaVu Sans', 'Helvetica', 'Courier', 'Times', 'Symbol', 'ZapfDingbats'
              */
-            'defaultFont' => 'DejaVu Sans',
+            'defaultFont' => 'Helvetica',
         ],
 
         'paper' => [
