@@ -109,30 +109,48 @@ return [
         'company_number' => null,
     ],
 
-    'default_logo' => null,
-
-    'default_color' => '#050038',
-
-    'default_template' => 'default.layout',
-
     /**
      * ISO 4217 currency code
      */
     'default_currency' => 'USD',
 
-    /**
-     * Default DOM PDF options
-     *
-     * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
-     */
-    'pdf_options' => [
-        'isPhpEnabled' => true,
+    'pdf' => [
+        /**
+         * Default DOM PDF options
+         *
+         * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
+         */
+        'options' => [
+            'isPhpEnabled' => true,
+            'fontHeightRatio' => 0.9,
+            /**
+             * Supported values are: 'DejaVu Sans', 'Helvetica', 'Courier', 'Times', 'Symbol', 'ZapfDingbats'
+             */
+            'defaultFont' => 'DejaVu Sans',
+        ],
+
+        'paper' => [
+            'paper' => 'a4',
+            'orientation' => 'portrait',
+        ],
+
+        /**
+         * The logo displayed in the PDF
+         */
+        'logo' => null,
+
+        /**
+         * The color displayed at the top of the PDF
+         */
+        'color' => '#050038',
+
+        /**
+         * The template used to render the PDF
+         */
+        'template' => 'default.layout',
+
     ],
 
-    'paper_options' => [
-        'paper' => 'a4',
-        'orientation' => 'portrait',
-    ],
 ];
 ```
 

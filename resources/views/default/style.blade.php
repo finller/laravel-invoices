@@ -3,7 +3,7 @@
         margin: 0;
         line-height: 1.5;
         tab-size: 4;
-        font-family: 'DejaVu Sans', 'Helvetica', 'Courier', 'Times', 'Symbol', 'ZapfDingbats';
+        font-family: '{{ $invoice->font }}', 'DejaVu Sans', 'Helvetica', 'Courier', 'Times', 'Symbol', 'ZapfDingbats';
         font-feature-settings: normal;
         font-variation-settings: normal;
     }

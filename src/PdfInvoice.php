@@ -36,18 +36,14 @@ class PdfInvoice
         public ?string $color = null,
         public ?string $filename = null,
         public ?string $template = null,
-        /**
-         * Can be a standard or custom font name
-         */
         public ?string $font = null,
     ) {
         $this->name = $name ?? __('invoices::invoice.invoice');
         $this->seller = $seller ?? config('invoices.default_seller', []);
         $this->logo = $logo ?? config('invoices.pdf.logo') ?? config('invoices.default_logo');
         $this->color = $color ?? config('invoices.pdf.color') ?? config('invoices.default_color');
+        $this->font = $font ?? config('invoices.pdf.options.defaultFont');
         $this->template = sprintf('invoices::%s', $template ?? config('invoices.pdf.template') ?? config('invoices.default_template'));
-
-        $this->font = $font ?? config('invoices.pdf.font');
     }
 
     public function generateFilename(): string
@@ -139,7 +135,6 @@ class PdfInvoice
 
         return $pdf->loadView($this->template, [
             'invoice' => $this,
-            'customFonts' => config('invoices.pdf.custom_fonts') ?? [],
         ]);
     }
 

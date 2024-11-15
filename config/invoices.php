@@ -86,7 +86,6 @@ return [
          * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
          */
         'options' => [
-            'isRemoteEnabled' => true,
             'isPhpEnabled' => true,
             'fontHeightRatio' => 0.9,
             /**
@@ -99,19 +98,6 @@ return [
             'paper' => 'a4',
             'orientation' => 'portrait',
         ],
-
-        /**
-         * Custom font loadable
-         */
-        'custom_fonts' => [
-            'Noto Sans' => 'https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap"',
-            'Plus Jakarta Sans' => 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans&display=swap',
-        ],
-
-        /**
-         * The font used for the PDF
-         */
-        'font' => 'Noto Sans',
 
         /**
          * The logo displayed in the PDF

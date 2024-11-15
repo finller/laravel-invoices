@@ -21,11 +21,11 @@
 
                         <table class="w-full">
                             <tbody>
-                                <tr class="text-sm">
-                                    <td class="whitespace-nowrap pr-2">
+                                <tr class="">
+                                    <td class="whitespace-nowrap pr-2 text-sm">
                                         <strong>{{ __('invoices::invoice.serial_number') }} </strong>
                                     </td>
-                                    <td class="" width="100%">
+                                    <td class="whitespace-nowrap text-sm" width="100%">
                                         <strong>{{ $invoice->serial_number }}</strong>
                                     </td>
                                 </tr>

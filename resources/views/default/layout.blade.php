@@ -5,14 +5,10 @@
     <title>{{ $invoice->name }}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    @if ($invoice->font && isset($customFonts[$invoice->font]))
-        <link href="{{ $customFonts[$invoice->font] }}" rel="stylesheet">
-    @endif
-
     @include('invoices::default.style')
 </head>
 
-<body style="font-family: {{ $invoice->font }};">
+<body>
 
     @include('invoices::default.invoice')
 
