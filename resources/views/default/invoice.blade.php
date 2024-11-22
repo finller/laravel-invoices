@@ -169,7 +169,7 @@
                         @if ($company_number)
                             <p class="pb-1 text-xs">{{ $company_number }}</p>
                         @endif
-                        @foreach (data_get($invoice->seller, 'data') ?? [] as $key => $item)
+                        @foreach (data_get($invoice->buyer, 'data') ?? [] as $key => $item)
                             @if (is_string($key))
                                 <p class="pb-1 text-xs">{{ $key }}: {{ $item }}</p>
                             @else
