@@ -48,7 +48,7 @@ class PdfInvoice
 
     public function generateFilename(): string
     {
-        return Str::slug("{$this->name}_{$this->serial_number}", separator: '-').'.pdf';
+        return Str::slug($this->serial_number ?? $this->name ?? 'invoice', separator: '-').'.pdf';
     }
 
     public function getFilename(): string
