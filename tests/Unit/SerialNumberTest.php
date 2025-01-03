@@ -2,34 +2,31 @@
 
 use Finller\Invoice\SerialNumberGenerator;
 
-it('can generate serial number from format', function ($format, $prefix, $serie, $count, $expected) {
+it('can generate serial number from format', function ($format, $prefix, $serie, $year, $month, $count, $expected) {
     $generator = new SerialNumberGenerator(
         format: $format,
     );
 
     $serialNumber = $generator->generate(
-        prefix: $prefix,
         count: $count,
+        prefix: $prefix,
         serie: $serie,
-        year: '2022',
-        month: '01'
+        year: $year,
+        month: $month
     );
 
     expect($serialNumber)->toBe($expected);
 })->with([
-    ['PP-YYCCCC', 'IN', null, 2, 'IN-220002'],
-    ['SSSS-YYCCCC', null, 1, 2, '0001-220002'],
-    ['SSSS-CCCC', null, 1, 2, '0001-0002'],
-    ['SSCC', null, 1, 2, '0102'],
-    ['CCCC', null, 1, 2, '0002'],
-    ['SSSSPP-YYCCCC', 'IN', 1, 2, '0001IN-220002'],
-    ['YYSSSSPPCCCC', 'IN', 1, 2, '220001IN0002'],
-    ['YYCCCCSSSSPP', 'IN', 1, 2, '2200020001IN'],
-    ['PPSSSS-YYYYCCCC', 'IN', 1, 2, 'IN0001-20220002'],
-    ['PPSSSS-YYYCCCC', 'IN', 1, 2, 'IN0001-0220002'],
-    ['PPCCCC', 'IN', null, 102, 'IN0102'],
-    ['PPSSSS-YYCCCC', 'YC', 1, 2, 'YC0001-220002'],
-    ['PPSSSS-YYCCCC', 'PS', 1, 2, 'PS0001-220002'],
+    ['PPPSSSSSSS-YYMMCCCC', 'INV', 1, 2025, 1, 1, 'INV0000001-25010001'],
+    ['PPPSSSSSSS-YYMMCCCC', 'INV', 1, 25, 1, 1, 'INV0000001-25010001'],
+    ['PPPSSSSSSS-YYMMCCCC', 'INV', 1000001, 25, 12, 1001, 'INV1000001-25121001'],
+    ['PPP-YYMMCCCC', 'INV', null, 25, 12, 1001, 'INV-25121001'],
+    ['PPP-MMCCCC', 'INV', null, null, 12, 1001, 'INV-121001'],
+    ['PPP-CCCC', 'INV', null, null, null, 1001, 'INV-1001'],
+    ['CCCC', null, null, null, null, 1001, '1001'],
+    ['PPPSSSSSSS-CCCC', 'INV', 1000001, null, null, 1001, 'INV1000001-1001'],
+    ['PPPSSSSSSS-YYCCCC', 'INV', 1000001, 25, null, 1001, 'INV1000001-251001'],
+    ['PPP-YYCCCC', 'INV', 1000001, 25, null, 1001, 'INV-251001'],
 ]);
 
 it('can parse serial number from format', function ($format, $serialNumber, $prefix, $serie, $year, $count) {
