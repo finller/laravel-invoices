@@ -9,7 +9,7 @@ enum InvoiceState: string
     case Paid = 'paid';
     case Refunded = 'refunded';
 
-    public function trans(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Draft => __('invoices::invoice.states.draft'),
@@ -17,5 +17,10 @@ enum InvoiceState: string
             self::Paid => __('invoices::invoice.states.paid'),
             self::Refunded => __('invoices::invoice.states.refunded'),
         };
+    }
+
+    public function trans(): string
+    {
+        return $this->getLabel();
     }
 }

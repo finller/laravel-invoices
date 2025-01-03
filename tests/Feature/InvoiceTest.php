@@ -24,6 +24,7 @@ it('can set the right serial number year and month from a date', function (
         month: $date?->format('m'),
     );
 
+    expect($invoice->serial_number_format)->toBe($format);
     expect($invoice->serial_number_year)->toBe($expectedYear);
     expect($invoice->serial_number_month)->toBe($expectedMonth);
 })->with([
@@ -66,14 +67,22 @@ it('can generate and denormalize serial numbers', function (
 ]);
 
 it('can generate and denormalize serial numbers with values from config file', function () {
+    $this->travelTo(
+        Carbon::create(2024, 8, 3, 0, 0, 0)
+    );
+
+    config()->set('invoices.serial_number.format', [
+        InvoiceType::Invoice->value => 'PPYYCCCC',
+    ]);
+
     /** @var Invoice */
-    $invoice = Invoice::factory()
-        ->create();
+    $invoice = Invoice::factory()->create();
 
     expect($invoice->serial_number)->toBe('IN240001');
     expect($invoice->serial_number_format)->toBe(config('invoices.serial_number.format.invoice'));
     expect($invoice->serial_number_prefix)->toBe(config('invoices.serial_number.prefix.invoice'));
-    expect($invoice->serial_number_year)->toBe((int) now()->format('y'));
+    expect($invoice->serial_number_year)->toBe(24);
+    expect($invoice->serial_number_serie)->toBe(null);
     expect($invoice->serial_number_month)->toBe(null);
     expect($invoice->serial_number_count)->toBe(1);
 });

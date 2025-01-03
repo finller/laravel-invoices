@@ -78,7 +78,7 @@ class SerialNumberGenerator implements GenerateSerialNumber
     }
 
     /**
-     * @return array{ 'prefix': ?string, 'serie': ?int, 'month': ?int, 'year': ?int, 'count': ?int,  }
+     * @return array{ 'prefix': ?string, 'serie': ?int, 'month': ?int, 'year': ?int, 'count': ?int}
      */
     public function parse(string $serialNumber): array
     {

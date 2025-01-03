@@ -9,7 +9,7 @@ enum InvoiceType: string
     case Credit = 'credit';
     case Proforma = 'proforma';
 
-    public function trans(): string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Invoice => __('invoices::invoice.types.invoice'),
@@ -17,5 +17,10 @@ enum InvoiceType: string
             self::Credit => __('invoices::invoice.types.credit'),
             self::Proforma => __('invoices::invoice.types.proforma'),
         };
+    }
+
+    public function trans(): string
+    {
+        return $this->getLabel();
     }
 }

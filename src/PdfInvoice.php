@@ -61,7 +61,7 @@ class PdfInvoice
         /** @var ?PdfInvoiceItem $firstItem */
         $firstItem = Arr::first($this->items);
 
-        return $firstItem?->currency ?? config('invoices.default_currency');
+        return $firstItem->currency ?? config('invoices.default_currency');
     }
 
     public function getLogo(): string
@@ -117,6 +117,9 @@ class PdfInvoice
         return $total->minus($this->totalDiscountAmount());
     }
 
+    /**
+     * @param  array<string, mixed>  $options
+     */
     public function pdf(array $options = []): \Barryvdh\DomPDF\PDF
     {
         $pdf = Pdf::setPaper(

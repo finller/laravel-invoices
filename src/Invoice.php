@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Mail\Attachment;
-use phpDocumentor\Reflection\Types\This;
 
 /**
  * @property int $id
@@ -30,8 +29,8 @@ use phpDocumentor\Reflection\Types\This;
  * @property ?Invoice $credit
  * @property InvoiceType $type
  * @property string $description
- * @property ?ArrayObject $seller_information
- * @property ?ArrayObject $buyer_information
+ * @property ?ArrayObject<string, mixed> $seller_information
+ * @property ?ArrayObject<string, mixed> $buyer_information
  * @property InvoiceState $state
  * @property ?Carbon $state_set_at
  * @property ?Carbon $due_at
@@ -50,7 +49,7 @@ use phpDocumentor\Reflection\Types\This;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property null|InvoiceDiscount[] $discounts
- * @property ?ArrayObject $metadata
+ * @property ?ArrayObject<array-key, mixed> $metadata
  * @property ?Money $subtotal_amount
  * @property ?Money $discount_amount
  * @property ?Money $tax_amount
@@ -107,21 +106,6 @@ class Invoice extends Model implements Attachable
         });
 
         static::updating(function (Invoice $invoice) {
-            if (
-                $invoice->state !== InvoiceState::Draft &&
-                $invoice->isDirty([
-                    'serial_number',
-                    'serial_number_format',
-                    'serial_number_prefix',
-                    'serial_number_serie',
-                    'serial_number_year',
-                    'serial_number_month',
-                    'serial_number_count',
-                ])
-            ) {
-                throw new Exception("Serial number details can't be changed after creation", 500);
-            }
-
             $invoice->denormalize();
         });
 
@@ -132,13 +116,21 @@ class Invoice extends Model implements Attachable
         });
     }
 
+    /**
+     * @return HasMany<InvoiceItem, $this>
+     */
     public function items(): HasMany
     {
-        return $this->hasMany(config('invoices.model_invoice_item'));
+        /** @var class-string<InvoiceItem> */
+        $model = config()->string('invoices.model_invoice_item');
+
+        return $this->hasMany($model);
     }
 
     /**
      * Any model that is the "parent" of the invoice like a Mission, a Transaction, ...
+     *
+     * @return MorphTo<Model, $this>
      **/
     public function invoiceable(): MorphTo
     {
@@ -149,6 +141,8 @@ class Invoice extends Model implements Attachable
      * Typically, the buyer is one of your users, teams or any other model.
      * When editing your invoice, you should not rely on the information of this relation as they can change in time and impact all buyer's invoices.
      * Instead you should store the buyer information in his property on the invoice creation/validation.
+     *
+     * @return MorphTo<Model, $this>
      */
     public function buyer(): MorphTo
     {
@@ -159,6 +153,8 @@ class Invoice extends Model implements Attachable
      * In case, your application is a marketplace, you would also attach the invoice to the seller
      * When editing your invoice, you should not rely on the information of this relation as they can change in time and impact all seller's invoices.
      * Instead you should store the seller information in his property on the invoice creation/validation.
+     *
+     * @return MorphTo<Model, $this>
      */
     public function seller(): MorphTo
     {
@@ -169,27 +165,35 @@ class Invoice extends Model implements Attachable
      * Invoice can be attached with another one
      * A Quote or a Credit can have another Invoice as parent.
      * Ex: $invoice = $quote->parent and $quote = $invoice->quote
+     *
+     * @return BelongsTo<Invoice, $this>
      */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }
 
+    /**
+     * @return HasOne<Invoice, $this>
+     */
     public function quote(): HasOne
     {
-        return $this->hasOne(Invoice::class, 'parent_id')->where('type', InvoiceType::Quote->value);
-    }
-
-    public function credit(): HasOne
-    {
-        return $this->hasOne(Invoice::class, 'parent_id')->where('type', InvoiceType::Credit->value);
+        return $this->hasOne(Invoice::class, 'parent_id')->where('type', InvoiceType::Quote);
     }
 
     /**
-     * When creating a new serial number
-     * The count value is based on the previous serial number
+     * @return HasOne<Invoice, $this>
+     */
+    public function credit(): HasOne
+    {
+        return $this->hasOne(Invoice::class, 'parent_id')->where('type', InvoiceType::Credit);
+    }
+
+    /**
+     * Generates a new serial number for an invoice.
      *
-     * This function can be customized to determine what is the previous invoice
+     * The count value for the new serial number is based on the previous serial number.
+     * This function can be customized to determine what constitutes the previous invoice.
      */
     public function getPreviousInvoice(): ?static
     {
@@ -206,97 +210,92 @@ class Invoice extends Model implements Attachable
         return $invoice;
     }
 
-    public function getSerialNumberFormatConfiguration(): string
-    {
-        /** @var string|array $formats */
-        $formats = config('invoices.serial_number.format', '');
-
-        if (is_string($formats)) {
-            return $formats;
-        }
-
-        /** @var ?string $format */
-        $format = data_get($formats, $this->type->value);
-
-        if (! $format) {
-            throw new Exception("No serial number format defined in conifg for type: {$this->type->value}.");
-        }
-
-        return $format;
-    }
-
-    public function getSerialNumberPrefixConfiguration(): ?string
-    {
-        /** @var string|array $prefixes */
-        $prefixes = config('invoices.serial_number.prefix', '');
-
-        if (is_string($prefixes)) {
-            return $prefixes;
-        }
-
-        return data_get($prefixes, $this->type->value);
-    }
-
-    /**
-     * Usefull to set serial number values while respecting format
-     */
-    public function configureSerialNumber(
-        ?string $format = null,
-        ?string $prefix = null,
-        ?int $serie = null,
-        string|int|null $year = null,
-        string|int|null $month = null,
+    public function setSerialNumberPrefix(
+        ?string $value = null,
+        bool $throw = true,
     ): static {
-        $this->serial_number_format = $format ?? $this->serial_number_format ?? $this->getSerialNumberFormatConfiguration();
 
-        $prefixLength = substr_count($this->serial_number_format, 'P');
-
-        if ($prefixLength) {
-            if ($prefix) {
-                $this->serial_number_prefix = substr($prefix, -$prefixLength);
-            }
-        } else {
+        if ($value === null) {
             $this->serial_number_prefix = null;
-        }
-
-        $serieLength = substr_count($this->serial_number_format, 'S');
-
-        if ($serieLength) {
-            if ($serie) {
-                $this->serial_number_serie = (int) substr((string) $serie, -$serieLength);
-            }
-        } else {
-            $this->serial_number_serie = null;
-        }
-
-        $yearLength = substr_count($this->serial_number_format, 'Y');
-
-        if ($yearLength) {
-            if ($year) {
-                $this->serial_number_year = (int) substr((string) $year, -$yearLength);
-            }
-        } else {
-            $this->serial_number_year = null;
-        }
-
-        $monthLength = substr_count($this->serial_number_format, 'M');
-
-        if ($monthLength) {
-            if ($month) {
-                $this->serial_number_month = (int) substr((string) $month, -$monthLength);
-            }
-        } else {
-            $this->serial_number_month = null;
+        } elseif ($length = substr_count($this->serial_number_format, 'P')) {
+            $this->serial_number_prefix = substr($value, -$length);
+        } elseif ($throw) {
+            throw new Exception('The Serial Number Format does not contain a prefix.');
         }
 
         return $this;
+    }
+
+    public function setSerialNumberSerie(
+        null|int|string $value = null,
+        bool $throw = true,
+    ): static {
+
+        if ($value === null) {
+            $this->serial_number_serie = null;
+        } elseif ($length = substr_count($this->serial_number_format, 'S')) {
+            $this->serial_number_serie = (int) substr((string) $value, -$length);
+        } elseif ($throw) {
+            throw new Exception('The Serial Number Format does not contain a serie.');
+        }
+
+        return $this;
+    }
+
+    public function setSerialNumberYear(
+        null|int|string $value = null,
+        bool $throw = true,
+    ): static {
+
+        if ($value === null) {
+            $this->serial_number_year = null;
+        } elseif ($length = substr_count($this->serial_number_format, 'Y')) {
+            $this->serial_number_year = (int) substr((string) $value, -$length);
+        } elseif ($throw) {
+            throw new Exception('The Serial Number Format does not contain a year.');
+        }
+
+        return $this;
+    }
+
+    public function setSerialNumberMonth(
+        null|int|string $value = null,
+        bool $throw = true,
+    ): static {
+
+        if ($value === null) {
+            $this->serial_number_month = null;
+        } elseif ($length = substr_count($this->serial_number_format, 'M')) {
+            $this->serial_number_month = (int) substr((string) $value, -$length);
+        } elseif ($throw) {
+            throw new Exception('The Serial Number Format does not contain a month.');
+        }
+
+        return $this;
+    }
+
+    public function configureSerialNumber(
+        ?string $format = null,
+        ?string $prefix = null,
+        string|int|null $serie = null,
+        string|int|null $year = null,
+        string|int|null $month = null,
+        bool $throw = false,
+    ): static {
+        $this->serial_number_format = $format ?? $this->serial_number_format ?? InvoiceServiceProvider::getSerialNumberFormatConfiguration($this->type);
+
+        return $this
+            ->setSerialNumberPrefix($prefix, $throw)
+            ->setSerialNumberSerie($serie, $throw)
+            ->setSerialNumberYear($year, $throw)
+            ->setSerialNumberMonth($month, $throw);
     }
 
     public function generateSerialNumber(): static
     {
         $this->configureSerialNumber(
             format: $this->serial_number_format,
-            prefix: $this->serial_number_prefix ?? $this->getSerialNumberPrefixConfiguration(),
+            prefix: $this->serial_number_prefix ?? InvoiceServiceProvider::getSerialNumberPrefixConfiguration($this->type),
             serie: $this->serial_number_serie,
             year: $this->serial_number_year ?? now()->format('Y'),
             month: $this->serial_number_month ?? now()->format('m'),
@@ -304,7 +303,7 @@ class Invoice extends Model implements Attachable
 
         $generator = new SerialNumberGenerator($this->serial_number_format);
 
-        $previousCount = $this->getPreviousInvoice()?->serial_number_count ?? 0;
+        $previousCount = (int) $this->getPreviousInvoice()?->serial_number_count;
 
         $this->serial_number = $generator->generate(
             prefix: $this->serial_number_prefix,
@@ -319,9 +318,12 @@ class Invoice extends Model implements Attachable
         return $this;
     }
 
+    /**
+     * @return array{ 'prefix': ?string, 'serie': ?int, 'month': ?int, 'year': ?int, 'count': ?int}
+     */
     public function parseSerialNumber(): array
     {
-        $format = $this->serial_number_format ?? $this->getSerialNumberFormatConfiguration();
+        $format = $this->serial_number_format ?? InvoiceServiceProvider::getSerialNumberFormatConfiguration($this->type);
 
         $generator = new SerialNumberGenerator($format);
 
@@ -330,7 +332,7 @@ class Invoice extends Model implements Attachable
 
     public function denormalizeSerialNumber(): static
     {
-        $this->serial_number_format ??= $this->getSerialNumberFormatConfiguration();
+        $this->serial_number_format ??= InvoiceServiceProvider::getSerialNumberFormatConfiguration($this->type);
 
         $values = $this->parseSerialNumber();
 
@@ -372,36 +374,64 @@ class Invoice extends Model implements Attachable
         return $this;
     }
 
+    /**
+     * @param  Builder<Invoice>  $query
+     * @return Builder<Invoice>
+     */
     public function scopeInvoice(Builder $query): Builder
     {
         return $query->where('type', InvoiceType::Invoice);
     }
 
+    /**
+     * @param  Builder<Invoice>  $query
+     * @return Builder<Invoice>
+     */
     public function scopeCredit(Builder $query): Builder
     {
         return $query->where('type', InvoiceType::Credit);
     }
 
+    /**
+     * @param  Builder<Invoice>  $query
+     * @return Builder<Invoice>
+     */
     public function scopeQuote(Builder $query): Builder
     {
         return $query->where('type', InvoiceType::Quote);
     }
 
+    /**
+     * @param  Builder<Invoice>  $query
+     * @return Builder<Invoice>
+     */
     public function scopePaid(Builder $query): Builder
     {
         return $query->where('state', InvoiceState::Paid);
     }
 
+    /**
+     * @param  Builder<Invoice>  $query
+     * @return Builder<Invoice>
+     */
     public function scopeRefunded(Builder $query): Builder
     {
         return $query->where('state', InvoiceState::Refunded);
     }
 
+    /**
+     * @param  Builder<Invoice>  $query
+     * @return Builder<Invoice>
+     */
     public function scopeDraft(Builder $query): Builder
     {
         return $query->where('state', InvoiceState::Draft);
     }
 
+    /**
+     * @param  Builder<Invoice>  $query
+     * @return Builder<Invoice>
+     */
     public function scopePending(Builder $query): Builder
     {
         return $query->where('state', InvoiceState::Pending);
@@ -420,8 +450,8 @@ class Invoice extends Model implements Attachable
     public function toPdfInvoice(): PdfInvoice
     {
         return new PdfInvoice(
-            name: $this->type->trans(),
-            state: $this->state->trans(),
+            name: $this->type->getLabel(),
+            state: $this->state->getLabel(),
             serial_number: $this->serial_number,
             paid_at: ($this->state === InvoiceState::Paid) ? $this->state_set_at : null,
             due_at: $this->due_at,

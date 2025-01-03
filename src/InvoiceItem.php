@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?string $quantity_unit
  * @property ?string $label
  * @property ?string $description
- * @property ?ArrayObject $metadata
+ * @property ?ArrayObject<array-key, mixed> $metadata
  * @property int $invoice_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -46,9 +46,15 @@ class InvoiceItem extends Model
         'tax_percentage' => 'float',
     ];
 
+    /**
+     * @return BelongsTo<Invoice, $this>
+     */
     public function invoice(): BelongsTo
     {
-        return $this->belongsTo(config('invoices.model_invoice'));
+        /** @var class-string<Invoice> */
+        $model = config()->string('invoices.model_invoice');
+
+        return $this->belongsTo($model);
     }
 
     public function toPdfInvoiceItem(): PdfInvoiceItem

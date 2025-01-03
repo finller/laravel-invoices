@@ -1,8 +1,8 @@
 includes:
-    - phpstan-baseline.neon
+    - vendor/larastan/larastan/extension.neon
 
 parameters:
-    level: 5
+    level: 6
     paths:
         - src
         - config
@@ -10,4 +10,7 @@ parameters:
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
-
+    checkModelAppends: false
+    noEnvCallsOutsideOfConfig: false
+    ignoreErrors:
+        - '#Method Finller\\Invoice\\InvoiceDiscount::fromLivewire\(\) has no return type specified#'

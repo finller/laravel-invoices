@@ -2,6 +2,7 @@
 
 namespace Finller\Invoice\Database\Factories;
 
+use Carbon\Carbon;
 use Finller\Invoice\Invoice;
 use Finller\Invoice\InvoiceState;
 use Finller\Invoice\InvoiceType;
@@ -16,7 +17,9 @@ class InvoiceFactory extends Factory
 
     public function definition()
     {
-        $created_at = fake()->dateTime();
+        $created_at = fake()->dateTime(
+            max: Carbon::create(2024, 12, 31)
+        );
 
         return [
             'type' => InvoiceType::Invoice,
