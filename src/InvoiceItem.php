@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice;
 
 use Brick\Money\Money;
@@ -60,7 +62,7 @@ class InvoiceItem extends Model
     public function toPdfInvoiceItem(): PdfInvoiceItem
     {
         return new PdfInvoiceItem(
-            label: $this->label,
+            label: $this->label ?? '',
             quantity: $this->quantity,
             quantity_unit: $this->quantity_unit,
             description: $this->description,

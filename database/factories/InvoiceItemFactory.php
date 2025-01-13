@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice\Database\Factories;
 
 use Brick\Money\Money;
@@ -15,8 +17,10 @@ class InvoiceItemFactory extends Factory
 
     public function definition()
     {
-        $price = Money::ofMinor(fake()->numberBetween(1000, 100000), config('invoices.default_currency'));
-        $unit_tax = Money::ofMinor(fake()->numberBetween(0, $price->getAmount()->toFloat()), config('invoices.default_currency'));
+        $currency = config()->string('invoices.default_currency');
+
+        $price = Money::ofMinor(fake()->numberBetween(1000, 100000), $currency);
+        $unit_tax = Money::ofMinor(fake()->numberBetween(0, $price->getAmount()->toFloat()), $currency);
 
         $useTaxPercentage = fake()->boolean();
 

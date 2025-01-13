@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice;
 
 use Brick\Money\Money;

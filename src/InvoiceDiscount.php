@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice;
 
 use Brick\Math\RoundingMode;
@@ -39,17 +41,23 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
     }
 
     /**
-     * @param  ?array<int|string, mixed>  $array
+     * @param  null|array{
+     *      name: ?string,
+     *      code: ?string,
+     *      currency: ?string,
+     *      amount_off: ?int,
+     *      percent_off: ?float,
+     * }  $array
      */
     public static function fromArray(?array $array): static
     {
-        $currency = data_get($array, 'currency', config('invoices.default_currency'));
-        $amount_off = data_get($array, 'amount_off');
-        $percent_off = data_get($array, 'percent_off');
+        $currency = $array['currency'] ?? config()->string('invoices.default_currency');
+        $amount_off = $array['amount_off'] ?? null;
+        $percent_off = $array['percent_off'] ?? null;
 
         return new static(
-            name: data_get($array, 'name'),
-            code: data_get($array, 'code'),
+            name: $array['name'] ?? '',
+            code: $array['code'] ?? '',
             amount_off: $amount_off ? Money::ofMinor($amount_off, $currency) : null,
             percent_off: $percent_off ? (float) $percent_off : null
         );
@@ -112,6 +120,7 @@ class InvoiceDiscount implements Arrayable, JsonSerializable
      *      percent_off: ?float,
      * } $value
      */
+    // @phpstan-ignore-next-line
     public static function fromLivewire($value)
     {
         return static::fromArray($value);

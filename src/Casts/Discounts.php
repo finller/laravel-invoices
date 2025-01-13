@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice\Casts;
 
 use Finller\Invoice\InvoiceDiscount;
@@ -14,16 +16,29 @@ class Discounts implements CastsAttributes
 {
     /**
      * @param  array<string, mixed>  $attributes
-     * @return null|InvoiceDiscount[]
+     * @return InvoiceDiscount[]
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        $data = Json::decode(data_get($attributes, $key, ''));
+        /**
+         * @var null|array<array-key, null|array{
+         *      name: ?string,
+         *      code: ?string,
+         *      currency: ?string,
+         *      amount_off: ?int,
+         *      percent_off: ?float,
+         * }> $data
+         */
+        $data = Json::decode($attributes[$key] ?? '');
 
-        /** @var string $class */
-        $class = config('invoices.discount_class');
+        /** @var class-string<InvoiceDiscount> $class */
+        $class = config()->string('invoices.discount_class');
 
-        return is_array($data) ? array_map(fn (?array $item) => $class::fromArray($item), $data) : null;
+        if (! is_array($data)) {
+            return [];
+        }
+
+        return array_map(fn ($item) => $class::fromArray($item), $data);
     }
 
     /**
@@ -35,6 +50,8 @@ class Discounts implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        return [$key => Json::encode($value)];
+        return [
+            $key => blank($value) ? null : Json::encode($value),
+        ];
     }
 }
