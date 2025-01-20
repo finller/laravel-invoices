@@ -25,6 +25,7 @@ class PdfInvoice
      * @param  array<string, mixed>  $seller
      * @param  PdfInvoiceItem[]  $items
      * @param  InvoiceDiscount[]  $discounts
+     * @param  ?string  $logo  A local file path. The file must be accessible using file_get_contents.
      */
     public function __construct(
         public ?string $name = null,
@@ -75,20 +76,12 @@ class PdfInvoice
         return $firstItem?->currency->getCurrencyCode() ?? config()->string('invoices.default_currency');
     }
 
+    /**
+     * @deprecated Using $this->logo
+     */
     public function getLogo(): ?string
     {
-        if (! $this->logo) {
-            return null;
-        }
-
-        $type = pathinfo($this->logo, PATHINFO_EXTENSION);
-
-        if ($data = file_get_contents($this->logo)) {
-            return 'data:image/'.$type.';base64,'.base64_encode($data);
-        }
-
-        return null;
-
+        return $this->logo;
     }
 
     /**

@@ -62,7 +62,7 @@
                     </td>
                     @if ($invoice->logo)
                         <td class="p-0 align-top" width="30%">
-                            <img src="{{ $invoice->getLogo() }}" alt="logo" height="100">
+                            <img src="{{ $invoice->logo }}" alt="logo" height="100">
                         </td>
                     @endif
                 </tr>
