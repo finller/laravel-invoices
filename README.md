@@ -28,6 +28,7 @@ Try out [the interactive demo](https://elegantengineering.tech/laravel-invoices)
     - [Displaying Your Invoice as a PDF](#displaying-your-invoice-as-a-pdf)
     - [Attaching Your Invoice to an Email](#attaching-your-invoice-to-an-email)
     - [Customizing the PDF Invoice](#customizing-the-pdf-invoice)
+    - [Adding a Dynamic Logo](#adding-a-dynamic-logo)
 
 1. [The PdfInvoice Class](#the-pdfinvoice-class)
 
@@ -389,6 +390,31 @@ To customize how your model is converted to a `PdfInvoice`, follow these steps:
         'model_invoice' => \App\Models\Invoice::class,
     ];
     ```
+
+### Adding a Dynamic Logo
+
+If you need to set the logo dynamically on the invoice, for example, when allowing users to upload their own logo, you can achieve this by overriding the `getLogo` method. Follow the steps outlined in the [Customizing the PDF Invoice](#customizing-the-pdf-invoice) section to create your own Model.
+
+To dynamically set the logo, define the `getLogo` method as shown below:
+
+```php
+class Invoice extends \Finller\Invoice\Invoice
+{
+    // ...
+
+    public function getLogo(): ?string
+    {
+        $file = new File(public_path('logo.png'));
+        $mime = $file->getMimeType();
+        $logo = "data:{$mime};base64," . base64_encode($file->getContent());
+
+        return $logo;
+    }
+}
+```
+
+> [!NOTE]  
+> The returned value must be either a base64-encoded data URL or a path to a locally accessible file.
 
 ## The PdfInvoice Class
 

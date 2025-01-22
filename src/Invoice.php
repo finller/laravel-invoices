@@ -449,6 +449,14 @@ class Invoice extends Model implements Attachable
             ->withMime('application/pdf');
     }
 
+    /**
+     * @return string|null A base64 encoded data url or a path to a local file
+     */
+    public function getLogo(): ?string
+    {
+        return null;
+    }
+
     public function toPdfInvoice(): PdfInvoice
     {
         return new PdfInvoice(
@@ -463,7 +471,8 @@ class Invoice extends Model implements Attachable
             description: $this->description,
             items: $this->items->map(fn (InvoiceItem $item) => $item->toPdfInvoiceItem())->all(),
             tax_label: $this->getTaxLabel(),
-            discounts: $this->getDiscounts()
+            discounts: $this->getDiscounts(),
+            logo: $this->getLogo(),
         );
     }
 }
