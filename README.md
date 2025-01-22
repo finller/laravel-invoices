@@ -13,6 +13,38 @@ This package provides a robust, easy-to-use system for managing invoices within 
 
 Try out [the interactive demo](https://elegantengineering.tech/laravel-invoices) to explore package capabilities.
 
+## Table of Contents
+
+1. [Requirements](#requirements)
+
+1. [Installation](#installation)
+
+1. [The Invoice Eloquent Model](#the-invoice-eloquent-model)
+
+    - [Storing an Invoice in Your Database](#storing-an-invoice-in-your-database)
+    - [Automatically Generating Unique Serial Numbers](#automatically-generating-unique-serial-numbers)
+    - [Managing Multiple Prefixes and Series](#managing-multiple-prefixes-and-series)
+    - [Customizing the Serial Number Format](#customizing-the-serial-number-format)
+    - [Displaying Your Invoice as a PDF](#displaying-your-invoice-as-a-pdf)
+    - [Attaching Your Invoice to an Email](#attaching-your-invoice-to-an-email)
+    - [Customizing the PDF Invoice](#customizing-the-pdf-invoice)
+
+1. [The PdfInvoice Class](#the-pdfinvoice-class)
+
+    - [Rendering the Invoice as a PDF](#rendering-the-invoice-as-a-pdf)
+    - [Rendering the Invoice in a View](#rendering-the-invoice-in-a-view)
+
+1. [Customization](#customization)
+    - [Customizing the Font](#customizing-the-font)
+    - [Customizing the Template](#customizing-the-template)
+
+## Requirements
+
+-   PHP 8.1+
+-   Laravel 11.0+
+-   `barryvdh/laravel-dompdf` for PDF rendering
+-   `elegantly/laravel-money` for money computation
+
 ## Installation
 
 You can install the package via composer:
@@ -156,7 +188,9 @@ return [
 ];
 ```
 
-## Store an invoice in your database
+## The Invoice Eloquent Model
+
+### Storing an Invoice in Your Database
 
 You can store an Invoice in your database using the Eloquent Model: `Finller\Invoice\Invoice`.
 
@@ -212,9 +246,9 @@ $invoice->items()->saveMany([
 ]);
 ```
 
-## Automatic Generation of Unique Serial Numbers
+### Automatically Generating Unique Serial Numbers
 
-This package provides a simple and reliable way to generate serial numbers automatically, such as "INV240001."
+This package provides a simple and reliable way to generate serial numbers automatically, such as "INV240001".
 
 You can configure the format of your serial numbers in the configuration file. The default format is `PPYYCCCC`, where each letter has a specific meaning (see the config file for details).
 
@@ -224,7 +258,7 @@ Serial numbers are generated sequentially, with each new serial number based on 
 
 By default, the previous invoice is determined based on criteria such as prefix, series, year, and month for accurate, scoped numbering.
 
-## Managing Multiple Prefixes and Series
+### Managing Multiple Prefixes and Series
 
 In more complex applications, you may need to use different prefixes and/or series for your invoices.
 
@@ -246,7 +280,7 @@ $invoice->configureSerialNumber(
 );
 ```
 
-## Customizing the Serial Number Format
+### Customizing the Serial Number Format
 
 In most cases, the format of your serial numbers should remain consistent, so it's recommended to set it in the configuration file.
 
@@ -268,16 +302,14 @@ $invoice->configureSerialNumber(
 
 $invoice->save();
 
-$invoice->serial_number; // IN-000100-2410-0001
+$invoice->serial_number; // IN-000100-24010001
 ```
 
-## Display your invoice as a PDF
+### Displaying Your Invoice as a PDF
 
 The Invoice model has a `toPdfInvoice()` that return a `PdfInvoice` class.
 
-### As a response in a controller
-
-You can stream the `pdfInvoice` instance as a response, or download it:
+You can stream the `PdfInvoice` instance as a response, or download it:
 
 ```php
 namespace App\Http\Controllers;
@@ -309,7 +341,7 @@ class InvoiceController extends Controller
 }
 ```
 
-### As a mail Attachment
+### Attaching Your Invoice to an Email
 
 The `Invoice` model provide a `toMailAttachment` method making it easy to use with `Mailable`
 
@@ -341,6 +373,185 @@ class PaymentInvoice extends Mailable
     }
 }
 ```
+
+### Customizing the PDF Invoice
+
+To customize how your model is converted to a `PdfInvoice`, follow these steps:
+
+1. **Create a Custom Model**: Define your own `\App\Models\Invoice` class and ensure it extends the base `\Finller\Invoice\Invoice` class.
+
+2. **Override the `toPdfInvoice` Method**: Implement your specific logic within the `toPdfInvoice` method to control the customization.
+
+3. **Update the Configuration File**: Publish the package configuration file and update the `model_invoice` key as shown below:
+
+    ```php
+    return [
+        'model_invoice' => \App\Models\Invoice::class,
+    ];
+    ```
+
+## The PdfInvoice Class
+
+This package includes a standalone `PdfInvoice` class, making it easy to render invoices as a PDF or directly within a view.
+
+You can even use this package exclusively for the `PdfInvoice` class if that suits your needs.
+
+Here’s an example of a fully configured `PdfInvoice` instance:
+
+```php
+use Finller\Invoice\PdfInvoice;
+
+$pdfInvoice = new PdfInvoice(
+    name: "Invoice",
+    state: "Paid",
+    serial_number: "INV-241200001",
+    seller: [
+        'name' => 'elegantly',
+        'address' => [
+            'street' => "Place de l'Opéra",
+            'city' => 'Paris',
+            'postal_code' => '75009',
+            'country' => 'France',
+        ],
+        'email' => 'john.doe@example.com',
+        'tax_number' => 'FR123456789',
+        "data" => [
+            "foo" => "bar"
+        ]
+    ],
+    buyer: [
+        'name' => 'John Doe',
+        'address' => [
+            'street' => '8405 Old James St.Rochester',
+            'city' => 'New York',
+            'postal_code' => '14609',
+            'state' => 'New York (NY)',
+            'country' => 'United States',
+        ],
+        'email' => 'john.doe@example.com',
+        "data" => [
+            "foo" => "bar"
+        ]
+    ],
+    description: "A invoice description",
+    created_at: now(),
+    due_at: now(),
+    paid_at: now(),
+    tax_label: "VAT (20%)",
+    items: [],
+    discounts: [],
+    logo: public_path('/images/logo.png'),
+    template: "default.layout",
+    font: "Helvetica",
+)
+```
+
+### Rendering the Invoice as a PDF
+
+#### In a Controller
+
+```php
+namespace App\Http\Controllers;
+
+use Finller\Invoice\PdfInvoice;
+
+class InvoiceController extends Controller
+{
+
+    public function showAsView()
+    {
+        $pdfInvoice = new PdfInvoice(
+            // ...
+        );
+
+        return $pdfInvoice->view();
+    }
+
+    public function showAsPdf()
+    {
+        $pdfInvoice = new PdfInvoice(
+            // ...
+        );
+
+        return $pdfInvoice->stream();
+    }
+
+    public function download()
+    {
+        $pdfInvoice = new PdfInvoice(
+            // ...
+        );
+
+        return $pdfInvoice->download();
+    }
+}
+```
+
+#### In a Livewire Component
+
+```php
+namespace App\Http\Controllers;
+
+use Finller\Invoice\PdfInvoice;
+
+class Invoice extends Component
+{
+    public function download()
+    {
+        $pdfInvoice = new PdfInvoice(
+            // ...
+        );
+
+        return response()->streamDownload(function () use ($pdfInvoice) {
+            echo $pdf->output();
+        }, 'laravel-invoices-demo.pdf');
+    }
+}
+```
+
+#### Store in a file
+
+```php
+
+$pdfInvoice = new PdfInvoice(
+    // ...
+);
+
+Storage::put(
+    "path/to/invoice.pdf",
+    $pdfInvoice->pdf()->output()
+);
+```
+
+### Rendering the Invoice in a View
+
+You can render your invoice within a larger view, enabling you to create an "invoice builder" experience similar to the [interactive demo](https://elegantengineering.tech/laravel-invoices).
+
+To achieve this, include the main part of the invoice in your view as shown below:
+
+```blade
+<div class="aspect-[210/297] bg-white shadow-md">
+    @include('invoices::default.invoice', ['invoice' => $invoice])
+</div>
+```
+
+This approach allows you to seamlessly integrate the invoice into a dynamic and customizable user interface.
+
+> [!NOTE]  
+> The default template is styled using Tailwind-compatible syntax, making it seamlessly compatible with websites that use Tailwind.  
+> If you don’t use Tailwind, the styling may not render as intended.
+
+## Customization
+
+## Customizing the Font
+
+See the [Dompdf font guide](https://github.com/dompdf/dompdf).
+
+## Customizing the Template
+
+To customize the invoice template, you can publish the provided views and modify them as needed.
+
+Alternatively, you can create a completely custom template. Ensure that your custom template follows the same structure and conventions as the default one to maintain compatibility with various use cases.
 
 ## Testing
 
