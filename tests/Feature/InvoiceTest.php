@@ -247,3 +247,73 @@ it('denormalize amounts in invoice', function () {
     expect($invoice->total_amount->getAmount()->toFloat())
         ->toEqual($pdfInvoice->totalAmount()->getAmount()->toFloat());
 });
+
+it('preserves currency during denormalization', function () {
+    config()->set('invoices.default_currency', 'USD');
+
+    /** @var Invoice $invoice */
+    $invoice = Invoice::factory()
+        ->state(['currency' => 'USD'])
+        ->create();
+
+    $invoice->items()->saveMany(
+        InvoiceItem::factory(2)
+            ->state(['currency' => 'USD'])  // Must match invoice currency
+            ->make()
+    );
+
+    $invoice->denormalize();
+    expect($invoice->currency)->toBe('USD');
+});
+
+it('handles empty items with existing currency', function () {
+    config()->set('invoices.default_currency', 'USD');
+
+    /** @var Invoice $invoice */
+    $invoice = Invoice::factory()
+        ->state(['currency' => 'USD'])
+        ->create();
+
+    $invoice->denormalize();
+
+    expect($invoice->currency)->toBe('USD')
+        ->and($invoice->total_amount->getAmount()->toFloat())->toBe(0.0);
+});
+
+it('uses default currency for new invoice with no items', function () {
+    config()->set('invoices.default_currency', 'USD');
+
+    /** @var Invoice $invoice */
+    $invoice = Invoice::factory()
+        ->state(['currency' => null])
+        ->create();
+
+    $invoice->denormalize();
+
+    expect($invoice->currency)->toBe('USD')
+        ->and($invoice->total_amount->getAmount()->toFloat())->toBe(0.0);
+});
+
+it('maintains currency consistency between invoice and items', function () {
+    config()->set('invoices.default_currency', 'USD');
+
+    /** @var Invoice $invoice */
+    $invoice = Invoice::factory()
+        ->state(['currency' => 'USD'])
+        ->create();
+
+    // Create items with matching currency
+    $invoice->items()->saveMany(
+        InvoiceItem::factory(2)
+            ->state([
+                'currency' => 'USD',
+                'unit_price' => 100,
+                'quantity' => 1,
+            ])
+            ->make()
+    );
+
+    $invoice->denormalize();
+    expect($invoice->currency)->toBe('USD')
+        ->and($invoice->total_amount->getAmount()->toFloat())->toBeGreaterThan(0);
+});
