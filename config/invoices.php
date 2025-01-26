@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Finller\Invoice\Invoice;
 use Finller\Invoice\InvoiceDiscount;
 use Finller\Invoice\InvoiceItem;

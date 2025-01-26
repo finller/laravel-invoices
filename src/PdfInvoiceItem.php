@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice;
 
 use Brick\Math\RoundingMode;
@@ -11,22 +13,24 @@ class PdfInvoiceItem
 {
     use FormatForPdf;
 
+    public Currency $currency;
+
     public function __construct(
         public string $label,
         public ?Money $unit_price = null,
         public ?Money $unit_tax = null,
         public ?float $tax_percentage = null,
         public ?int $quantity = 1,
-        public null|string|Currency $currency = null,
+        null|string|Currency $currency = null,
         public ?string $description = null,
         public ?string $quantity_unit = null,
     ) {
         if (! ($currency instanceof Currency)) {
-            $this->currency = Currency::of($currency ?? config('invoices.default_currency'));
+            $this->currency = Currency::of($currency ?? config()->string('invoices.default_currency'));
         }
 
         if ($tax_percentage && ($tax_percentage > 100 || $tax_percentage < 0)) {
-            throw new Exception("The tax_percentage parameter must be an integer between 0 and 100. $tax_percentage given.");
+            throw new Exception("The tax_percentage parameter must be an integer between 0 and 100. {$tax_percentage} given.");
         }
     }
 

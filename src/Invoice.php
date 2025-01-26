@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice;
 
 use Brick\Money\Money;
@@ -48,7 +50,7 @@ use Illuminate\Mail\Attachment;
  * @property ?string $invoiceable_type
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property null|InvoiceDiscount[] $discounts
+ * @property InvoiceDiscount[] $discounts
  * @property ?ArrayObject<array-key, mixed> $metadata
  * @property ?Money $subtotal_amount
  * @property ?Money $discount_amount
@@ -217,8 +219,8 @@ class Invoice extends Model implements Attachable
 
         if ($value === null) {
             $this->serial_number_prefix = null;
-        } elseif ($length = substr_count($this->serial_number_format, 'P')) {
-            $this->serial_number_prefix = substr($value, -$length);
+        } elseif ($length = mb_substr_count($this->serial_number_format, 'P')) {
+            $this->serial_number_prefix = mb_substr($value, -$length);
         } elseif ($throw) {
             throw new Exception('The Serial Number Format does not contain a prefix.');
         }
@@ -233,8 +235,8 @@ class Invoice extends Model implements Attachable
 
         if ($value === null) {
             $this->serial_number_serie = null;
-        } elseif ($length = substr_count($this->serial_number_format, 'S')) {
-            $this->serial_number_serie = (int) substr((string) $value, -$length);
+        } elseif ($length = mb_substr_count($this->serial_number_format, 'S')) {
+            $this->serial_number_serie = (int) mb_substr((string) $value, -$length);
         } elseif ($throw) {
             throw new Exception('The Serial Number Format does not contain a serie.');
         }
@@ -249,8 +251,8 @@ class Invoice extends Model implements Attachable
 
         if ($value === null) {
             $this->serial_number_year = null;
-        } elseif ($length = substr_count($this->serial_number_format, 'Y')) {
-            $this->serial_number_year = (int) substr((string) $value, -$length);
+        } elseif ($length = mb_substr_count($this->serial_number_format, 'Y')) {
+            $this->serial_number_year = (int) mb_substr((string) $value, -$length);
         } elseif ($throw) {
             throw new Exception('The Serial Number Format does not contain a year.');
         }
@@ -265,8 +267,8 @@ class Invoice extends Model implements Attachable
 
         if ($value === null) {
             $this->serial_number_month = null;
-        } elseif ($length = substr_count($this->serial_number_format, 'M')) {
-            $this->serial_number_month = (int) substr((string) $value, -$length);
+        } elseif ($length = mb_substr_count($this->serial_number_format, 'M')) {
+            $this->serial_number_month = (int) mb_substr((string) $value, -$length);
         } elseif ($throw) {
             throw new Exception('The Serial Number Format does not contain a month.');
         }
@@ -340,7 +342,7 @@ class Invoice extends Model implements Attachable
         $this->serial_number_serie = $values['serie'];
         $this->serial_number_year = $values['year'];
         $this->serial_number_month = $values['month'];
-        $this->serial_number_count = $values['count'];
+        $this->serial_number_count = (int) $values['count'];
 
         return $this;
     }
@@ -351,9 +353,9 @@ class Invoice extends Model implements Attachable
     }
 
     /**
-     * @return null|InvoiceDiscount[]
+     * @return InvoiceDiscount[]
      */
-    public function getDiscounts(): ?array
+    public function getDiscounts(): array
     {
         return $this->discounts;
     }
@@ -447,6 +449,14 @@ class Invoice extends Model implements Attachable
             ->withMime('application/pdf');
     }
 
+    /**
+     * @return string|null A base64 encoded data url or a path to a local file
+     */
+    public function getLogo(): ?string
+    {
+        return null;
+    }
+
     public function toPdfInvoice(): PdfInvoice
     {
         return new PdfInvoice(
@@ -456,12 +466,13 @@ class Invoice extends Model implements Attachable
             paid_at: ($this->state === InvoiceState::Paid) ? $this->state_set_at : null,
             due_at: $this->due_at,
             created_at: $this->created_at,
-            buyer: $this->buyer_information?->toArray(),
-            seller: $this->seller_information?->toArray(),
+            buyer: $this->buyer_information?->toArray() ?? [],
+            seller: $this->seller_information?->toArray() ?? [],
             description: $this->description,
             items: $this->items->map(fn (InvoiceItem $item) => $item->toPdfInvoiceItem())->all(),
             tax_label: $this->getTaxLabel(),
-            discounts: $this->getDiscounts()
+            discounts: $this->getDiscounts(),
+            logo: $this->getLogo(),
         );
     }
 }

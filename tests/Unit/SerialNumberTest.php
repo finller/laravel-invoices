@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Finller\Invoice\SerialNumberGenerator;
 
 it('can generate serial number from format', function ($format, $prefix, $serie, $year, $month, $count, $expected) {

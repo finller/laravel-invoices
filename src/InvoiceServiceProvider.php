@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice;
 
 use Exception;
@@ -40,7 +42,7 @@ class InvoiceServiceProvider extends PackageServiceProvider
             return $prefixes;
         }
 
-        return $type ? data_get($prefixes, $type->value) : null;
+        return $prefixes[$type?->value] ?? null;
     }
 
     public static function getSerialNumberFormatConfiguration(?InvoiceType $type): string
@@ -53,10 +55,10 @@ class InvoiceServiceProvider extends PackageServiceProvider
         }
 
         /** @var ?string $format */
-        $format = $type ? data_get($formats, $type->value) : null;
+        $format = $formats[$type?->value] ?? null;
 
         if (! $format) {
-            throw new Exception("No serial number format defined in config for type: {$type->value}.");
+            throw new Exception("No serial number format defined in config for type: {$type?->value}.");
         }
 
         return $format;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Finller\Invoice;
 
 class SerialNumberGenerator implements GenerateSerialNumber
@@ -17,74 +19,80 @@ class SerialNumberGenerator implements GenerateSerialNumber
         string|int|null $year = null,
         string|int|null $month = null,
     ): string {
-        return preg_replace_callback_array(
+        $serie = (string) $serie;
+        $month = (string) $month;
+        $year = (string) $year;
+        $prefix = (string) $prefix;
+        $count = (string) $count;
+
+        $value = preg_replace_callback_array(
             [
                 '/S+/' => function ($matches) use ($serie) {
-                    $slot = $matches[0] ?? '';
-                    $slotLength = strlen($slot);
-                    $valueLength = strlen($serie);
+                    $slot = (string) ($matches[0] ?? '');
+                    $slotLength = mb_strlen($slot);
+                    $valueLength = mb_strlen($serie);
 
                     if ($slotLength < 1) {
                         return '';
                     }
 
                     if (! $serie) {
-                        throw new \Exception("The serial Number format includes a $slotLength long Serie (S), but no serie has been specified.");
+                        throw new \Exception("The serial Number format includes a {$slotLength} long Serie (S), but no serie has been specified.");
                     }
 
                     if ($valueLength > $slotLength) {
-                        throw new \Exception("The Serial Number can't be formatted: Serie ($serie) is $valueLength digits long while the format has only $slotLength slots.");
+                        throw new \Exception("The Serial Number can't be formatted: Serie ({$serie}) is {$valueLength} digits long while the format has only {$slotLength} slots.");
                     }
 
-                    return str_pad(
-                        (string) $serie,
+                    return mb_str_pad(
+                        $serie,
                         $slotLength,
                         '0',
                         STR_PAD_LEFT
                     );
                 },
                 '/M+/' => function ($matches) use ($month) {
-                    $slot = $matches[0] ?? '';
-                    $slotLength = strlen($slot);
+                    $slot = (string) ($matches[0] ?? '');
+                    $slotLength = mb_strlen($slot);
 
                     if ($slotLength < 1) {
                         return '';
                     }
 
                     if (! $month) {
-                        throw new \Exception("The serial Number format includes a $slotLength long Month (M), but no month has been specified.");
+                        throw new \Exception("The serial Number format includes a {$slotLength} long Month (M), but no month has been specified.");
                     }
 
-                    return str_pad(
-                        (string) substr($month, -$slotLength),
+                    return mb_str_pad(
+                        mb_substr($month, -$slotLength),
                         $slotLength,
                         '0',
                         STR_PAD_LEFT
                     );
                 },
                 '/Y+/' => function ($matches) use ($year) {
-                    $slot = $matches[0] ?? '';
-                    $slotLength = strlen($slot);
+                    $slot = (string) ($matches[0] ?? '');
+                    $slotLength = mb_strlen($slot);
 
                     if ($slotLength < 1) {
                         return '';
                     }
 
                     if (! $year) {
-                        throw new \Exception("The serial Number format includes a $slotLength long Year (Y), but no year has been specified.");
+                        throw new \Exception("The serial Number format includes a {$slotLength} long Year (Y), but no year has been specified.");
                     }
 
-                    return str_pad(
-                        (string) substr($year, -$slotLength),
+                    return mb_str_pad(
+                        mb_substr($year, -$slotLength),
                         $slotLength,
                         '0',
                         STR_PAD_LEFT
                     );
                 },
                 '/C+/' => function ($matches) use ($count) {
-                    $slot = $matches[0] ?? '';
-                    $slotLength = strlen($slot);
-                    $valueLength = strlen((string) $count);
+                    $slot = (string) ($matches[0] ?? '');
+                    $slotLength = mb_strlen($slot);
+                    $valueLength = mb_strlen($count);
 
                     if ($slotLength < 1) {
                         return '';
@@ -95,11 +103,11 @@ class SerialNumberGenerator implements GenerateSerialNumber
                     }
 
                     if ($valueLength > $slotLength) {
-                        throw new \Exception("The Serial Number can't be formatted: Count ({$count}) is {$valueLength} digits long while the format has only $slotLength slots.");
+                        throw new \Exception("The Serial Number can't be formatted: Count ({$count}) is {$valueLength} digits long while the format has only {$slotLength} slots.");
                     }
 
-                    return str_pad(
-                        (string) $count,
+                    return mb_str_pad(
+                        $count,
                         $slotLength,
                         '0',
                         STR_PAD_LEFT
@@ -107,9 +115,9 @@ class SerialNumberGenerator implements GenerateSerialNumber
                 },
                 // Must be kept last to avoid interfering with other callbacks
                 '/P+/' => function ($matches) use ($prefix) {
-                    $slot = $matches[0] ?? '';
-                    $slotLength = strlen($slot);
-                    $valueLength = strlen($prefix);
+                    $slot = (string) ($matches[0] ?? '');
+                    $slotLength = mb_strlen($slot);
+                    $valueLength = mb_strlen($prefix);
 
                     if ($slotLength < 1) {
                         return '';
@@ -120,11 +128,11 @@ class SerialNumberGenerator implements GenerateSerialNumber
                     }
 
                     if ($valueLength > $slotLength) {
-                        throw new \Exception("The Serial Number can't be formatted: Prefix ({$prefix}) is {$valueLength} digits long while the format has only $slotLength slots.");
+                        throw new \Exception("The Serial Number can't be formatted: Prefix ({$prefix}) is {$valueLength} digits long while the format has only {$slotLength} slots.");
                     }
 
-                    return str_pad(
-                        (string) $prefix,
+                    return mb_str_pad(
+                        $prefix,
                         $slotLength,
                         '0',
                         STR_PAD_LEFT
@@ -133,6 +141,8 @@ class SerialNumberGenerator implements GenerateSerialNumber
             ],
             $this->format
         );
+
+        return is_string($value) ? $value : '';
     }
 
     /**
@@ -143,25 +153,27 @@ class SerialNumberGenerator implements GenerateSerialNumber
         preg_match("/{$this->formatToRegex()}/", $serialNumber, $matches);
 
         return [
-            'prefix' => data_get($matches, 'prefix'),
-            'serie' => ($serie = data_get($matches, 'serie')) ? intval($serie) : null,
-            'month' => ($month = data_get($matches, 'month')) ? intval($month) : null,
-            'year' => ($year = data_get($matches, 'year')) ? intval($year) : null,
-            'count' => ($count = data_get($matches, 'count')) ? intval($count) : null,
+            'prefix' => ($prefix = $matches['prefix'] ?? null) ? $prefix : null,
+            'serie' => ($serie = $matches['serie'] ?? null) ? (int) $serie : null,
+            'month' => ($month = $matches['month'] ?? null) ? (int) $month : null,
+            'year' => ($year = $matches['year'] ?? null) ? (int) $year : null,
+            'count' => ($count = $matches['count'] ?? null) ? (int) $count : null,
         ];
     }
 
     protected function formatToRegex(): string
     {
-        return preg_replace_callback_array(
+        $value = preg_replace_callback_array(
             [
-                '/P+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<prefix>[a-zA-Z]{{$length}})" : '',
-                '/S+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<serie>\d{{$length}})" : '',
-                '/M+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<month>\d{{$length}})" : '',
-                '/Y+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<year>\d{{$length}})" : '',
-                '/C+/' => fn ($matches) => ($matches[0] && $length = strlen($matches[0])) ? "(?<count>\d{{$length}})" : '',
+                '/P+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<prefix>[a-zA-Z]{{$length}})" : '',
+                '/S+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<serie>\d{{$length}})" : '',
+                '/M+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<month>\d{{$length}})" : '',
+                '/Y+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<year>\d{{$length}})" : '',
+                '/C+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<count>\d{{$length}})" : '',
             ],
             $this->format
         );
+
+        return is_string($value) ? $value : '';
     }
 }
