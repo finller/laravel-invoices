@@ -201,6 +201,7 @@ You can store an Invoice in your database using the Eloquent Model: `Finller\Inv
 Here is a full example:
 
 ```php
+use Brick\Money\Money;
 use Finller\Invoice\Invoice;
 use Finller\Invoice\InvoiceState;
 use Finller\Invoice\InvoiceType;
