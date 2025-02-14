@@ -163,17 +163,16 @@ class SerialNumberGenerator implements GenerateSerialNumber
 
     protected function formatToRegex(): string
     {
-        $format = preg_replace('/([^\w\s])/i', '\\\\$1', $this->format);
-
         $value = preg_replace_callback_array(
             [
+                '/[^\w\s]/i' => fn ($matches) => $matches[0] ? "\\{$matches[0]}" : '',
                 '/P+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<prefix>[a-zA-Z]{{$length}})" : '',
                 '/S+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<serie>\d{{$length}})" : '',
                 '/M+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<month>\d{{$length}})" : '',
                 '/Y+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<year>\d{{$length}})" : '',
                 '/C+/' => fn ($matches) => ($matches[0] && $length = mb_strlen($matches[0])) ? "(?<count>\d{{$length}})" : '',
             ],
-            $format
+            $this->format
         );
 
         return is_string($value) ? $value : '';
