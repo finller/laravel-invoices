@@ -52,4 +52,6 @@ it('can parse serial number from format', function ($format, $serialNumber, $pre
     ['YYCCCC', '220002', null, null, 22, 2],
     ['YYPPCCCSSSS', '22IN0020001', 'IN', 1, 22, 2],
     ['YYPPCCCSSSS', '22CS0020001', 'CS', 1, 22, 2],
+    ['YYPPCCC/SSSS', '22CS002/0001', 'CS', 1, 22, 2],
+    ['CCCC/YY', '0002/25', null, null, 25, 2],
 ]);
