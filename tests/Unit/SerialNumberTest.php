@@ -21,6 +21,7 @@ $cases = [
     ['CCCC\YY', '0002\25', null, null, 25, null, 2],
     ['CCCC.YY', '0002.25', null, null, 25, null, 2],
     ['CCCC|YY', '0002|25', null, null, 25, null, 2],
+    ['PPP-SSS..CCCC/YY', 'INV-999..0001/25', 'INV', 999, 25, null, 1],
 ];
 
 it('can generate serial number from format', function ($format, $serialNumber, $prefix, $serie, $year, $month, $count) {
