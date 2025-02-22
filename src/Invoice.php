@@ -367,11 +367,16 @@ class Invoice extends Model implements Attachable
     public function denormalize(): static
     {
         $pdfInvoice = $this->toPdfInvoice();
-        $this->currency = $pdfInvoice->getCurrency();
+
         $this->subtotal_amount = $pdfInvoice->subTotalAmount();
         $this->discount_amount = $pdfInvoice->totalDiscountAmount();
         $this->tax_amount = $pdfInvoice->totalTaxAmount();
         $this->total_amount = $pdfInvoice->totalAmount();
+
+        // If no currency is set yet (new invoice), then get it from items
+        if (! $this->currency) {
+            $this->currency = $pdfInvoice->getCurrency();
+        }
 
         return $this;
     }
