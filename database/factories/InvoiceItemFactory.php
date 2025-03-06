@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Finller\Invoice\Database\Factories;
 
 use Brick\Money\Money;
-use Finller\Invoice\InvoiceItem;
+use Finller\Invoice\Models\InvoiceItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

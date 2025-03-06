@@ -25,6 +25,7 @@ return [
 
     'from' => 'Bill From',
     'to' => 'Bill To',
+    'shipping_to' => 'Shipping To',
 
     'states' => [
         'draft' => 'Draft',
@@ -39,4 +40,6 @@ return [
         'credit' => 'Credit note',
         'proforma' => 'Proforma invoice',
     ],
+
+    'page' => 'Page',
 ];

@@ -6,6 +6,7 @@ namespace Finller\Invoice;
 
 use Exception;
 use Finller\Invoice\Commands\DenormalizeInvoicesCommand;
+use Finller\Invoice\Enums\InvoiceType;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

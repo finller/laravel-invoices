@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice;
+namespace Finller\Invoice\Models;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
@@ -10,10 +10,16 @@ use Elegantly\Money\MoneyCast;
 use Exception;
 use Finller\Invoice\Casts\Discounts;
 use Finller\Invoice\Database\Factories\InvoiceFactory;
+use Finller\Invoice\Enums\InvoiceState;
+use Finller\Invoice\Enums\InvoiceType;
+use Finller\Invoice\InvoiceDiscount;
+use Finller\Invoice\InvoiceServiceProvider;
+use Finller\Invoice\Pdf\PdfInvoice;
+use Finller\Invoice\SerialNumberGenerator;
+use Finller\Invoice\Support\Buyer;
+use Finller\Invoice\Support\Seller;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\ArrayObject;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,8 +37,8 @@ use Illuminate\Mail\Attachment;
  * @property ?Invoice $credit
  * @property InvoiceType $type
  * @property string $description
- * @property ?ArrayObject<string, mixed> $seller_information
- * @property ?ArrayObject<string, mixed> $buyer_information
+ * @property ?array<string, mixed> $seller_information
+ * @property ?array<string, mixed> $buyer_information
  * @property InvoiceState $state
  * @property ?Carbon $state_set_at
  * @property ?Carbon $due_at
@@ -51,7 +57,7 @@ use Illuminate\Mail\Attachment;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property InvoiceDiscount[] $discounts
- * @property ?ArrayObject<array-key, mixed> $metadata
+ * @property ?array<array-key, mixed> $metadata
  * @property ?Money $subtotal_amount
  * @property ?Money $discount_amount
  * @property ?Money $tax_amount
@@ -84,9 +90,9 @@ class Invoice extends Model implements Attachable
         'state_set_at' => 'datetime',
         'due_at' => 'datetime',
         'state' => InvoiceState::class,
-        'seller_information' => AsArrayObject::class,
-        'buyer_information' => AsArrayObject::class,
-        'metadata' => AsArrayObject::class,
+        'seller_information' => 'array',
+        'buyer_information' => 'array',
+        'metadata' => 'array',
         'discounts' => Discounts::class,
         'subtotal_amount' => MoneyCast::class.':currency',
         'discount_amount' => MoneyCast::class.':currency',
@@ -444,7 +450,7 @@ class Invoice extends Model implements Attachable
      */
     public function toMailAttachment(): Attachment
     {
-        return Attachment::fromData(fn () => $this->toPdfInvoice()->pdf()->output())
+        return Attachment::fromData(fn () => $this->toPdfInvoice()->getPdfOutput())
             ->as($this->toPdfInvoice()->getFilename())
             ->withMime('application/pdf');
     }
@@ -460,16 +466,15 @@ class Invoice extends Model implements Attachable
     public function toPdfInvoice(): PdfInvoice
     {
         return new PdfInvoice(
-            name: $this->type->getLabel(),
-            state: $this->state->getLabel(),
+            type: $this->type,
+            state: $this->state,
             serial_number: $this->serial_number,
-            paid_at: ($this->state === InvoiceState::Paid) ? $this->state_set_at : null,
             due_at: $this->due_at,
             created_at: $this->created_at,
-            buyer: $this->buyer_information?->toArray() ?? [],
-            seller: $this->seller_information?->toArray() ?? [],
+            buyer: Buyer::fromArray($this->buyer_information ?? []),
+            seller: Seller::fromArray($this->seller_information ?? []),
             description: $this->description,
-            items: $this->items->map(fn (InvoiceItem $item) => $item->toPdfInvoiceItem())->all(),
+            items: $this->items->map(fn ($item) => $item->toPdfInvoiceItem())->all(),
             tax_label: $this->getTaxLabel(),
             discounts: $this->getDiscounts(),
             logo: $this->getLogo(),

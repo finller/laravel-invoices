@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Finller\Invoice;
 
+use Finller\Invoice\Contracts\GenerateSerialNumber;
+
 class SerialNumberGenerator implements GenerateSerialNumber
 {
     public function __construct(

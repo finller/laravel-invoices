@@ -25,6 +25,7 @@ return [
 
     'from' => 'De',
     'to' => 'Pour',
+    'shipping_to' => 'Livré à',
 
     'states' => [
         'draft' => 'Brouillon',
@@ -39,4 +40,6 @@ return [
         'credit' => "Facture d'avoir",
         'proforma' => 'Facture Proforma',
     ],
+
+    'page' => 'Page',
 ];

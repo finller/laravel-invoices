@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Finller\Invoice\Commands;
 
-use Finller\Invoice\Invoice;
+use Finller\Invoice\Models\Invoice;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

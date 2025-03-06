@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice;
+namespace Finller\Invoice\Models;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
 use Elegantly\Money\MoneyCast;
 use Finller\Invoice\Database\Factories\InvoiceItemFactory;
+use Finller\Invoice\Pdf\PdfInvoiceItem;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -62,8 +63,8 @@ class InvoiceItem extends Model
     public function toPdfInvoiceItem(): PdfInvoiceItem
     {
         return new PdfInvoiceItem(
-            label: $this->label ?? '',
-            quantity: $this->quantity,
+            label: $this->label,
+            quantity: $this->quantity ?? 1,
             quantity_unit: $this->quantity_unit,
             description: $this->description,
             unit_price: $this->unit_price,

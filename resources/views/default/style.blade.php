@@ -1,19 +1,17 @@
-<style type="text/css" media="screen">
-    html {
-        margin: 0;
-        line-height: 1.5;
-        tab-size: 4;
-        font-family: '{{ $invoice->font }}', 'DejaVu Sans', 'Helvetica', 'Courier', 'Times', 'Symbol', 'ZapfDingbats';
-        font-feature-settings: normal;
-        font-variation-settings: normal;
+<style type="text/css">
+    @page {
+        margin: 48px 48px 56px 48px;
     }
 
     body {
+        line-height: 1.5;
         margin: 0;
         line-height: inherit;
         color: #050038;
         background-color: #fff;
         text-align: left;
+        font-feature-settings: normal;
+        font-variation-settings: normal;
     }
 
     h1,
@@ -144,12 +142,25 @@
         width: 100%;
     }
 
+    .h-2 {
+        height: 8px;
+    }
+
     .h-3 {
         height: 12px;
     }
 
     .m-12 {
         margin: 48px;
+    }
+
+    .mx-12 {
+        margin-left: 48px;
+        margin-right: 48px;
+    }
+
+    .mb-12 {
+        margin-bottom: 48px;
     }
 
     .p-0 {
@@ -205,14 +216,6 @@
         padding-top: 0.5rem;
     }
 
-    .mb-5 {
-        margin-bottom: 1.5rem;
-    }
-
-    .mt-5 {
-        margin-top: 1.5rem;
-    }
-
     .mb-1 {
         margin-bottom: 4px;
     }
@@ -221,11 +224,71 @@
         margin-top: 4px;
     }
 
+    .mb-5 {
+        margin-bottom: 1.5rem;
+    }
+
+    .mt-5 {
+        margin-top: 1.5rem;
+    }
+
     .mb-6 {
-        margin-bottom: 3rem;
+        margin-bottom: 24px;
+    }
+
+    .mb-8 {
+        margin-bottom: 32px;
     }
 
     .border-b {
         border-bottom: 1px solid #e5e7eb;
+    }
+
+    .fixed {
+        position: fixed;
+    }
+
+    .-left-12 {
+        left: -48px;
+    }
+
+    .-right-12 {
+        right: -48px;
+    }
+
+    .-top-12 {
+        top: -48px;
+    }
+
+    .-bottom-12 {
+        bottom: -48px;
+    }
+
+    .-bottom-14 {
+        bottom: -56px;
+    }
+
+    .left-0 {
+        left: 0;
+    }
+
+    .right-0 {
+        right: 0;
+    }
+
+    .bottom-0 {
+        bottom: 0;
+    }
+
+    .top-0 {
+        top: 0;
+    }
+
+    .text-gray-500 {
+        color: #6b7280;
+    }
+
+    .dompdf-page:after {
+        content: counter(page);
     }
 </style>

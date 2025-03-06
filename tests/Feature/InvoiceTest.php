@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
-use Finller\Invoice\Invoice;
-use Finller\Invoice\InvoiceItem;
-use Finller\Invoice\InvoiceType;
+use Finller\Invoice\Enums\InvoiceType;
+use Finller\Invoice\Models\Invoice;
+use Finller\Invoice\Models\InvoiceItem;
 use Illuminate\Database\Eloquent\Collection;
 
 it('can set the right serial number year and month from a date', function (

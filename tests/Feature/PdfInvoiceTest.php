@@ -3,17 +3,18 @@
 declare(strict_types=1);
 
 use Brick\Money\Money;
-use Finller\Invoice\PdfInvoice;
-use Finller\Invoice\PdfInvoiceItem;
+use Finller\Invoice\Enums\InvoiceState;
+use Finller\Invoice\Enums\InvoiceType;
+use Finller\Invoice\Pdf\PdfInvoice;
+use Finller\Invoice\Pdf\PdfInvoiceItem;
 
 it('computes the right subTotalAmount, totalTaxAmount and totalAmount', function () {
     $pdfInvoice = new PdfInvoice(
-        name: 'Invoice',
+        type: InvoiceType::Invoice,
+        state: InvoiceState::Paid,
         serial_number: 'FAKE-INVOICE-01',
-        state: 'paid',
         due_at: now(),
         created_at: now(),
-        buyer: config('invoices.default_seller')
     );
 
     $pdfInvoice->items = [

@@ -6,6 +6,7 @@ namespace Finller\Invoice;
 
 use Brick\Math\RoundingMode;
 use Brick\Money\Money;
+use Finller\Invoice\Concerns\FormatForPdf;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 

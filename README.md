@@ -70,10 +70,10 @@ php artisan vendor:publish --tag="invoices-config"
 This is the contents of the published config file:
 
 ```php
-use Finller\Invoice\Invoice;
+use Finller\Invoice\Models\Invoice;
 use Finller\Invoice\InvoiceDiscount;
-use Finller\Invoice\InvoiceItem;
-use Finller\Invoice\InvoiceType;
+use Finller\Invoice\Models\InvoiceItem;
+use Finller\Invoice\Enums\InvoiceType;
 
 return [
 
@@ -193,7 +193,7 @@ return [
 
 ### Storing an Invoice in Your Database
 
-You can store an Invoice in your database using the Eloquent Model: `Finller\Invoice\Invoice`.
+You can store an Invoice in your database using the Eloquent Model: `Finller\Invoice\Models\Invoice`.
 
 > [!NOTE]
 > Don't forget to publish and run the migrations
@@ -202,9 +202,9 @@ Here is a full example:
 
 ```php
 use Brick\Money\Money;
-use Finller\Invoice\Invoice;
-use Finller\Invoice\InvoiceState;
-use Finller\Invoice\InvoiceType;
+use Finller\Invoice\Models\Invoice;
+use Finller\Invoice\Enums\InvoiceState;
+use Finller\Invoice\Enums\InvoiceType;
 
 // Let's say your app edit invoices for your users
 $customer = User::find(1);
@@ -256,7 +256,7 @@ You can configure the format of your serial numbers in the configuration file. T
 
 When `invoices.serial_number.auto_generate` is set to `true`, a unique serial number is assigned to each new invoice automatically.
 
-Serial numbers are generated sequentially, with each new serial number based on the latest available one. To define what qualifies as the `previous` serial number, you can extend the `Finller\Invoice\Invoice` class and override the `getPreviousInvoice` method.
+Serial numbers are generated sequentially, with each new serial number based on the latest available one. To define what qualifies as the `previous` serial number, you can extend the `Finller\Invoice\Models\Invoice` class and override the `getPreviousInvoice` method.
 
 By default, the previous invoice is determined based on criteria such as prefix, series, year, and month for accurate, scoped numbering.
 
@@ -273,7 +273,7 @@ For instance, you might want to define a unique series for each user, creating s
 When creating an invoice, you can dynamically specify the prefix and series as follows:
 
 ```php
-use Finller\Invoice\Invoice;
+use Finller\Invoice\Models\Invoice;
 $invoice = new Invoice();
 
 $invoice->configureSerialNumber(
@@ -380,7 +380,7 @@ class PaymentInvoice extends Mailable
 
 To customize how your model is converted to a `PdfInvoice`, follow these steps:
 
-1. **Create a Custom Model**: Define your own `\App\Models\Invoice` class and ensure it extends the base `\Finller\Invoice\Invoice` class.
+1. **Create a Custom Model**: Define your own `\App\Models\Invoice` class and ensure it extends the base `\Finller\Invoice\Models\Invoice` class.
 
 2. **Override the `toPdfInvoice` Method**: Implement your specific logic within the `toPdfInvoice` method to control the customization.
 
@@ -399,7 +399,7 @@ If you need to set the logo dynamically on the invoice, for example, when allowi
 To dynamically set the logo, define the `getLogo` method as shown below:
 
 ```php
-class Invoice extends \Finller\Invoice\Invoice
+class Invoice extends \Finller\Invoice\Models\Invoice
 {
     // ...
 
@@ -426,7 +426,7 @@ You can even use this package exclusively for the `PdfInvoice` class if that sui
 Here’s an example of a fully configured `PdfInvoice` instance:
 
 ```php
-use Finller\Invoice\PdfInvoice;
+use Finller\Invoice\Pdf\PdfInvoice;
 
 $pdfInvoice = new PdfInvoice(
     name: "Invoice",
@@ -480,7 +480,7 @@ $pdfInvoice = new PdfInvoice(
 ```php
 namespace App\Http\Controllers;
 
-use Finller\Invoice\PdfInvoice;
+use Finller\Invoice\Pdf\PdfInvoice;
 
 class InvoiceController extends Controller
 {
@@ -519,7 +519,7 @@ class InvoiceController extends Controller
 ```php
 namespace App\Http\Controllers;
 
-use Finller\Invoice\PdfInvoice;
+use Finller\Invoice\Pdf\PdfInvoice;
 
 class Invoice extends Component
 {

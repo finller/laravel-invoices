@@ -1,298 +1,362 @@
-@php
-    $displayTaxColumn = !$invoice->totalTaxAmount()->isZero();
-    $colspan = $displayTaxColumn ? '3' : '2';
-@endphp
-
 <div>
-    <div class="h-3 w-full" style="background-color: {{ $invoice->color }}"></div>
-    <div class="m-12">
-        <table class="mb-5 w-full">
-            <tbody>
-                <tr>
-                    <td class="p-0 align-top">
-                        <h1 class="mb-1 text-2xl">
-                            <strong>{{ $invoice->name }}</strong>
-                        </h1>
-                        @if ($invoice->state)
-                            <p class="mb-5">
-                                {{ $invoice->state }}
-                            </p>
-                        @endif
+    <table class="mb-8 w-full">
+        <tbody>
+            <tr>
+                <td class="p-0 align-top">
+                    <h1 class="mb-1 text-2xl">
+                        <strong>{{ $invoice->type->getLabel() }}</strong>
+                    </h1>
+                    <p class="mb-5 text-sm">
+                        {{ $invoice->state->getLabel() }}
+                    </p>
 
-                        <table class="w-full">
-                            <tbody>
-                                <tr class="">
-                                    <td class="whitespace-nowrap pr-2 text-sm">
-                                        <strong>{{ __('invoices::invoice.serial_number') }} </strong>
-                                    </td>
-                                    <td class="whitespace-nowrap text-sm" width="100%">
-                                        <strong>{{ $invoice->serial_number }}</strong>
-                                    </td>
-                                </tr>
+                    <table class="w-full">
+                        <tbody>
+                            <tr class="text-xs">
+                                <td class="whitespace-nowrap pr-2">
+                                    <strong>{{ __('invoices::invoice.serial_number') }} </strong>
+                                </td>
+                                <td class="whitespace-nowrap" width="100%">
+                                    <strong>{{ $invoice->serial_number }}</strong>
+                                </td>
+                            </tr>
+                            <tr class="text-xs">
+                                <td class="whitespace-nowrap pr-2">
+                                    {{ __('invoices::invoice.created_at') }}
+                                </td>
+                                <td class="" width="100%">
+                                    {{ $invoice->created_at?->format(config('invoices.date_format')) }}
+                                </td>
+                            </tr>
+                            @if ($invoice->due_at)
                                 <tr class="text-xs">
                                     <td class="whitespace-nowrap pr-2">
-                                        {{ __('invoices::invoice.created_at') }}
+                                        {{ __('invoices::invoice.due_at') }}
                                     </td>
                                     <td class="" width="100%">
-                                        {{ $invoice->created_at?->format(config('invoices.date_format')) }}
+                                        {{ $invoice->due_at->format(config('invoices.date_format')) }}
                                     </td>
                                 </tr>
-                                @if ($invoice->due_at)
-                                    <tr class="text-xs">
-                                        <td class="whitespace-nowrap pr-2">
-                                            {{ __('invoices::invoice.due_at') }}
-                                        </td>
-                                        <td class="" width="100%">
-                                            {{ $invoice->due_at->format(config('invoices.date_format')) }}
-                                        </td>
-                                    </tr>
-                                @endif
-                                @if ($invoice->paid_at)
-                                    <tr class="text-xs">
-                                        <td class="whitespace-nowrap pr-2">
-                                            {{ __('invoices::invoice.paid_at') }}
-                                        </td>
-                                        <td class="" width="100%">
-                                            {{ $invoice->paid_at->format(config('invoices.date_format')) }}
-                                        </td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
-                    </td>
-                    @if ($invoice->logo)
-                        <td class="p-0 align-top" width="30%">
-                            <img src="{{ $invoice->logo }}" alt="logo" height="100">
-                        </td>
-                    @endif
-                </tr>
-
-            </tbody>
-        </table>
-
-        <table class="mb-6 w-full">
-            <tbody>
-                <tr>
-                    <td class="p-0 align-top" width="50%">
-                        @php
-                            $name = data_get($invoice->seller, 'name');
-                            $street = data_get($invoice->seller, 'address.street');
-                            $postal_code = data_get($invoice->seller, 'address.postal_code');
-                            $city = data_get($invoice->seller, 'address.city');
-                            $state = data_get($invoice->seller, 'address.state');
-                            $country = data_get($invoice->seller, 'address.country');
-                            $email = data_get($invoice->seller, 'email');
-                            $phone_number = data_get($invoice->seller, 'phone_number');
-                            $tax_number = data_get($invoice->seller, 'tax_number');
-                            $company_number = data_get($invoice->seller, 'company_number');
-                        @endphp
-                        <p class="pb-1 text-sm"><strong>{{ __('invoices::invoice.from') }}</strong></p>
-                        @if ($name)
-                            <p class="pb-1 text-xs">{{ $name }}</p>
-                        @endif
-                        @if ($street)
-                            <p class="pb-1 text-xs">{{ $street }}</p>
-                        @endif
-                        @if ($postal_code || $city)
-                            <p class="pb-1 text-xs">
-                                {{ $postal_code }}
-                                {{ $city }}
-                            </p>
-                        @endif
-                        @if ($state)
-                            <p class="pb-1 text-xs">{{ $state }}</p>
-                        @endif
-                        @if ($country)
-                            <p class="pb-1 text-xs">{{ $country }}</p>
-                        @endif
-                        @if ($email)
-                            <p class="pb-1 text-xs">{{ $email }}</p>
-                        @endif
-                        @if ($phone_number)
-                            <p class="pb-1 text-xs">{{ $phone_number }}</p>
-                        @endif
-                        @if ($tax_number)
-                            <p class="pb-1 text-xs">{{ $tax_number }}</p>
-                        @endif
-                        @if ($company_number)
-                            <p class="pb-1 text-xs">{{ $company_number }}</p>
-                        @endif
-                        @foreach (data_get($invoice->seller, 'data') ?? [] as $key => $item)
-                            @if (is_string($key))
-                                <p class="pb-1 text-xs">{{ $key }}: {{ $item }}</p>
-                            @else
-                                <p class="pb-1 text-xs">{{ $item }}</p>
                             @endif
-                        @endforeach
-                    </td>
-                    <td class="p-0 align-top" width="50%">
-                        @php
-                            $name = data_get($invoice->buyer, 'name');
-                            $street = data_get($invoice->buyer, 'address.street');
-                            $postal_code = data_get($invoice->buyer, 'address.postal_code');
-                            $city = data_get($invoice->buyer, 'address.city');
-                            $state = data_get($invoice->buyer, 'address.state');
-                            $country = data_get($invoice->buyer, 'address.country');
-                            $email = data_get($invoice->buyer, 'email');
-                            $phone_number = data_get($invoice->buyer, 'phone_number');
-                            $tax_number = data_get($invoice->buyer, 'tax_number');
-                            $company_number = data_get($invoice->buyer, 'company_number');
-                        @endphp
-                        <p class="pb-1 text-sm"><strong>{{ __('invoices::invoice.to') }}</strong></p>
-                        @if ($name)
-                            <p class="pb-1 text-xs">{{ $name }}</p>
-                        @endif
-                        @if ($street)
-                            <p class="pb-1 text-xs">{{ $street }}</p>
-                        @endif
-                        @if ($postal_code || $city)
-                            <p class="pb-1 text-xs">
-                                {{ $postal_code }}
-                                {{ $city }}
-                            </p>
-                        @endif
-                        @if ($state)
-                            <p class="pb-1 text-xs">{{ $state }}</p>
-                        @endif
-                        @if ($country)
-                            <p class="pb-1 text-xs">{{ $country }}</p>
-                        @endif
-                        @if ($email)
-                            <p class="pb-1 text-xs">{{ $email }}</p>
-                        @endif
-                        @if ($phone_number)
-                            <p class="pb-1 text-xs">{{ $phone_number }}</p>
-                        @endif
-                        @if ($tax_number)
-                            <p class="pb-1 text-xs">{{ $tax_number }}</p>
-                        @endif
-                        @if ($company_number)
-                            <p class="pb-1 text-xs">{{ $company_number }}</p>
-                        @endif
-                        @foreach (data_get($invoice->buyer, 'data') ?? [] as $key => $item)
-                            @if (is_string($key))
-                                <p class="pb-1 text-xs">{{ $key }}: {{ $item }}</p>
-                            @else
-                                <p class="pb-1 text-xs">{{ $item }}</p>
+                            @if ($invoice->paid_at)
+                                <tr class="text-xs">
+                                    <td class="whitespace-nowrap pr-2">
+                                        {{ __('invoices::invoice.paid_at') }}
+                                    </td>
+                                    <td class="" width="100%">
+                                        {{ $invoice->paid_at->format(config('invoices.date_format')) }}
+                                    </td>
+                                </tr>
                             @endif
-                        @endforeach
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 
-        <table class="mb-5 w-full">
-            <thead>
-                <tr>
-                    <th class="whitespace-nowrap border-b py-2 pr-2 text-left text-xs font-normal">
-                        {{ __('invoices::invoice.description') }}
-                    </th>
-                    <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
-                        {{ __('invoices::invoice.quantity') }}
-                    </th>
-                    <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
-                        {{ __('invoices::invoice.unit_price') }}
-                    </th>
-                    @if ($displayTaxColumn)
-                        <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
-                            {{ __('invoices::invoice.tax') }}
-                        </th>
-                    @endif
-                    <th class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs font-normal">
-                        {{ __('invoices::invoice.amount') }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($invoice->items as $item)
-                    <tr>
-                        <td @class(['align-top py-2 pr-2', 'border-b' => !$loop->last])>
-                            <p class="text-xs"><strong>{{ $item->label }}</strong></p>
-                            @if ($item->description)
-                                <p class="pt-1 text-xs">{{ $item->description }}</p>
-                            @endif
-                        </td>
-                        <td class="whitespace-nowrap border-b p-2 align-top text-xs">
-                            <p>{{ $item->quantity }}</p>
-                        </td>
-                        <td class="whitespace-nowrap border-b p-2 align-top text-xs">
-                            <p>{{ $item->formatMoney($item->unit_price) }}</p>
-                        </td>
-                        @if ($displayTaxColumn)
-                            <td class="whitespace-nowrap border-b p-2 align-top text-xs">
-                                @if ($item->unit_tax && $item->tax_percentage)
-                                    <p>{{ $item->formatMoney($item->unit_tax) }}
-                                        ({{ $item->formatPercentage($item->tax_percentage) }})</p>
-                                @elseif ($item->unit_tax)
-                                    <p>{{ $item->formatMoney($item->unit_tax) }}</p>
-                                @else
-                                    <p>{{ $item->formatPercentage($item->tax_percentage) }}</p>
-                                @endif
-                            </td>
-                        @endif
-                        <td class="whitespace-nowrap border-b py-2 pl-2 text-right align-top text-xs">
-                            <p>{{ $item->formatMoney($item->totalAmount()) }}</p>
-                        </td>
-                    </tr>
-                @endforeach
-
-                <tr>
-                    {{-- empty space --}}
-                    <td class="py-2 pr-2"></td>
-                    <td class="border-b p-2 text-xs" colspan="{{ $colspan }}">
-                        {{ __('invoices::invoice.subtotal_amount') }}</td>
-                    <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
-                        {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
+                            @foreach ($invoice->fields as $key => $value)
+                                <tr class="text-xs">
+                                    <td class="whitespace-nowrap pr-2">
+                                        {{ $key }}
+                                    </td>
+                                    <td class="" width="100%">
+                                        {{ $value }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </td>
+                @if ($invoice->logo)
+                    <td class="p-0 align-top" width="20%">
+                        <img src="{{ $invoice->logo }}" alt="logo" height="100">
                     </td>
-                </tr>
-                @if ($invoice->discounts)
-                    @foreach ($invoice->discounts as $discount)
-                        <tr>
-                            {{-- empty space --}}
-                            <td class="py-2 pr-2"></td>
-                            <td class="border-b p-2 text-xs" colspan="{{ $colspan }}">
-                                {{ __($discount->name) ?? __('invoices::invoice.discount_name') }}
-                                @if ($discount->percent_off)
-                                    ({{ $discount->formatPercentage($discount->percent_off) }})
-                                @endif
-                            </td>
-                            <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
-                                {{ $invoice->formatMoney($discount->computeDiscountAmountOn($invoice->subTotalAmount())?->multipliedBy(-1)) }}
-                            </td>
-                        </tr>
-                    @endforeach
                 @endif
-                @if ($invoice->tax_label || $displayTaxColumn)
+            </tr>
+
+        </tbody>
+    </table>
+
+    <table class="mb-6 w-full">
+        <tbody>
+            <tr>
+                <td class="p-0 align-top" width="50%">
+                    @php
+                        $name = $invoice->seller->name;
+                        $street = $invoice->seller->address->street;
+                        $postal_code = $invoice->seller->address->postal_code;
+                        $city = $invoice->seller->address->city;
+                        $state = $invoice->seller->address->state;
+                        $country = $invoice->seller->address->country;
+                        $address_fields = $invoice->seller->address?->fields ?? [];
+                        $email = $invoice->seller->email;
+                        $phone = $invoice->seller->phone;
+                        $tax_number = $invoice->seller->tax_number;
+                        $fields = $invoice->seller->fields;
+                    @endphp
+
+                    <p class="mb-1 pb-1 text-xs text-gray-500">{{ __('invoices::invoice.from') }}</p>
+
+                    @if ($name)
+                        <p class="pb-1 text-xs"><strong>{{ $name }}</strong></p>
+                    @endif
+                    @if ($street)
+                        <p class="pb-1 text-xs">{{ $street }}</p>
+                    @endif
+                    @if ($postal_code || $city)
+                        <p class="whitespace-nowrap pb-1 text-xs">
+                            {{ $postal_code }}
+                            {{ $city }}
+                        </p>
+                    @endif
+                    @if ($state)
+                        <p class="pb-1 text-xs">{{ $state }}</p>
+                    @endif
+                    @if ($country)
+                        <p class="pb-1 text-xs">{{ $country }}</p>
+                    @endif
+
+                    @foreach ($address_fields as $key => $value)
+                        <p class="pb-1 text-xs">
+                            @if (is_string($key))
+                                {{ $key }}
+                            @endif
+                            {{ $value }}
+                        </p>
+                    @endforeach
+
+                    @if ($email)
+                        <p class="pb-1 text-xs">{{ $email }}</p>
+                    @endif
+                    @if ($phone)
+                        <p class="pb-1 text-xs">{{ $phone }}</p>
+                    @endif
+                    @if ($tax_number)
+                        <p class="pb-1 text-xs">{{ $tax_number }}</p>
+                    @endif
+                    @foreach ($fields as $key => $value)
+                        <p class="pb-1 text-xs">
+                            @if (is_string($key))
+                                {{ $key }}
+                            @endif
+                            {{ $value }}
+                        </p>
+                    @endforeach
+                </td>
+                <td class="p-0 align-top" width="50%">
+                    @php
+                        $name = $invoice->buyer->name;
+                        $street = $invoice->buyer->billing_address?->street;
+                        $postal_code = $invoice->buyer->billing_address?->postal_code;
+                        $city = $invoice->buyer->billing_address?->city;
+                        $state = $invoice->buyer->billing_address?->state;
+                        $country = $invoice->buyer->billing_address?->country;
+                        $address_fields = $invoice->buyer->billing_address?->fields ?? [];
+                        $email = $invoice->buyer->email;
+                        $phone = $invoice->buyer->phone;
+                        $tax_number = $invoice->buyer->tax_number;
+                        $fields = $invoice->buyer->fields;
+                    @endphp
+                    <p class="mb-1 pb-1 text-xs text-gray-500">{{ __('invoices::invoice.to') }}</p>
+
+                    @if ($name)
+                        <p class="pb-1 text-xs"><strong>{{ $name }}</strong></p>
+                    @endif
+                    @if ($street)
+                        <p class="pb-1 text-xs">{{ $street }}</p>
+                    @endif
+                    @if ($postal_code || $city)
+                        <p class="whitespace-nowrap pb-1 text-xs">
+                            {{ $postal_code }}
+                            {{ $city }}
+                        </p>
+                    @endif
+                    @if ($state)
+                        <p class="pb-1 text-xs">{{ $state }}</p>
+                    @endif
+                    @if ($country)
+                        <p class="pb-1 text-xs">{{ $country }}</p>
+                    @endif
+
+                    @foreach ($address_fields as $key => $value)
+                        <p class="pb-1 text-xs">
+                            @if (is_string($key))
+                                {{ $key }}
+                            @endif
+                            {{ $value }}
+                        </p>
+                    @endforeach
+
+                    @if ($email)
+                        <p class="pb-1 text-xs">{{ $email }}</p>
+                    @endif
+                    @if ($phone)
+                        <p class="pb-1 text-xs">{{ $phone }}</p>
+                    @endif
+                    @if ($tax_number)
+                        <p class="pb-1 text-xs">{{ $tax_number }}</p>
+                    @endif
+
+                    @foreach ($fields as $key => $value)
+                        <p class="pb-1 text-xs">
+                            @if (is_string($key))
+                                {{ $key }}
+                            @endif
+                            {{ $value }}
+                        </p>
+                    @endforeach
+                </td>
+
+                @if ($invoice->buyer->shipping_address)
+                    <td class="p-0 align-top" width="50%">
+                        @php
+                            $name = $invoice->buyer->shipping_address->name;
+                            $street = $invoice->buyer->shipping_address->street;
+                            $postal_code = $invoice->buyer->shipping_address->postal_code;
+                            $city = $invoice->buyer->shipping_address->city;
+                            $state = $invoice->buyer->shipping_address->state;
+                            $country = $invoice->buyer->shipping_address->country;
+                            $fields = $invoice->buyer->shipping_address->fields;
+                        @endphp
+                        <p class="mb-1 whitespace-nowrap pb-1 text-xs text-gray-500">
+                            {{ __('invoices::invoice.shipping_to') }}
+                        </p>
+
+                        @if ($name)
+                            <p class="pb-1 text-xs"><strong>{{ $name }}</strong></p>
+                        @endif
+                        @if ($street)
+                            <p class="pb-1 text-xs">{{ $street }}</p>
+                        @endif
+                        @if ($postal_code || $city)
+                            <p class="whitespace-nowrap pb-1 text-xs">
+                                {{ $postal_code }}
+                                {{ $city }}
+                            </p>
+                        @endif
+                        @if ($state)
+                            <p class="pb-1 text-xs">{{ $state }}</p>
+                        @endif
+                        @if ($country)
+                            <p class="pb-1 text-xs">{{ $country }}</p>
+                        @endif
+                        @foreach ($fields as $key => $value)
+                            <p class="pb-1 text-xs">
+                                @if (is_string($key))
+                                    {{ $key }}
+                                @endif
+                                {{ $value }}
+                            </p>
+                        @endforeach
+                    </td>
+                @endif
+
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="mb-5 w-full">
+        <thead>
+            <tr class="text-gray-500">
+                <th class="whitespace-nowrap border-b py-2 pr-2 text-left text-xs font-normal">
+                    {{ __('invoices::invoice.description') }}
+                </th>
+                <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
+                    {{ __('invoices::invoice.quantity') }}
+                </th>
+                <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
+                    {{ __('invoices::invoice.unit_price') }}
+                </th>
+                <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
+                    {{ __('invoices::invoice.tax') }}
+                </th>
+                <th class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs font-normal">
+                    {{ __('invoices::invoice.amount') }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($invoice->items as $item)
+                <tr>
+                    <td @class(['align-top py-2 pr-2', 'border-b' => !$loop->last])>
+                        <p class="text-xs"><strong>{{ $item->label }}</strong></p>
+                        @if ($item->description)
+                            <p class="pt-1 text-xs">{{ $item->description }}</p>
+                        @endif
+                    </td>
+                    <td class="whitespace-nowrap border-b p-2 align-top text-xs">
+                        <p>{{ $item->quantity }}</p>
+                    </td>
+                    <td class="whitespace-nowrap border-b p-2 align-top text-xs">
+                        <p>{{ $item->formatMoney($item->unit_price) }}</p>
+                    </td>
+                    <td class="whitespace-nowrap border-b p-2 align-top text-xs">
+                        @if ($item->unit_tax && $item->tax_percentage)
+                            <p>{{ $item->formatMoney($item->unit_tax) }}
+                                ({{ $item->formatPercentage($item->tax_percentage) }})
+                            </p>
+                        @elseif ($item->unit_tax)
+                            <p>{{ $item->formatMoney($item->unit_tax) }}</p>
+                        @else
+                            <p>{{ $item->formatPercentage($item->tax_percentage) }}</p>
+                        @endif
+                    </td>
+                    <td class="whitespace-nowrap border-b py-2 pl-2 text-right align-top text-xs">
+                        <p>{{ $item->formatMoney($item->totalAmount()) }}</p>
+                    </td>
+                </tr>
+            @endforeach
+
+            <tr>
+                {{-- empty space --}}
+                <td class="py-2 pr-2"></td>
+                <td class="border-b p-2 text-xs" colspan="3">
+                    {{ __('invoices::invoice.subtotal_amount') }}</td>
+                <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
+                    {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
+                </td>
+            </tr>
+            @if ($invoice->discounts)
+                @foreach ($invoice->discounts as $discount)
                     <tr>
                         {{-- empty space --}}
                         <td class="py-2 pr-2"></td>
-                        <td class="border-b p-2 text-xs" colspan="{{ $colspan }}">
-                            {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}
+                        <td class="border-b p-2 text-xs" colspan="3">
+                            {{ __($discount->name) ?? __('invoices::invoice.discount_name') }}
+                            @if ($discount->percent_off)
+                                ({{ $discount->formatPercentage($discount->percent_off) }})
+                            @endif
                         </td>
                         <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
-                            {{ $invoice->formatMoney($invoice->totalTaxAmount()) }}
+                            {{ $invoice->formatMoney($discount->computeDiscountAmountOn($invoice->subTotalAmount())?->multipliedBy(-1)) }}
                         </td>
                     </tr>
-                @endif
-                <tr>
-                    {{-- empty space --}}
-                    <td class="py-2 pr-2"></td>
-                    <td class="border-b p-2 text-sm" colspan="{{ $colspan }}">
-                        <strong>{{ __('invoices::invoice.total_amount') }}</strong>
-                    </td>
-                    <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-sm">
-                        <strong>
-                            {{ $invoice->formatMoney($invoice->totalAmount()) }}
-                        </strong>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                @endforeach
+            @endif
 
-        @if ($invoice->description)
-            <p class="mb-1 text-sm"><strong>{{ __('invoices::invoice.description') }}</strong></p>
-            <p class="whitespace-pre-line text-xs">{!! $invoice->description !!}</p>
-        @endif
+            <tr>
+                {{-- empty space --}}
+                <td class="py-2 pr-2"></td>
+                <td class="border-b p-2 text-xs" colspan="3">
+                    {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}
+                </td>
+                <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
+                    {{ $invoice->formatMoney($invoice->totalTaxAmount()) }}
+                </td>
+            </tr>
 
-    </div>
+            <tr>
+                {{-- empty space --}}
+                <td class="py-2 pr-2"></td>
+                <td class="p-2 text-sm" colspan="3">
+                    <strong>{{ __('invoices::invoice.total_amount') }}</strong>
+                </td>
+                <td class="whitespace-nowrap py-2 pl-2 text-right text-sm">
+                    <strong>
+                        {{ $invoice->formatMoney($invoice->totalAmount()) }}
+                    </strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    @if ($invoice->description)
+        <p class="mb-1 text-sm"><strong>{{ __('invoices::invoice.description') }}</strong></p>
+        <p class="whitespace-pre-line text-xs">{!! $invoice->description !!}</p>
+    @endif
 </div>

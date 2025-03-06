@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Finller\Invoice\Database\Factories;
 
 use Carbon\Carbon;
-use Finller\Invoice\Invoice;
-use Finller\Invoice\InvoiceState;
-use Finller\Invoice\InvoiceType;
+use Finller\Invoice\Enums\InvoiceState;
+use Finller\Invoice\Enums\InvoiceType;
+use Finller\Invoice\Models\Invoice;
+use Finller\Invoice\Support\Address;
+use Finller\Invoice\Support\Buyer;
+use Finller\Invoice\Support\Seller;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -31,19 +34,20 @@ class InvoiceFactory extends Factory
             'created_at' => $created_at,
             'due_at' => fake()->dateTimeBetween($created_at, '+ 30 days'),
             'description' => fake()->sentence(),
-            'buyer_information' => [
-                'name' => fake()->company(),
-                'address' => [
-                    'street' => fake()->streetName(),
-                    'city' => fake()->city(),
-                    'postal_code' => fake()->postcode(),
-                    'state' => null,
-                    'country' => fake()->country(),
-                ],
-                'email' => fake()->email(),
-                'phone_number' => fake()->phoneNumber(),
-                'tax_number' => fake()->numberBetween(12345678, 99999999),
-            ],
+            // @phpstan-ignore-next-line
+            'seller_information' => Seller::fromArray(config('invoices.default_seller')),
+            'buyer_information' => new Buyer(
+                name : fake()->company(),
+                billing_address : new Address(
+                    street: fake()->streetName(),
+                    city: fake()->city(),
+                    postal_code : fake()->postcode(),
+                    country: fake()->country(),
+                ),
+                email : fake()->email(),
+                phone : fake()->phoneNumber(),
+                tax_number : (string) fake()->numberBetween(12345678, 99999999),
+            ),
         ];
     }
 

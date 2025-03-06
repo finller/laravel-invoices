@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Brick\Money\Money;
-use Finller\Invoice\PdfInvoiceItem;
+use Finller\Invoice\Pdf\PdfInvoiceItem;
 
 it('computes the right subTotalAmount', function ($unit_price, $quantity, $unit_tax, $expected) {
     $item = new PdfInvoiceItem(
