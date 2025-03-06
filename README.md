@@ -165,10 +165,10 @@ return [
              */
             'defaultFont' => 'Helvetica',
 
-            'fontDir' => sys_get_temp_dir(),
-            'fontCache' => sys_get_temp_dir(),
+            'fontDir' => storage_path('fonts'), // advised by dompdf (https://github.com/dompdf/dompdf/pull/782)
+            'fontCache' => storage_path('fonts'),
             'tempDir' => sys_get_temp_dir(),
-            'chroot' => sys_get_temp_dir(),
+            'chroot' => realpath(base_path()),
         ],
 
         /**
