@@ -1,9 +1,9 @@
 # Everything You Need to Manage Invoices in Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/finller/laravel-invoices.svg?style=flat-square)](https://packagist.org/packages/finller/laravel-invoices)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/finller/laravel-invoices/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/finller/laravel-invoices/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/finller/laravel-invoices/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/finller/laravel-invoices/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/finller/laravel-invoices.svg?style=flat-square)](https://packagist.org/packages/finller/laravel-invoices)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/elegantly/laravel-invoices.svg?style=flat-square)](https://packagist.org/packages/elegantly/laravel-invoices)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/elegantly/laravel-invoices/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-invoices/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/elegantly/laravel-invoices/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/ElegantEngineeringTech/laravel-invoices/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/elegantly/laravel-invoices.svg?style=flat-square)](https://packagist.org/packages/elegantly/laravel-invoices)
 
 This package provides a robust, easy-to-use system for managing invoices within a Laravel application, with options for database storage, serial numbering, and PDF generation.
 
@@ -51,7 +51,7 @@ Try out [the interactive demo](https://elegantengineering.tech/laravel-invoices)
 You can install the package via composer:
 
 ```bash
-composer require finller/laravel-invoices
+composer require elegantly/laravel-invoices
 ```
 
 You can publish and run the migrations with:
@@ -70,10 +70,10 @@ php artisan vendor:publish --tag="invoices-config"
 This is the contents of the published config file:
 
 ```php
-use Finller\Invoice\Models\Invoice;
-use Finller\Invoice\InvoiceDiscount;
-use Finller\Invoice\Models\InvoiceItem;
-use Finller\Invoice\Enums\InvoiceType;
+use Elegantly\Invoices\Models\Invoice;
+use Elegantly\Invoices\InvoiceDiscount;
+use Elegantly\Invoices\Models\InvoiceItem;
+use Elegantly\Invoices\Enums\InvoiceType;
 
 return [
 
@@ -193,7 +193,7 @@ return [
 
 ### Storing an Invoice in Your Database
 
-You can store an Invoice in your database using the Eloquent Model: `Finller\Invoice\Models\Invoice`.
+You can store an Invoice in your database using the Eloquent Model: `Elegantly\Invoices\Models\Invoice`.
 
 > [!NOTE]
 > Don't forget to publish and run the migrations
@@ -202,9 +202,9 @@ Here is a full example:
 
 ```php
 use Brick\Money\Money;
-use Finller\Invoice\Models\Invoice;
-use Finller\Invoice\Enums\InvoiceState;
-use Finller\Invoice\Enums\InvoiceType;
+use Elegantly\Invoices\Models\Invoice;
+use Elegantly\Invoices\Enums\InvoiceState;
+use Elegantly\Invoices\Enums\InvoiceType;
 
 // Let's say your app edit invoices for your users
 $customer = User::find(1);
@@ -256,7 +256,7 @@ You can configure the format of your serial numbers in the configuration file. T
 
 When `invoices.serial_number.auto_generate` is set to `true`, a unique serial number is assigned to each new invoice automatically.
 
-Serial numbers are generated sequentially, with each new serial number based on the latest available one. To define what qualifies as the `previous` serial number, you can extend the `Finller\Invoice\Models\Invoice` class and override the `getPreviousInvoice` method.
+Serial numbers are generated sequentially, with each new serial number based on the latest available one. To define what qualifies as the `previous` serial number, you can extend the `Elegantly\Invoices\Models\Invoice` class and override the `getPreviousInvoice` method.
 
 By default, the previous invoice is determined based on criteria such as prefix, series, year, and month for accurate, scoped numbering.
 
@@ -273,7 +273,7 @@ For instance, you might want to define a unique series for each user, creating s
 When creating an invoice, you can dynamically specify the prefix and series as follows:
 
 ```php
-use Finller\Invoice\Models\Invoice;
+use Elegantly\Invoices\Models\Invoice;
 $invoice = new Invoice();
 
 $invoice->configureSerialNumber(
@@ -380,7 +380,7 @@ class PaymentInvoice extends Mailable
 
 To customize how your model is converted to a `PdfInvoice`, follow these steps:
 
-1. **Create a Custom Model**: Define your own `\App\Models\Invoice` class and ensure it extends the base `\Finller\Invoice\Models\Invoice` class.
+1. **Create a Custom Model**: Define your own `\App\Models\Invoice` class and ensure it extends the base `\Elegantly\Invoices\Models\Invoice` class.
 
 2. **Override the `toPdfInvoice` Method**: Implement your specific logic within the `toPdfInvoice` method to control the customization.
 
@@ -399,7 +399,7 @@ If you need to set the logo dynamically on the invoice, for example, when allowi
 To dynamically set the logo, define the `getLogo` method as shown below:
 
 ```php
-class Invoice extends \Finller\Invoice\Models\Invoice
+class Invoice extends \Elegantly\Invoices\Models\Invoice
 {
     // ...
 
@@ -426,7 +426,7 @@ You can even use this package exclusively for the `PdfInvoice` class if that sui
 Here’s an example of a fully configured `PdfInvoice` instance:
 
 ```php
-use Finller\Invoice\Pdf\PdfInvoice;
+use Elegantly\Invoices\Pdf\PdfInvoice;
 
 $pdfInvoice = new PdfInvoice(
     name: "Invoice",
@@ -480,7 +480,7 @@ $pdfInvoice = new PdfInvoice(
 ```php
 namespace App\Http\Controllers;
 
-use Finller\Invoice\Pdf\PdfInvoice;
+use Elegantly\Invoices\Pdf\PdfInvoice;
 
 class InvoiceController extends Controller
 {
@@ -519,7 +519,7 @@ class InvoiceController extends Controller
 ```php
 namespace App\Http\Controllers;
 
-use Finller\Invoice\Pdf\PdfInvoice;
+use Elegantly\Invoices\Pdf\PdfInvoice;
 
 class Invoice extends Component
 {

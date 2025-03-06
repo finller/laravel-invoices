@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Pdf;
+namespace Elegantly\Invoices\Pdf;
 
 use Brick\Math\RoundingMode;
 use Brick\Money\Currency;
 use Brick\Money\Money;
+use Elegantly\Invoices\Concerns\FormatForPdf;
 use Exception;
-use Finller\Invoice\Concerns\FormatForPdf;
 
 class PdfInvoiceItem
 {

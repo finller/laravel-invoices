@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Enums;
+namespace Elegantly\Invoices\Enums;
 
 enum InvoiceType: string
 {

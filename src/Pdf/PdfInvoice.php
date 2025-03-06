@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Pdf;
+namespace Elegantly\Invoices\Pdf;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
-use Finller\Invoice\Concerns\FormatForPdf;
-use Finller\Invoice\Enums\InvoiceState;
-use Finller\Invoice\Enums\InvoiceType;
-use Finller\Invoice\InvoiceDiscount;
-use Finller\Invoice\Support\Buyer;
-use Finller\Invoice\Support\Seller;
+use Elegantly\Invoices\Concerns\FormatForPdf;
+use Elegantly\Invoices\Enums\InvoiceState;
+use Elegantly\Invoices\Enums\InvoiceType;
+use Elegantly\Invoices\InvoiceDiscount;
+use Elegantly\Invoices\Support\Buyer;
+use Elegantly\Invoices\Support\Seller;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

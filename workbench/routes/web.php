@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 use Brick\Money\Money;
 use Carbon\Carbon;
-use Finller\Invoice\Enums\InvoiceState;
-use Finller\Invoice\Enums\InvoiceType;
-use Finller\Invoice\InvoiceDiscount;
-use Finller\Invoice\Pdf\PdfInvoice;
-use Finller\Invoice\Pdf\PdfInvoiceItem;
-use Finller\Invoice\Support\Address;
-use Finller\Invoice\Support\Buyer;
-use Finller\Invoice\Support\Seller;
+use Elegantly\Invoices\Enums\InvoiceState;
+use Elegantly\Invoices\Enums\InvoiceType;
+use Elegantly\Invoices\InvoiceDiscount;
+use Elegantly\Invoices\Pdf\PdfInvoice;
+use Elegantly\Invoices\Pdf\PdfInvoiceItem;
+use Elegantly\Invoices\Support\Address;
+use Elegantly\Invoices\Support\Buyer;
+use Elegantly\Invoices\Support\Seller;
 use Illuminate\Support\Facades\Route;
 
 $invoice = new PdfInvoice(
@@ -26,7 +26,7 @@ $invoice = new PdfInvoice(
     ],
     logo: 'https://avatars.githubusercontent.com/u/170185760?s=400&u=becdedf9606e6a80ea4831e8fc5cac301763368a&v=4',
     seller: new Seller(
-        name: 'Finller',
+        name: 'Elegantly',
         address: new Address(
             street: "9 rue Geoffroy l'Angevin",
             postal_code: '75004',

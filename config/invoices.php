@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Finller\Invoice\Enums\InvoiceType;
-use Finller\Invoice\InvoiceDiscount;
-use Finller\Invoice\Models\Invoice;
-use Finller\Invoice\Models\InvoiceItem;
+use Elegantly\Invoices\Enums\InvoiceType;
+use Elegantly\Invoices\InvoiceDiscount;
+use Elegantly\Invoices\Models\Invoice;
+use Elegantly\Invoices\Models\InvoiceItem;
 
 return [
 

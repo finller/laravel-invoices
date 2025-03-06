@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Models;
+namespace Elegantly\Invoices\Models;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
+use Elegantly\Invoices\Casts\Discounts;
+use Elegantly\Invoices\Database\Factories\InvoiceFactory;
+use Elegantly\Invoices\Enums\InvoiceState;
+use Elegantly\Invoices\Enums\InvoiceType;
+use Elegantly\Invoices\InvoiceDiscount;
+use Elegantly\Invoices\InvoiceServiceProvider;
+use Elegantly\Invoices\Pdf\PdfInvoice;
+use Elegantly\Invoices\SerialNumberGenerator;
+use Elegantly\Invoices\Support\Buyer;
+use Elegantly\Invoices\Support\Seller;
 use Elegantly\Money\MoneyCast;
 use Exception;
-use Finller\Invoice\Casts\Discounts;
-use Finller\Invoice\Database\Factories\InvoiceFactory;
-use Finller\Invoice\Enums\InvoiceState;
-use Finller\Invoice\Enums\InvoiceType;
-use Finller\Invoice\InvoiceDiscount;
-use Finller\Invoice\InvoiceServiceProvider;
-use Finller\Invoice\Pdf\PdfInvoice;
-use Finller\Invoice\SerialNumberGenerator;
-use Finller\Invoice\Support\Buyer;
-use Finller\Invoice\Support\Seller;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Database\Factories;
+namespace Elegantly\Invoices\Database\Factories;
 
 use Brick\Money\Money;
-use Finller\Invoice\Models\InvoiceItem;
+use Elegantly\Invoices\Models\InvoiceItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

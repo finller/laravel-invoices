@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Models;
+namespace Elegantly\Invoices\Models;
 
 use Brick\Money\Money;
 use Carbon\Carbon;
+use Elegantly\Invoices\Database\Factories\InvoiceItemFactory;
+use Elegantly\Invoices\Pdf\PdfInvoiceItem;
 use Elegantly\Money\MoneyCast;
-use Finller\Invoice\Database\Factories\InvoiceItemFactory;
-use Finller\Invoice\Pdf\PdfInvoiceItem;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

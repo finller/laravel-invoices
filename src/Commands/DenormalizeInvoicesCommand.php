@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Commands;
+namespace Elegantly\Invoices\Commands;
 
-use Finller\Invoice\Models\Invoice;
+use Elegantly\Invoices\Models\Invoice;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

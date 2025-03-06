@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Casts;
+namespace Elegantly\Invoices\Casts;
 
-use Finller\Invoice\InvoiceDiscount;
+use Elegantly\Invoices\InvoiceDiscount;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Database\Eloquent\Model;

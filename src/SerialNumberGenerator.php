@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice;
+namespace Elegantly\Invoices;
 
-use Finller\Invoice\Contracts\GenerateSerialNumber;
+use Elegantly\Invoices\Contracts\GenerateSerialNumber;
 
 class SerialNumberGenerator implements GenerateSerialNumber
 {

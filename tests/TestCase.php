@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Tests;
+namespace Elegantly\Invoices\Tests;
 
-use Finller\Invoice\InvoiceServiceProvider;
+use Elegantly\Invoices\InvoiceServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -15,7 +15,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Finller\\Invoice\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Elegantly\\Invoices\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

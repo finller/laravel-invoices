@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Concerns;
+namespace Elegantly\Invoices\Concerns;
 
 use Brick\Money\Money;
 use NumberFormatter;

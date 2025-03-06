@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice;
+namespace Elegantly\Invoices;
 
 use Brick\Math\RoundingMode;
 use Brick\Money\Money;
-use Finller\Invoice\Concerns\FormatForPdf;
+use Elegantly\Invoices\Concerns\FormatForPdf;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 

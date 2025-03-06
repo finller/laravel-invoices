@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Brick\Money\Money;
-use Finller\Invoice\Enums\InvoiceState;
-use Finller\Invoice\Enums\InvoiceType;
-use Finller\Invoice\Pdf\PdfInvoice;
-use Finller\Invoice\Pdf\PdfInvoiceItem;
+use Elegantly\Invoices\Enums\InvoiceState;
+use Elegantly\Invoices\Enums\InvoiceType;
+use Elegantly\Invoices\Pdf\PdfInvoice;
+use Elegantly\Invoices\Pdf\PdfInvoiceItem;
 
 it('computes the right subTotalAmount, totalTaxAmount and totalAmount', function () {
     $pdfInvoice = new PdfInvoice(

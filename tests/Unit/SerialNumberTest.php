@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Finller\Invoice\SerialNumberGenerator;
+use Elegantly\Invoices\SerialNumberGenerator;
 
 $cases = [
     // $format, $serialNumber, $prefix, $serie, $year, $month, $count

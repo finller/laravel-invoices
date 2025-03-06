@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Database\Factories;
+namespace Elegantly\Invoices\Database\Factories;
 
 use Carbon\Carbon;
-use Finller\Invoice\Enums\InvoiceState;
-use Finller\Invoice\Enums\InvoiceType;
-use Finller\Invoice\Models\Invoice;
-use Finller\Invoice\Support\Address;
-use Finller\Invoice\Support\Buyer;
-use Finller\Invoice\Support\Seller;
+use Elegantly\Invoices\Enums\InvoiceState;
+use Elegantly\Invoices\Enums\InvoiceType;
+use Elegantly\Invoices\Models\Invoice;
+use Elegantly\Invoices\Support\Address;
+use Elegantly\Invoices\Support\Buyer;
+use Elegantly\Invoices\Support\Seller;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

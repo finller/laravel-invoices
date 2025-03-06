@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Contracts;
+namespace Elegantly\Invoices\Contracts;
 
 interface GenerateSerialNumber
 {

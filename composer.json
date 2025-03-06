@@ -1,13 +1,13 @@
 {
-    "name": "finller/laravel-invoices",
+    "name": "elegantly/laravel-invoices",
     "description": "Store invoices safely in your Laravel application",
     "keywords": [
-        "finller",
+        "elegantly",
         "laravel",
         "invoices",
         "laravel-invoices"
     ],
-    "homepage": "https://github.com/finller/laravel-invoices",
+    "homepage": "https://github.com/ElegantEngineeringTech/laravel-invoices",
     "license": "MIT",
     "authors": [
         {
@@ -37,13 +37,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Finller\\Invoice\\": "src",
-            "Finller\\Invoice\\Database\\Factories\\": "database/factories"
+            "Elegantly\\Invoices\\": "src",
+            "Elegantly\\Invoices\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Finller\\Invoice\\Tests\\": "tests",
+            "Elegantly\\Invoices\\Tests\\": "tests",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
@@ -87,10 +87,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Finller\\Invoice\\InvoiceServiceProvider"
+                "Elegantly\\Invoices\\InvoiceServiceProvider"
             ],
             "aliases": {
-                "Invoice": "Finller\\Invoice\\Facades\\Invoice"
+                "Invoice": "Elegantly\\Invoices\\Facades\\Invoice"
             }
         }
     },

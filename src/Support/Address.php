@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice\Support;
+namespace Elegantly\Invoices\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
 

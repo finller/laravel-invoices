@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Finller\Invoice;
+namespace Elegantly\Invoices;
 
+use Elegantly\Invoices\Commands\DenormalizeInvoicesCommand;
+use Elegantly\Invoices\Enums\InvoiceType;
 use Exception;
-use Finller\Invoice\Commands\DenormalizeInvoicesCommand;
-use Finller\Invoice\Enums\InvoiceType;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
