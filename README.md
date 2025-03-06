@@ -108,12 +108,7 @@ return [
          * - SSSS-CCCC: 0001-0123
          * - YYCCCC: 220123
          */
-        'format' => [
-            InvoiceType::Invoice->value => 'PPYYCCCC',
-            InvoiceType::Quote->value => 'PPYYCCCC',
-            InvoiceType::Credit->value => 'PPYYCCCC',
-            InvoiceType::Proforma->value => 'PPYYCCCC',
-        ],
+        'format' => 'PPYYCCCC',
 
         /**
          * Define the default prefix used for each invoice type
@@ -150,23 +145,30 @@ return [
     'default_currency' => 'USD',
 
     'pdf' => [
+
+        'paper' => [
+            'paper' => 'a4',
+            'orientation' => 'portrait',
+        ],
+
         /**
          * Default DOM PDF options
          *
          * @see Available options https://github.com/barryvdh/laravel-dompdf#configuration
          */
         'options' => [
-            'isPhpEnabled' => true,
-            'fontHeightRatio' => 0.9,
+            'isRemoteEnabled' => true,
+            'isPhpEnabled' => false,
+            'fontHeightRatio' => 1,
             /**
              * Supported values are: 'DejaVu Sans', 'Helvetica', 'Courier', 'Times', 'Symbol', 'ZapfDingbats'
              */
             'defaultFont' => 'Helvetica',
-        ],
 
-        'paper' => [
-            'paper' => 'a4',
-            'orientation' => 'portrait',
+            'fontDir' => sys_get_temp_dir(),
+            'fontCache' => sys_get_temp_dir(),
+            'tempDir' => sys_get_temp_dir(),
+            'chroot' => sys_get_temp_dir(),
         ],
 
         /**
@@ -175,14 +177,16 @@ return [
         'logo' => null,
 
         /**
-         * The color displayed at the top of the PDF
-         */
-        'color' => '#050038',
-
-        /**
          * The template used to render the PDF
          */
         'template' => 'default.layout',
+
+        'template_data' => [
+            /**
+             * The color displayed at the top of the PDF
+             */
+            'color' => '#050038',
+        ],
 
     ],
 
