@@ -16,7 +16,7 @@ class Buyer implements Arrayable
      */
     public function __construct(
         public ?string $name = null,
-        public ?Address $billing_address = null,
+        public ?Address $address = null,
         public ?Address $shipping_address = null,
         public ?string $tax_number = null,
         public ?string $email = null,
@@ -35,7 +35,7 @@ class Buyer implements Arrayable
             // @phpstan-ignore-next-line
             name: data_get($values, 'name'),
             // @phpstan-ignore-next-line
-            billing_address: ($billing_address = data_get($values, 'billing_address')) ? Address::fromArray($billing_address) : null,
+            address: ($address = data_get($values, 'address')) ? Address::fromArray($address) : null,
             // @phpstan-ignore-next-line
             shipping_address: ($shipping_address = data_get($values, 'shipping_address')) ? Address::fromArray($shipping_address) : null,
             // @phpstan-ignore-next-line
@@ -52,7 +52,7 @@ class Buyer implements Arrayable
     /**
      * @return array{
      *    name: ?string,
-     *    billing_address: null|array{
+     *    address: null|array{
      *       name: ?string,
      *       street: ?string,
      *       state: ?string,
@@ -80,7 +80,7 @@ class Buyer implements Arrayable
     {
         return [
             'name' => $this->name,
-            'billing_address' => $this->billing_address?->toArray(),
+            'address' => $this->address?->toArray(),
             'shipping_address' => $this->shipping_address?->toArray(),
             'tax_number' => $this->tax_number,
             'email' => $this->email,

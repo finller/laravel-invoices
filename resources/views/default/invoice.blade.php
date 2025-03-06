@@ -141,12 +141,12 @@
                 <td class="p-0 align-top" width="50%">
                     @php
                         $name = $invoice->buyer->name;
-                        $street = $invoice->buyer->billing_address?->street;
-                        $postal_code = $invoice->buyer->billing_address?->postal_code;
-                        $city = $invoice->buyer->billing_address?->city;
-                        $state = $invoice->buyer->billing_address?->state;
-                        $country = $invoice->buyer->billing_address?->country;
-                        $address_fields = $invoice->buyer->billing_address?->fields ?? [];
+                        $street = $invoice->buyer->address?->street;
+                        $postal_code = $invoice->buyer->address?->postal_code;
+                        $city = $invoice->buyer->address?->city;
+                        $state = $invoice->buyer->address?->state;
+                        $country = $invoice->buyer->address?->country;
+                        $address_fields = $invoice->buyer->address?->fields ?? [];
                         $email = $invoice->buyer->email;
                         $phone = $invoice->buyer->phone;
                         $tax_number = $invoice->buyer->tax_number;

@@ -38,7 +38,7 @@ class InvoiceFactory extends Factory
             'seller_information' => Seller::fromArray(config('invoices.default_seller')),
             'buyer_information' => new Buyer(
                 name : fake()->company(),
-                billing_address : new Address(
+                address : new Address(
                     street: fake()->streetName(),
                     city: fake()->city(),
                     postal_code : fake()->postcode(),

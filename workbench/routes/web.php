@@ -42,7 +42,7 @@ $invoice = new PdfInvoice(
     ),
     buyer: new Buyer(
         name: 'CHASR',
-        billing_address: new Address(
+        address: new Address(
             street : '8 Allée Du Sequoia',
             postal_code : '77400',
             city : 'Lagny-sur-Marne',
