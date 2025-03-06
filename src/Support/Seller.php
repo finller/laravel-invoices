@@ -42,7 +42,7 @@ class Seller implements Arrayable
             // @phpstan-ignore-next-line
             phone: data_get($values, 'phone'),
             // @phpstan-ignore-next-line
-            fields: data_get($values, 'fields') ?? [],
+            fields: data_get($values, 'fields') ?? data_get($values, 'data') ?? [],
         );
     }
 
