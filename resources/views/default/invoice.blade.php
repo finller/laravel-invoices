@@ -250,6 +250,10 @@
         </tbody>
     </table>
 
+    @php
+        $hasTaxes = $invoice->tax_label || $invoice->totalTaxAmount()->isPositive();
+    @endphp
+
     <table class="mb-5 w-full">
         <thead>
             <tr class="text-gray-500">
@@ -262,9 +266,15 @@
                 <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
                     {{ __('invoices::invoice.unit_price') }}
                 </th>
-                <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
-                    {{ __('invoices::invoice.tax') }}
-                </th>
+
+                @if ($hasTaxes)
+                    <th class="whitespace-nowrap border-b p-2 text-left text-xs font-normal">
+                        {{ __('invoices::invoice.tax') }}
+                    </th>
+                @else
+                    <th class="p-0"></th>
+                @endif
+
                 <th class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs font-normal">
                     {{ __('invoices::invoice.amount') }}
                 </th>
@@ -285,17 +295,26 @@
                     <td class="whitespace-nowrap border-b p-2 align-top text-xs">
                         <p>{{ $item->formatMoney($item->unit_price) }}</p>
                     </td>
-                    <td class="whitespace-nowrap border-b p-2 align-top text-xs">
-                        @if ($item->unit_tax && $item->tax_percentage)
-                            <p>{{ $item->formatMoney($item->unit_tax) }}
-                                ({{ $item->formatPercentage($item->tax_percentage) }})
-                            </p>
-                        @elseif ($item->unit_tax)
-                            <p>{{ $item->formatMoney($item->unit_tax) }}</p>
-                        @else
-                            <p>{{ $item->formatPercentage($item->tax_percentage) }}</p>
-                        @endif
-                    </td>
+
+                    @if ($hasTaxes)
+                        <td class="whitespace-nowrap border-b p-2 align-top text-xs">
+                            @if ($item->unit_tax !== null && $item->tax_percentage !== null)
+                                <p>
+                                    {{ $item->formatMoney($item->unit_tax) }}
+                                    ({{ $item->formatPercentage($item->tax_percentage) }})
+                                </p>
+                            @elseif ($item->unit_tax !== null)
+                                <p>{{ $item->formatMoney($item->unit_tax) }}</p>
+                            @elseif($item->tax_percentage !== null)
+                                <p>{{ $item->formatPercentage($item->tax_percentage) }}</p>
+                            @else
+                                <p>-</p>
+                            @endif
+                        </td>
+                    @else
+                        <td class="p-0"></td>
+                    @endif
+
                     <td class="whitespace-nowrap border-b py-2 pl-2 text-right align-top text-xs">
                         <p>{{ $item->formatMoney($item->totalAmount()) }}</p>
                     </td>
@@ -311,34 +330,35 @@
                     {{ $invoice->formatMoney($invoice->subTotalAmount()) }}
                 </td>
             </tr>
-            @if ($invoice->discounts)
-                @foreach ($invoice->discounts as $discount)
-                    <tr>
-                        {{-- empty space --}}
-                        <td class="py-2 pr-2"></td>
-                        <td class="border-b p-2 text-xs" colspan="3">
-                            {{ __($discount->name) ?? __('invoices::invoice.discount_name') }}
-                            @if ($discount->percent_off)
-                                ({{ $discount->formatPercentage($discount->percent_off) }})
-                            @endif
-                        </td>
-                        <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
-                            {{ $invoice->formatMoney($discount->computeDiscountAmountOn($invoice->subTotalAmount())?->multipliedBy(-1)) }}
-                        </td>
-                    </tr>
-                @endforeach
-            @endif
 
-            <tr>
-                {{-- empty space --}}
-                <td class="py-2 pr-2"></td>
-                <td class="border-b p-2 text-xs" colspan="3">
-                    {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}
-                </td>
-                <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
-                    {{ $invoice->formatMoney($invoice->totalTaxAmount()) }}
-                </td>
-            </tr>
+            @foreach ($invoice->discounts as $discount)
+                <tr>
+                    {{-- empty space --}}
+                    <td class="py-2 pr-2"></td>
+                    <td class="border-b p-2 text-xs" colspan="3">
+                        {{ __($discount->name) ?? __('invoices::invoice.discount_name') }}
+                        @if ($discount->percent_off)
+                            ({{ $discount->formatPercentage($discount->percent_off) }})
+                        @endif
+                    </td>
+                    <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
+                        {{ $invoice->formatMoney($discount->computeDiscountAmountOn($invoice->subTotalAmount())?->multipliedBy(-1)) }}
+                    </td>
+                </tr>
+            @endforeach
+
+            @if ($hasTaxes)
+                <tr>
+                    {{-- empty space --}}
+                    <td class="py-2 pr-2"></td>
+                    <td class="border-b p-2 text-xs" colspan="3">
+                        {{ $invoice->tax_label ?? __('invoices::invoice.tax_label') }}
+                    </td>
+                    <td class="whitespace-nowrap border-b py-2 pl-2 text-right text-xs">
+                        {{ $invoice->formatMoney($invoice->totalTaxAmount()) }}
+                    </td>
+                </tr>
+            @endif
 
             <tr>
                 {{-- empty space --}}
