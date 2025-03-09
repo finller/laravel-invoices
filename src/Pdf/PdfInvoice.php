@@ -22,6 +22,10 @@ class PdfInvoice
 {
     use FormatForPdf;
 
+    public string $type;
+
+    public string $state;
+
     public string $template;
 
     /**
@@ -32,8 +36,8 @@ class PdfInvoice
      * @param  array<string, mixed>  $templateData
      */
     public function __construct(
-        public InvoiceType $type = InvoiceType::Invoice,
-        public InvoiceState $state = InvoiceState::Draft,
+        InvoiceType|string $type = InvoiceType::Invoice,
+        InvoiceState|string $state = InvoiceState::Draft,
         public ?string $serial_number = null,
         public ?Carbon $created_at = null,
         public ?Carbon $due_at = null,
@@ -53,6 +57,9 @@ class PdfInvoice
 
         public ?string $logo = null,
     ) {
+        $this->type = $type instanceof InvoiceType ? $type->getLabel() : $type;
+        $this->state = $state instanceof InvoiceState ? $state->getLabel() : $state;
+
         // @phpstan-ignore-next-line
         $this->logo = $logo ?? config('invoices.pdf.logo') ?? config('invoices.default_logo');
         // @phpstan-ignore-next-line

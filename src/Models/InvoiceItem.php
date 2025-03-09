@@ -39,15 +39,18 @@ class InvoiceItem extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        /**
-         * This cast will be forwarded to the class defined in config at invoices.money_cast
-         */
-        'unit_price' => MoneyCast::class.':currency',
-        'unit_tax' => MoneyCast::class.':currency',
-        'metadata' => AsArrayObject::class,
-        'tax_percentage' => 'float',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'unit_price' => MoneyCast::class.':currency',
+            'unit_tax' => MoneyCast::class.':currency',
+            'metadata' => AsArrayObject::class,
+            'tax_percentage' => 'float',
+        ];
+    }
 
     /**
      * @return BelongsTo<Invoice, $this>

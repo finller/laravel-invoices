@@ -35,12 +35,12 @@ use Illuminate\Mail\Attachment;
  * @property ?Invoice $parent
  * @property ?Invoice $quote
  * @property ?Invoice $credit
- * @property InvoiceType $type
+ * @property string $type
+ * @property string $state
+ * @property ?Carbon $state_set_at
  * @property string $description
  * @property ?array<string, mixed> $seller_information
  * @property ?array<string, mixed> $buyer_information
- * @property InvoiceState $state
- * @property ?Carbon $state_set_at
  * @property ?Carbon $due_at
  * @property ?string $tax_type
  * @property ?string $tax_exempt
@@ -79,26 +79,30 @@ class Invoice extends Model implements Attachable
     use HasFactory;
 
     protected $attributes = [
-        'type' => InvoiceType::Invoice,
-        'state' => InvoiceState::Draft,
+        'type' => InvoiceType::Invoice->value,
+        'state' => InvoiceState::Draft->value,
     ];
 
     protected $guarded = [];
 
-    protected $casts = [
-        'type' => InvoiceType::class,
-        'state_set_at' => 'datetime',
-        'due_at' => 'datetime',
-        'state' => InvoiceState::class,
-        'seller_information' => 'array',
-        'buyer_information' => 'array',
-        'metadata' => 'array',
-        'discounts' => Discounts::class,
-        'subtotal_amount' => MoneyCast::class.':currency',
-        'discount_amount' => MoneyCast::class.':currency',
-        'tax_amount' => MoneyCast::class.':currency',
-        'total_amount' => MoneyCast::class.':currency',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'state_set_at' => 'datetime',
+            'due_at' => 'datetime',
+            'seller_information' => 'array',
+            'buyer_information' => 'array',
+            'metadata' => 'array',
+            'discounts' => Discounts::class,
+            'subtotal_amount' => MoneyCast::class.':currency',
+            'discount_amount' => MoneyCast::class.':currency',
+            'tax_amount' => MoneyCast::class.':currency',
+            'total_amount' => MoneyCast::class.':currency',
+        ];
+    }
 
     public static function booted()
     {
@@ -463,11 +467,21 @@ class Invoice extends Model implements Attachable
         return null;
     }
 
+    public function getType(): string|InvoiceType
+    {
+        return InvoiceType::tryFrom($this->type) ?? $this->type;
+    }
+
+    public function getState(): string|InvoiceState
+    {
+        return InvoiceState::tryFrom($this->state) ?? $this->state;
+    }
+
     public function toPdfInvoice(): PdfInvoice
     {
         return new PdfInvoice(
-            type: $this->type,
-            state: $this->state,
+            type: $this->getType(),
+            state: $this->getState(),
             serial_number: $this->serial_number,
             due_at: $this->due_at,
             created_at: $this->created_at,

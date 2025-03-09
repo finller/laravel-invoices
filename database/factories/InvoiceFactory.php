@@ -27,8 +27,8 @@ class InvoiceFactory extends Factory
         );
 
         return [
-            'type' => InvoiceType::Invoice,
-            'state' => fake()->randomElement(InvoiceState::cases()),
+            'type' => InvoiceType::Invoice->value,
+            'state' => InvoiceState::Draft->value,
             'state_set_at' => fake()->dateTimeBetween($created_at),
             'updated_at' => fake()->dateTimeBetween($created_at),
             'created_at' => $created_at,

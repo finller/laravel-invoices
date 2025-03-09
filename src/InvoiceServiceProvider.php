@@ -34,8 +34,10 @@ class InvoiceServiceProvider extends PackageServiceProvider
             ->hasMigration('migrate_serial_number_details_columns_to_invoices_table');
     }
 
-    public static function getSerialNumberPrefixConfiguration(?InvoiceType $type): ?string
+    public static function getSerialNumberPrefixConfiguration(null|string|InvoiceType $type): ?string
     {
+        $value = $type instanceof InvoiceType ? $type->value : $type;
+
         /** @var string|array<string, string> $prefixes */
         $prefixes = config('invoices.serial_number.prefix', '');
 
@@ -43,11 +45,13 @@ class InvoiceServiceProvider extends PackageServiceProvider
             return $prefixes;
         }
 
-        return $prefixes[$type?->value] ?? null;
+        return $prefixes[$value] ?? null;
     }
 
-    public static function getSerialNumberFormatConfiguration(?InvoiceType $type): string
+    public static function getSerialNumberFormatConfiguration(null|string|InvoiceType $type): string
     {
+        $value = $type instanceof InvoiceType ? $type->value : $type;
+
         /** @var string|array<string, string> $formats */
         $formats = config('invoices.serial_number.format') ?? '';
 
@@ -56,10 +60,10 @@ class InvoiceServiceProvider extends PackageServiceProvider
         }
 
         /** @var ?string $format */
-        $format = $formats[$type?->value] ?? null;
+        $format = $formats[$value] ?? null;
 
         if (! $format) {
-            throw new Exception("No serial number format defined in config for type: {$type?->value}.");
+            throw new Exception("No serial number format defined in config for type: {$value}.");
         }
 
         return $format;
